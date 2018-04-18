@@ -9,6 +9,7 @@
 			* 文件上传
 				* downloadonly
 				* 手动上传
+				* URL
 			* 文件下载
 			* 文件同步
 			* repo模板上传
