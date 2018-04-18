@@ -1,6 +1,5 @@
 <#-- @ftlvariable name="page" type="org.springframework.data.domain.Page<com.slyak.mirrors.domain.Project>" -->
-<@layout.main title="项目">
-<a class="btn btn-primary justify-content-end" href="<@slyak.query url="/project"/>">创建项目</a>
+<@layout.main title='项目'>
 <table class="table table-bordered">
     <thead>
     <tr>

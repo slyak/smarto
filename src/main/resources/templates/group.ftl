@@ -1,5 +1,5 @@
 <#-- @ftlvariable name="group" type="com.slyak.mirrors.domain.Group" -->
-<@layout.main title="机器组详情">
+<@layout.main title='机器组详情'>
 <@slyak.js url="/js/group.js"/>
 <style>
     input.form-control{
