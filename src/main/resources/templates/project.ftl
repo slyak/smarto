@@ -41,7 +41,10 @@
 </#assign>
 
 <#assign left>
-    test
+<div style="width: 100%;text-align: center;padding:15px;">
+    <img src="http://192.168.230.8:3990/projects/MT/avatar.png?s=256&amp;v=1476253074022" alt="mssg-test" style="">
+    <div style="font-size: 20px;color:#333;line-height: 70px;">大数据基础</div>
+</div>
 </#assign>
 
 <@layout.leftRight title='详情' left=left right=right/>
