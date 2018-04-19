@@ -8,6 +8,7 @@
 </head>
 <body>
     <@bootstrap.navbar brand="ITASM" menu=[
+    {'title':'资源站','url':'/resources'},
     {'title':'项目','url':'/'},
     {'title':'全局设置','url':'/global'},
     {'title':'使用帮助','url':'/help'}
@@ -51,7 +52,7 @@
         </div>
         <div class="main-right">
             <@titleLine title=title btnCreate=btnCreate/>
-            <div class="container pt-4">
+            <div class="p-3">
             ${right}
             </div>
         </div>
