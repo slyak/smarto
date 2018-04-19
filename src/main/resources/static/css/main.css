@@ -53,7 +53,9 @@ a.nav-link:hover, a.nav-link:focus {
     padding: 20px;
     box-sizing: border-box;
     display: table;
-
+    width: 100%;
+    background: #f5f5f5 !important;
+    border-bottom: 1px solid #dee2e6 !important;
 }
 
 .title-line-main {
@@ -108,7 +110,7 @@ a.nav-link:hover, a.nav-link:focus {
 
 .table th,
 .table td {
-    padding: 7px;
+    padding: 7px 10px;
     vertical-align: middle;
     border-top: 0 !important;
     border-bottom: 1px solid #dee2e6 !important;
@@ -141,13 +143,15 @@ form input, form select {
 
 .main-left,.main-right{
     display: table-cell;
-    padding: 20px;
+    vertical-align: top;
 }
 
 .main-left{
+    padding: 15px;
     width: 230px;
     background-color: #f5f5f5;
     border-right: 1px solid #dee2e6;
+    height: calc(100vh - 42px);
 }
 
 .form-group label{
