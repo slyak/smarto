@@ -1,3 +1,4 @@
+<#-- @ftlvariable name="slyakRequestContext" type="com.slyak.web.support.freemarker.SlyakRequestContext" -->
 <#macro html title>
 <html>
 <head>
@@ -27,7 +28,7 @@
     <div class="title-line-main">
         <h1>${title}</h1>
         <#if btnCreate.title??>
-            <a class="btn btn-sm btn-primary ml-3"
+            <a class="btn btn-sm ml-3"
                href="<@slyak.query url="${btnCreate.url}"/>">${btnCreate.title}</a>
         </#if>
     </div>
@@ -70,8 +71,26 @@
             </div>
         </div>
         <div class="layout-cell sidebar">
-            ${right}
+        ${right}
         </div>
     </div>
     </@html>
+</#macro>
+
+<#macro list title="" items=[{'title':'示例','url':'/','class':'fa-plus'}]>
+<div class="list-wrapper">
+    <#if title?has_content>
+    <div class="list-title">${title}</div>
+    </#if>
+    <ul>
+        <#list items as item>
+        <li class="list-item">
+            <a href="<@slyak.query url="${item.url}"/>" <#if slyakRequestContext.isSameUrl(item.url)>class="active" </#if>>
+                <i class="fas ${item.class}"></i>
+                <span>${item.title}</span>
+            </a>
+        </li>
+        </#list>
+    </ul>
+</div>
 </#macro>

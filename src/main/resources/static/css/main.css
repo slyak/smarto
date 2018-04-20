@@ -108,10 +108,24 @@ a.nav-link:hover, a.nav-link:focus /*,.active a*/
 }
 
 .btn:active, .btn:focus, .btn:hover {
-    background: #e9e9e9 !important;
-    border-color: #999 !important;
-    color: #000 !important;
-    text-decoration: none !important;
+    background: #e9e9e9;
+    border-color: #999;
+    color: #000;
+    text-decoration: none;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background: #2a67a5 !important;
+    border-color: transparent !important;
+    color: #fff !important;
+}
+
+.btn-primary, .btn-primary:visited {
+    background: #3572b0 !important;
+    border-color: transparent !important;
+    color: #fff !important;
+    font-weight: bold !important;
+    -webkit-font-smoothing: antialiased !important;
 }
 
 .table th,
@@ -121,6 +135,7 @@ a.nav-link:hover, a.nav-link:focus /*,.active a*/
     border-top: 0 !important;
     border-bottom: 1px solid #dee2e6 !important;
     font-size: 14px;
+    text-align: left;
 }
 
 form input, form select {
@@ -180,7 +195,6 @@ li {
 
 .list-item svg, .list-item i {
     margin-top: 2px;
-    margin-right: 15px;
     width: 16px;
     height: 16px;
     float: left;
@@ -207,6 +221,7 @@ li {
     text-align: left;
     line-height: 20px;
     padding: 10px 0 4px;
+    border-top: 1px solid #dee2e6;
     color: rgb(112, 112, 112);
 }
 
@@ -216,10 +231,17 @@ svg, .fas, .list-item i {
 }
 
 .fas {
-    margin-right: 15px;
+    margin-right: 10px;
     font-size: 14px;
 }
 
 .fa-cog {
     font-size: 16px;
+}
+
+.sidebar-title {
+    font-size: 20px;
+    color: #333;
+    line-height: 53px;
+    padding-top: 10px;
 }

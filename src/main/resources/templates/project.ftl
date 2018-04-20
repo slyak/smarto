@@ -29,44 +29,13 @@
 <#assign left>
 <div>
     <div class="text-center">
-        <img src="http://192.168.230.8:3990/projects/MT/avatar.png?s=256&amp;v=1476253074022" alt="mssg-test" style="">
-        <div style="font-size: 20px;color:#333;line-height: 53px;padding-top: 10px">大数据基础</div>
+        <img src="<@slyak.query url="/images/default-avatar.svg"/>">
+        <div class="sidebar-title">大数据基础</div>
     </div>
-    <div class="list-wrapper">
-        <div class="list-title">ACTIONS</div>
-        <ul>
-            <li class="list-item">
-                <a href="<@slyak.query url="/group"/>">
-                    <i class="fas fa-plus"></i>
-                    <span>创建机器组</span>
-                </a>
-            </li>
-        </ul>
-    </div>
-    <hr class="mt-1 mb-1"/>
-    <div class="list-wrapper">
-        <div class="list-title">NAVIGATION</div>
-        <ul>
-            <li class="list-item">
-                <a href="<@slyak.query url="/project"/>"
-                   <#if slyakRequestContext.isSameUrl("/project")>class="active" </#if>>
-                    <i class="fas fa-desktop"></i>
-                    <span>机器组列表</span>
-                </a>
-            </li>
-        </ul>
-    </div>
-    <hr class="mt-1 mb-1"/>
-    <div class="list-wrapper">
-        <ul>
-            <li class="list-item">
-                <a href="<@slyak.query url="/project"/>"
-                   <#if slyakRequestContext.isSameUrl("/settings")>class="active" </#if>>
-                    <i class="fas fa-cog"></i>
-                    <span>配置</span>
-                </a>
-            </li>
-        </ul>
+    <div class="mt-2">
+    <@layout.list title="操作" items=[{'title':'创建机器组','url':'/group','class':'fa-plus'}]/>
+    <@layout.list title="导航" items=[{'title':'机器组列表','url':'/project','class':'fa-desktop'}]/>
+    <@layout.list items=[{'title':'配置','url':'/project/settings','class':'fa-cog'}]/>
     </div>
 </div>
 </#assign>
