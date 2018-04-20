@@ -1,5 +1,5 @@
 <#-- @ftlvariable name="slyakRequestContext" type="com.slyak.web.support.freemarker.SlyakRequestContext" -->
-<#macro html title>
+<#macro html>
 <html>
 <head>
     <@bootstrap.cssAndJs/>
@@ -36,7 +36,7 @@
 </#macro>
 
 <#macro main title btnCreate={}>
-    <@html title=title>
+    <@html>
         <@titleLine title=title btnCreate=btnCreate/>
     <div class="main">
         <#nested />
@@ -46,7 +46,7 @@
 
 
 <#macro rightMain left right title btnCreate={}>
-    <@html title=title>
+    <@html>
     <div class="layout-l-r">
         <div class="layout-cell sidebar left">
         ${left}
@@ -62,7 +62,7 @@
 </#macro>
 
 <#macro leftMain left right title btnCreate={}>
-    <@html title=title>
+    <@html>
     <div class="layout-l-r">
         <div class="layout-cell left">
             <@titleLine title=title btnCreate=btnCreate/>
@@ -80,17 +80,46 @@
 <#macro list title="" items=[{'title':'示例','url':'/','class':'fa-plus'}]>
 <div class="list-wrapper">
     <#if title?has_content>
-    <div class="list-title">${title}</div>
+        <div class="list-title">${title}</div>
     </#if>
     <ul>
         <#list items as item>
-        <li class="list-item">
-            <a href="<@slyak.query url="${item.url}"/>" <#if slyakRequestContext.isSameUrl(item.url)>class="active" </#if>>
-                <i class="fas ${item.class}"></i>
-                <span>${item.title}</span>
-            </a>
-        </li>
+            <li class="list-item">
+                <a href="<@slyak.query url="${item.url}"/>"
+                   <#if slyakRequestContext.isSameUrl(item.url)>class="active" </#if>>
+                    <i class="fas ${item.class}"></i>
+                    <span>${item.title}</span>
+                </a>
+            </li>
         </#list>
     </ul>
 </div>
+</#macro>
+
+<#macro group title>
+    <#assign left>
+    <div>
+        <div class="text-center">
+            <img src="<@slyak.query url="/images/default-avatar.svg"/>">
+            <div class="sidebar-title">大数据基础</div>
+        </div>
+        <div class="mt-2">
+            <@layout.list title="操作" items=[
+            {'title':'运行所有脚本','url':'/group','class':'fa-paper-plane'},
+            {'title':'下载离线安装包','url':'/group','class':'fa-download'}
+            ]/>
+    <@layout.list title="导航" items=[
+        {'title':'主机列表','url':'/group/hosts','class':'fa-desktop'},
+        {'title':'文件列表','url':'/group/files','class':'fa-file'},
+        {'title':'变量列表','url':'/group/envs','class':'fa-subscript'},
+        {'title':'脚本列表','url':'/group/scripts','class':'fa-code'}
+        ]/>
+    <@layout.list items=[{'title':'配置','url':'/project/settings','class':'fa-cog'}]/>
+        </div>
+    </div>
+    </#assign>
+    <#assign right>
+        <#nested />
+    </#assign>
+    <@layout.rightMain title=title left=left right=right/>
 </#macro>

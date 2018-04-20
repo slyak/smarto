@@ -9,7 +9,7 @@ a {
     text-decoration: none;
 }
 
-a:hover, a:focus, a:active, a.btn-link:hover, a.btn-link:focus, a.btn-link:active {
+a:hover, a:focus, a:active, a.btn-link, a.btn-link:hover, a.btn-link:focus, a.btn-link:active {
     color: #3b73af;
     font-size: 14px;
 }
@@ -161,12 +161,12 @@ form input, form select {
     height: 75vh;
 }
 
-.layout-cell{
+.layout-cell {
     display: table-cell;
     vertical-align: top;
 }
 
-.left{
+.left {
     border-right: 1px solid #dee2e6;
 }
 

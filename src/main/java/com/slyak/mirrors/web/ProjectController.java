@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * .
@@ -17,46 +18,28 @@ import org.springframework.web.bind.annotation.PostMapping;
  * @since 1.3.0
  */
 @Controller
-public class IndexController {
+@RequestMapping("/project")
+public class ProjectController {
 
     @Autowired
     private MirrorManager mirrorManager;
 
-    @GetMapping("/")
-    public String index(Pageable pageable, ModelMap modelMap) {
+    @GetMapping
+    public String index(){
+        return "redirect:/project/groups";
+    }
+
+    @GetMapping("/list")
+    public void list(Pageable pageable, ModelMap modelMap) {
         modelMap.put("page", mirrorManager.queryProjects(pageable));
-        return "projects";
     }
 
-    @GetMapping("/project")
-    public void project(@Param("id") Project project) {
-
+    @GetMapping("/groups")
+    public void groups(Long projectId) {
     }
 
-    public void createProject(@Param("id") Project project) {
-
-    }
-
-    @PostMapping("/project")
+    @PostMapping
     public void saveProject(@Param("id") Project project) {
-        project(project);
-    }
-
-    @GetMapping("/group")
-    public void group() {
-    }
-
-    @PostMapping("/group")
-    public void saveGroup() {
-        group();
-    }
-
-    @GetMapping("/global")
-    public void global() {
-    }
-
-    @PostMapping("/global")
-    public void saveGlobal() {
-        global();
+        groups(project.getId());
     }
 }
