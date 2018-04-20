@@ -1,5 +1,6 @@
 <#-- @ftlvariable name="page" type="org.springframework.data.domain.Page<com.slyak.mirrors.domain.Project>" -->
-<@layout.main title='项目' btnCreate={'title':'创建新项目','url':'/project'}>
+
+<#assign left>
 <table class="table table-hover">
     <thead>
     <tr>
@@ -22,4 +23,10 @@
     </tbody>
 </table>
     <@bootstrap.pagination value=page relativeUrl="/" />
-</@layout.main>
+</#assign>
+
+<#assign right>
+
+</#assign>
+
+<@layout.leftMain title='项目' left=left right=right btnCreate={'title':'创建新项目','url':'/project'}/>

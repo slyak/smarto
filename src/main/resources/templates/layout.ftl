@@ -8,7 +8,7 @@
 </head>
 <body>
     <@bootstrap.navbar brand="ITASM" menu=[
-    {'title':'资源站','url':'/resources'},
+    <#--{'title':'资源站','url':'/resources'},-->
     {'title':'项目','url':'/'},
     {'title':'全局设置','url':'/global'},
     {'title':'使用帮助','url':'/help'}
@@ -44,17 +44,33 @@
 </#macro>
 
 
-<#macro leftRight left right title btnCreate={}>
+<#macro rightMain left right title btnCreate={}>
     <@html title=title>
     <div class="layout-l-r">
-        <div class="main-left">
+        <div class="layout-cell sidebar left">
         ${left}
         </div>
-        <div class="main-right">
+        <div class="layout-cell">
             <@titleLine title=title btnCreate=btnCreate/>
             <div class="p-3">
             ${right}
             </div>
+        </div>
+    </div>
+    </@html>
+</#macro>
+
+<#macro leftMain left right title btnCreate={}>
+    <@html title=title>
+    <div class="layout-l-r">
+        <div class="layout-cell left">
+            <@titleLine title=title btnCreate=btnCreate/>
+            <div class="p-3">
+            ${left}
+            </div>
+        </div>
+        <div class="layout-cell sidebar">
+            ${right}
         </div>
     </div>
     </@html>

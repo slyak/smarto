@@ -33,6 +33,10 @@ public class IndexController {
 
     }
 
+    public void createProject(@Param("id") Project project) {
+
+    }
+
     @PostMapping("/project")
     public void saveProject(@Param("id") Project project) {
         project(project);

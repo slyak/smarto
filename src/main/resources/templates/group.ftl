@@ -1,6 +1,7 @@
 <#-- @ftlvariable name="group" type="com.slyak.mirrors.domain.Group" -->
-<@layout.main title='机器组详情'>
-<@slyak.js url="/js/group.js"/>
+
+<#assign right>
+    <@slyak.js url="/js/group.js"/>
 <style>
     input.form-control{
         width: 250px !important;
@@ -25,7 +26,7 @@
                 </div>
                 <i class="fas fa-minus-circle fa-lg mb-2" style="cursor: pointer;"></i>
                 <#if !node_has_next>
-                <i class="fas fa-plus-circle fa-lg mb-2 mx-sm-2" style="cursor: pointer;"></i>
+                    <i class="fas fa-plus-circle fa-lg mb-2 mx-sm-2" style="cursor: pointer;"></i>
                 </#if>
             </div>
         </#list>
@@ -63,4 +64,10 @@
 this is a test console
     </pre>
 </div>
-</@layout.main>
+</#assign>
+
+<#assign left>
+
+</#assign>
+
+<@layout.rightMain title='机器组' left=left right=right/>
