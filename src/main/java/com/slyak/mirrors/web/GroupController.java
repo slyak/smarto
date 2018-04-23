@@ -51,4 +51,8 @@ public class GroupController {
     @GetMapping("/envs")
     public void envs() {
     }
+
+    @GetMapping("/settings")
+    public void settings() {
+    }
 }

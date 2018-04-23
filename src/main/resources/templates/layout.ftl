@@ -136,7 +136,9 @@
             <div class="card-body">
                 <h5 class="card-title">${title}</h5>
                 <hr/>
-                <form action="${action}" method="post">
+                <form action="<@slyak.query url=action/>" method="post" autocomplete="off">
+                    <input style="display:none" type="text" name="fakename">
+                    <input style="display:none" type="password" name="fakepwd">
                     <#nested />
                 </form>
                 <hr/>

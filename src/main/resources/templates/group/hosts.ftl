@@ -10,15 +10,15 @@
     <tbody>
     <#--<#list page.content as group>-->
     <tr>
-        <td><i class="fas fa-boxes"></i><a href="<@slyak.query url="/group/host"/>">NameNode1</a></td>
+        <td><i class="fas fa-desktop"></i><a href="<@slyak.query url="/group/host"/>">NameNode1</a></td>
         <td>节点一</td>
     </tr>
     <tr>
-        <td><i class="fas fa-boxes"></i><a href="<@slyak.query url="/group/host"/>">NameNode2</a></td>
+        <td><i class="fas fa-desktop"></i><a href="<@slyak.query url="/group/host"/>">NameNode2</a></td>
         <td>节点二</td>
     </tr>
     <tr>
-        <td><i class="fas fa-boxes"></i><a href="<@slyak.query url="/group/host"/>">NameNode3</a></td>
+        <td><i class="fas fa-desktop"></i><a href="<@slyak.query url="/group/host"/>">NameNode3</a></td>
         <td>节点三</td>
     </tr>
     </tbody>
