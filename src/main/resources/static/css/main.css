@@ -21,6 +21,12 @@ a:hover, a:focus, a:active, a.btn-link, a.btn-link:hover, a.btn-link:focus, a.bt
     color: #fff !important;
 }
 
+.nav-link i{
+    height: 20px;
+    line-height: 20px;
+    font-size: 18px;
+}
+
 a.nav-link {
     color: #fff;
     line-height: 20px;
@@ -260,6 +266,6 @@ svg, .fas, .list-item i {
 }
 
 .detail {
-    width: 558px;
+    width: 600px;
     margin: 50px auto 0;
 }

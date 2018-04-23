@@ -8,11 +8,12 @@
     <@slyak.css url="/css/main.css"/>
 </head>
 <body>
-    <@bootstrap.navbar brand="ITASM" menu=[
-    <#--{'title':'资源站','url':'/resources'},-->
+    <@bootstrap.navbar brand="ITASM" left=[
     {'title':'项目','url':'/'},
-    {'title':'全局设置','url':'/global'},
-    {'title':'使用帮助','url':'/help'}
+    {'title':'镜像仓库','url':'/mirrors'}
+    ] right=[
+    {'title':'<i class="fa fa-question-circle fa-lg"></i>','url':'/help'},
+    {'title':'<i class="fa fa-cog fa-lg"></i>','url':'/admin'}
     ]/>
 <div class="container-fluid p-0">
     <#nested />
@@ -101,12 +102,38 @@
 </div>
 </#macro>
 
-<#macro group title btnCreate={}>
+<#macro project title btnCreate={}>
     <#assign left>
     <div>
         <div class="text-center">
             <img src="<@slyak.query url="/images/default-avatar.svg"/>">
             <div class="sidebar-title">大数据基础</div>
+        </div>
+        <div class="mt-2">
+            <@layout.list title="操作" items=[
+            {'title':'创建分组','url':'/project/group','class':'fa-plus'},
+            {'title':'下载离线安装包','url':'/project/download','class':'fa-download'}
+            ]/>
+    <@layout.list title="导航" items=[{'title':'分组列表','url':'/project/groups','class':'fa-boxes'}]/>
+    <@layout.list items=[{'title':'配置','url':'/project/settings','class':'fa-cog'}]/>
+        </div>
+    </div>
+    </#assign>
+    <#assign right>
+        <#nested />
+    </#assign>
+    <@layout.rightMain title=title left=left right=right btnCreate=btnCreate/>
+</#macro>
+
+<#macro group title btnCreate={}>
+    <#assign left>
+    <div>
+        <div class="text-left mb-3">
+            <img src="<@slyak.query url="/images/default-avatar.svg"/>" style="width: 48px;position: absolute">
+            <div style="padding-left: 58px;padding-top: 4px;height: 45px;">
+                <a href="">NameNode</a>
+                <div>大数据基础</div>
+            </div>
         </div>
         <div class="mt-2">
             <@layout.list title="操作" items=[

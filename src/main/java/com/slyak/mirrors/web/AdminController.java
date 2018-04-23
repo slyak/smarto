@@ -12,15 +12,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @since 1.3.0
  */
 @Controller
-@RequestMapping("/global")
-public class GlobalController {
+@RequestMapping("/admin")
+public class AdminController {
 
     @GetMapping
-    public void global() {
+    public String index() {
+        return "/admin/index";
     }
 
-    @PostMapping
-    public void saveGlobal() {
-        global();
+
+    @GetMapping("/files")
+    public void files() {
     }
 }

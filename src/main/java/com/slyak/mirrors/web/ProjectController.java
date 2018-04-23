@@ -33,6 +33,11 @@ public class ProjectController {
     public void groups(Long projectId) {
     }
 
+
+    @GetMapping("/group")
+    public void group(Long groupId) {
+    }
+
     @PostMapping
     public void saveProject(@Param("id") Project project) {
         groups(project.getId());

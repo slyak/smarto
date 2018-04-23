@@ -39,6 +39,10 @@ public class GroupController {
     public void files() {
     }
 
+    @GetMapping("/file")
+    public void file() {
+    }
+
     @GetMapping("/scripts")
     public void scripts() {
     }
