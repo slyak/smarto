@@ -24,11 +24,6 @@ public class ProjectController {
     @Autowired
     private MirrorManager mirrorManager;
 
-    @GetMapping
-    public String index(){
-        return "redirect:/project/groups";
-    }
-
     @GetMapping("/list")
     public void list(Pageable pageable, ModelMap modelMap) {
         modelMap.put("page", mirrorManager.queryProjects(pageable));
@@ -41,5 +36,9 @@ public class ProjectController {
     @PostMapping
     public void saveProject(@Param("id") Project project) {
         groups(project.getId());
+    }
+
+    @GetMapping("/settings")
+    public void settings() {
     }
 }

@@ -20,11 +20,6 @@ public class GroupController {
     @Autowired
     private MirrorManager mirrorManager;
 
-    @GetMapping
-    public String group() {
-        return "redirect:/group/hosts";
-    }
-
     @GetMapping("/hosts")
     public void hosts() {
     }
@@ -36,7 +31,7 @@ public class GroupController {
 
     @PostMapping
     public void saveGroup() {
-        group();
+        hosts();
     }
 
 
