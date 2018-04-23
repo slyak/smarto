@@ -15,12 +15,17 @@
     {'title':'使用帮助','url':'/help'}
     ]/>
 <div class="container-fluid p-0">
-    <div class="bg-white">
-        <#nested />
-    </div>
+    <#nested />
 </div>
 </body>
 </html>
+</#macro>
+
+<#macro footer>
+<div class="footer">
+    Slyak ITASM v0.1.0&nbsp;&nbsp;&nbsp;&nbsp;stormning@163.com&nbsp;&nbsp;&nbsp;&nbsp;slyak.com
+    <div class="logo">Slyak</div>
+</div>
 </#macro>
 
 <#macro titleLine title btnCreate={}>
@@ -47,7 +52,7 @@
 
 <#macro rightMain left right title btnCreate={}>
     <@html>
-    <div class="layout-l-r">
+    <div class="layout-l-r bg-white">
         <div class="layout-cell sidebar left">
         ${left}
         </div>
@@ -63,7 +68,7 @@
 
 <#macro leftMain left right title btnCreate={}>
     <@html>
-    <div class="layout-l-r">
+    <div class="layout-l-r bg-white">
         <div class="layout-cell left">
             <@titleLine title=title btnCreate=btnCreate/>
             <div class="p-3">
@@ -96,7 +101,7 @@
 </div>
 </#macro>
 
-<#macro group title>
+<#macro group title btnCreate={}>
     <#assign left>
     <div>
         <div class="text-center">
@@ -112,7 +117,7 @@
         {'title':'主机列表','url':'/group/hosts','class':'fa-desktop'},
         {'title':'文件列表','url':'/group/files','class':'fa-file'},
         {'title':'变量列表','url':'/group/envs','class':'fa-subscript'},
-        {'title':'脚本列表','url':'/group/scripts','class':'fa-code'}
+        {'title':'初始化脚本','url':'/group/scripts','class':'fa-code'}
         ]/>
     <@layout.list items=[{'title':'配置','url':'/project/settings','class':'fa-cog'}]/>
         </div>
@@ -121,5 +126,26 @@
     <#assign right>
         <#nested />
     </#assign>
-    <@layout.rightMain title=title left=left right=right/>
+    <@layout.rightMain title=title left=left right=right btnCreate=btnCreate/>
+</#macro>
+
+<#macro detail title action>
+    <@html>
+    <div class="detail">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">${title}</h5>
+                <hr/>
+                <form action="${action}" method="post">
+                    <#nested />
+                </form>
+                <hr/>
+                <div class="text-right">
+                    <button class="btn btn-lg btn-primary">保存</button>
+                    <button class="btn btn-lg btn-link" onclick="history.back()">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </@html>
 </#macro>

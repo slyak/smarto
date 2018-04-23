@@ -50,6 +50,19 @@ a.nav-link:hover, a.nav-link:focus /*,.active a*/
     border-bottom: 1px solid #ddd;
 }
 
+.footer{
+    color: #707070;
+    font-size: 12px;
+    text-align: center;
+    padding: 20px;
+}
+
+.footer .logo{
+    font-size: 24px;
+    font-weight: bold;
+    font-family: 'DejaVu Serif', Georgia, "Times New Roman", Times, serif;
+}
+
 .navbar, .title-line {
     padding: 0 20px;
 }
@@ -174,7 +187,7 @@ form input, form select {
     padding: 15px;
     width: 230px;
     background-color: #f5f5f5;
-    height: calc(100vh - 42px);
+    height: calc(100vh - 43px);
 }
 
 .form-group label {
@@ -244,4 +257,9 @@ svg, .fas, .list-item i {
     color: #333;
     line-height: 53px;
     padding-top: 10px;
+}
+
+.detail {
+    width: 558px;
+    margin: 50px auto 0;
 }

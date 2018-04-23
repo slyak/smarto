@@ -29,6 +29,10 @@ public class GroupController {
     public void hosts() {
     }
 
+    @GetMapping("/host")
+    public void host() {
+    }
+
 
     @PostMapping
     public void saveGroup() {
