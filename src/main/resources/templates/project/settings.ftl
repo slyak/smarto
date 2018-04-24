@@ -1,5 +1,5 @@
 <@layout.project title="配置" btnCreate={'title':'删除','url':'/project/delete'}>
-<div style="width: 550px">
+<div class="settings">
     <@bootstrap.form action="">
         <@bootstrap.formgroup label="项目名称">
             <@bootstrap.input name="name" value="${project.name}"/>

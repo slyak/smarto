@@ -28,6 +28,15 @@ public class GroupController {
     public void host() {
     }
 
+    @GetMapping("/dependency")
+    public void dependency() {
+
+    }
+
+    @GetMapping("/dependencies")
+    public void dependencies() {
+
+    }
 
     @PostMapping
     public void saveGroup() {

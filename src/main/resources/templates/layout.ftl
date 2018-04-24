@@ -142,11 +142,12 @@
             ]/>
     <@layout.list title="导航" items=[
         {'title':'主机列表','url':'/group/hosts','class':'fa-desktop'},
+        {'title':'依赖项目','url':'/group/dependencies','class':'fa-cubes'},
         {'title':'文件列表','url':'/group/files','class':'fa-file'},
         {'title':'变量列表','url':'/group/envs','class':'fa-subscript'},
         {'title':'初始化脚本','url':'/group/scripts','class':'fa-code'}
         ]/>
-    <@layout.list items=[{'title':'配置','url':'/project/settings','class':'fa-cog'}]/>
+    <@layout.list items=[{'title':'配置','url':'/group/settings','class':'fa-cog'}]/>
         </div>
     </div>
     </#assign>
