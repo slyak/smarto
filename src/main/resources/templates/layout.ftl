@@ -10,7 +10,7 @@
 <body>
     <@bootstrap.navbar brand="ITASM" left=[
     {'title':'项目','url':'/'},
-    {'title':'镜像仓库','url':'/mirrors'}
+    {'title':'镜像仓库','url':'/mirror/mirrors'}
     ] right=[
     {'title':'<i class="fa fa-question-circle fa-lg"></i>','url':'/help'},
     {'title':'<i class="fa fa-cog fa-lg"></i>','url':'/admin'}
@@ -67,11 +67,13 @@
     </@html>
 </#macro>
 
-<#macro leftMain left right title btnCreate={}>
+<#macro leftMain left right title="" btnCreate={}>
     <@html>
     <div class="layout-l-r bg-white">
         <div class="layout-cell left">
-            <@titleLine title=title btnCreate=btnCreate/>
+            <#if title?has_content>
+                <@titleLine title=title btnCreate=btnCreate/>
+            </#if>
             <div class="p-3">
             ${left}
             </div>
@@ -158,6 +160,37 @@
     <@layout.rightMain title=title left=left right=right btnCreate=btnCreate/>
 </#macro>
 
+<#macro admin title btnCreate={}>
+    <#assign left>
+    <div>
+        <h4>系统管理</h4>
+        <div class="mt-2">
+            <@layout.list items=[
+            {'title':'全局设置','url':'/admin','class':'fa-globe'}
+            ]/>
+        </div>
+        <@layout.list title="用户" items=[
+        {'title':'用户管理','url':'/admin/users','class':'fa-user'},
+        {'title':'角色管理','url':'/admin/roles','class':'fa-user-secret'}
+        ]/>
+        <@layout.list title="文件" items=[
+        {'title':'镜像仓库','url':'/admin/mirrors','class':'fa-warehouse'},
+        {'title':'操作系统','url':'/admin/os','class':'fa-linux'}
+        ]/>
+        <@layout.list title="备份" items=[
+        {'title':'系统备份','url':'/admin/backup','class':'fa-archive'},
+        {'title':'系统恢复','url':'/admin/recover','class':'fa-recycle'}
+        ]/>
+    </div>
+    </#assign>
+    <#assign right>
+    <div class="settings">
+        <#nested />
+    </div>
+    </#assign>
+    <@layout.rightMain title=title left=left right=right btnCreate=btnCreate/>
+</#macro>
+
 <#macro settings title btnCreate={}>
     <#assign left>
     <div>
@@ -175,7 +208,7 @@
             ]/>
     <@layout.list title="导航" items=[
         {'title':'主机列表','url':'/group/hosts','class':'fa-desktop'},
-        {'title':'依赖项目','url':'/group/dependencies','class':'fa-cubes'},
+        {'title':'依赖列表','url':'/group/dependencies','class':'fa-cubes'},
         {'title':'文件列表','url':'/group/files','class':'fa-file'},
         {'title':'变量列表','url':'/group/envs','class':'fa-subscript'},
         {'title':'初始化脚本','url':'/group/scripts','class':'fa-code'}

@@ -165,7 +165,7 @@ form input, form select {
     border-radius: 3px;
     box-sizing: border-box;
     margin: 0;
-    max-width: 250px;
+    /*max-width: 250px;*/
     vertical-align: baseline;
     width: 100%;
     background: #fff;
@@ -174,7 +174,7 @@ form input, form select {
     font-size: 14px !important;
 }
 
-input[type=file] {
+input[type=file], input[type=checkbox] {
     height: inherit !important;
 }
 
@@ -274,6 +274,11 @@ svg, .fas, .list-item i {
     margin: 50px auto 0;
 }
 
-.settings {
-    width: 550px;
+#mirrorSearch{
+    margin: 14px 0 30px;
+}
+
+#mirrorSearch .btn{
+    height: inherit !important;
+    width: 100px;
 }

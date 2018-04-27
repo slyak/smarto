@@ -4,7 +4,7 @@
     <thead>
     <tr>
         <th scope="col">名称</th>
-        <th scope="col">依赖项目</th>
+        <th scope="col">依赖列表</th>
         <th scope="col">描述</th>
     </tr>
     </thead>
@@ -31,4 +31,4 @@
 </div>
 </#assign>
 
-<@layout.leftMain title='项目' left=left right=right btnCreate={'title':'创建新项目','url':'/project'}/>
+<@layout.leftMain title='项目' left=left right=right btnCreate={'title':'创建新项目','url':'/project/project'}/>

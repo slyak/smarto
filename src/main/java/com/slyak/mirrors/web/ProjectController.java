@@ -33,6 +33,10 @@ public class ProjectController {
     public void groups(Long projectId) {
     }
 
+    @GetMapping("/project")
+    public void project(Long projectId) {
+
+    }
 
     @GetMapping("/group")
     public void group(Long groupId) {
