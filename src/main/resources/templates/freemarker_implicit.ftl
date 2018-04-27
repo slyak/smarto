@@ -9,3 +9,5 @@
 [#import '/spring.ftl' as spring]
 [#import '/com/slyak/web/support/freemarker/slyak.ftl' as slyak]
 [#import '/com/slyak/web/support/freemarker/bootstrap/bootstrap.ftl' as bootstrap]
+[#import '/com/slyak/web/support/freemarker/ace/ace.ftl' as ace]
+[#import '/com/slyak/web/support/freemarker/sockjs/sockjs.ftl' as sockjs]

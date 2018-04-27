@@ -1,11 +1,10 @@
 <#-- @ftlvariable name="page" type="org.springframework.data.domain.Page<com.slyak.mirrors.domain.Project>" -->
-
 <#assign left>
 <table class="table table-hover">
     <thead>
     <tr>
         <th scope="col">名称</th>
-        <th scope="col">父项目</th>
+        <th scope="col">依赖项目</th>
         <th scope="col">描述</th>
     </tr>
     </thead>

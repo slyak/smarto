@@ -1,11 +1,13 @@
 package com.slyak.mirrors.domain;
 
+import com.slyak.spring.jpa.hibernate.JSONType;
 import lombok.Data;
+import org.hibernate.annotations.Type;
+import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.List;
 
 /**
  * group file.
@@ -16,12 +18,12 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "t_group_file")
 @Data
-public class GroupFile {
-    @Id
-    @GeneratedValue
-    private Long id;
+public class GroupFile extends AbstractPersistable<Long> {
 
     private FileType fileType = FileType.NORMAL;
 
-    private String storePath;
+    private String typeValue;
+
+    @Type(type = JSONType.TYPE)
+    private List<Long> groupFileIds;
 }

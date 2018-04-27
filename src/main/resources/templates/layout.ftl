@@ -137,6 +137,39 @@
         </div>
         <div class="mt-2">
             <@layout.list title="操作" items=[
+            {'title':'编辑初始化脚本','url':'/group/script','class':'fa-upload'},
+            {'title':'下载离线安装包','url':'/group/downloadPkg','class':'fa-download'}
+            ]/>
+    <@layout.list title="导航" items=[
+        {'title':'主机列表','url':'/group/hosts','class':'fa-desktop'},
+        {'title':'依赖列表','url':'/group/dependencies','class':'fa-cubes'},
+        {'title':'文件列表','url':'/group/files','class':'fa-file'},
+        {'title':'变量列表','url':'/group/envs','class':'fa-subscript'},
+        {'title':'脚本列表','url':'/group/scripts','class':'fa-code'},
+        {'title':'历史版本','url':'/group/history','class':'fa-code-branch'}
+        ]/>
+    <@layout.list items=[{'title':'配置','url':'/group/settings','class':'fa-cog'}]/>
+        </div>
+    </div>
+    </#assign>
+    <#assign right>
+        <#nested />
+    </#assign>
+    <@layout.rightMain title=title left=left right=right btnCreate=btnCreate/>
+</#macro>
+
+<#macro settings title btnCreate={}>
+    <#assign left>
+    <div>
+        <div class="text-left mb-3">
+            <img src="<@slyak.query url="/images/default-avatar.svg"/>" style="width: 48px;position: absolute">
+            <div style="padding-left: 58px;padding-top: 4px;height: 45px;">
+                <a href="">NameNode</a>
+                <div>大数据基础</div>
+            </div>
+        </div>
+        <div class="mt-2">
+            <@layout.list title="操作" items=[
             {'title':'运行所有脚本','url':'/group','class':'fa-paper-plane'},
             {'title':'下载离线安装包','url':'/group','class':'fa-download'}
             ]/>
@@ -157,14 +190,14 @@
     <@layout.rightMain title=title left=left right=right btnCreate=btnCreate/>
 </#macro>
 
-<#macro detail title action>
+<#macro detail title action enctype="application/x-www-form-urlencoded">
     <@html>
     <div class="detail">
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">${title}</h5>
                 <hr/>
-                <form action="<@slyak.query url=action/>" method="post" autocomplete="off">
+                <form action="<@slyak.query url=action/>" method="post" autocomplete="off" enctype="${enctype}">
                     <input style="display:none" type="text" name="fakename">
                     <input style="display:none" type="password" name="fakepwd">
                     <#nested />

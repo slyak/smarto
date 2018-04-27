@@ -24,8 +24,8 @@ public class ProjectController {
     @Autowired
     private MirrorManager mirrorManager;
 
-    @GetMapping("/list")
-    public void list(Pageable pageable, ModelMap modelMap) {
+    @GetMapping("/projects")
+    public void projects(Pageable pageable, ModelMap modelMap) {
         modelMap.put("page", mirrorManager.queryProjects(pageable));
     }
 

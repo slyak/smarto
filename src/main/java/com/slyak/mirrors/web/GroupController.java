@@ -52,12 +52,21 @@ public class GroupController {
     public void file() {
     }
 
+    @GetMapping("/script")
+    public void script() {
+    }
+
+
     @GetMapping("/scripts")
     public void scripts() {
     }
 
     @GetMapping("/envs")
     public void envs() {
+    }
+
+    @GetMapping("/env")
+    public void env() {
     }
 
     @GetMapping("/settings")

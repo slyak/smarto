@@ -9,11 +9,11 @@
     <tbody>
     <#--<#list page.content as group>-->
     <tr>
-        <td>JAVA_HOME</td>
+        <td>大数据基础</td>
         <td><a class="btn-link" href="">删除</a></td>
     </tr>
     <tr>
-        <td>MYSQL_USER_PWD</td>
+        <td>Zookeeper</td>
         <td><a class="btn-link" href="">删除</a></td>
     </tr>
     </tbody>

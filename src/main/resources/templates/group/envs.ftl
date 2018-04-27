@@ -1,4 +1,4 @@
-<@layout.group title="变量列表">
+<@layout.group title="变量列表" btnCreate={'title':'添加变量','url':'/group/env'}>
 <table class="table table-hover table-fa">
     <thead>
     <tr>
@@ -32,7 +32,7 @@
     </tbody>
 </table>
 <div class="alert alert-primary" role="alert">
-    <p><i class="fa fa-info-circle pr-1"></i>变量可以使用在脚本中，以${r'${变量名称}'}方式引用，默认系统变量如下：</p>
+    <p><i class="fa fa-info-circle pr-1"></i>变量可以使用在脚本中，以${r'${变量名称}'}方式引用，依赖项目的变量也会继承下来，供您修改。默认系统变量如下：</p>
     1. <b>HOST_IP</b>   当前主机IP<br/>
     2. <b>HOST_NAME</b> 主机名
 </div>

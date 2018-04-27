@@ -21,29 +21,29 @@ a:hover, a:focus, a:active, a.btn-link, a.btn-link:hover, a.btn-link:focus, a.bt
     color: #fff !important;
 }
 
-.nav-link i{
+.navbar .nav-link i {
     height: 20px;
     line-height: 20px;
     font-size: 18px;
 }
 
-a.nav-link {
+.navbar a.nav-link {
     color: #fff;
     line-height: 20px;
     padding: 10px;
 }
 
-a.nav-link:hover, a.nav-link:focus /*,.active a*/
+.navbar a.nav-link:hover, .navbar a.nav-link:focus /*,.active a*/
 {
     background-color: #296ca3 !important;
     color: #fff !important;
 }
 
-.nav-link, .navbar-brand {
+.navbar .nav-link, .navbar .navbar-brand {
     color: #fff !important;
 }
 
-.navbar-brand {
+.navbar .navbar-brand {
     font-size: 20px !important;
 }
 
@@ -56,14 +56,14 @@ a.nav-link:hover, a.nav-link:focus /*,.active a*/
     border-bottom: 1px solid #ddd;
 }
 
-.footer{
+.footer {
     color: #707070;
     font-size: 12px;
     text-align: center;
     padding: 20px;
 }
 
-.footer .logo{
+.footer .logo {
     font-size: 24px;
     font-weight: bold;
     font-family: 'DejaVu Serif', Georgia, "Times New Roman", Times, serif;
@@ -174,6 +174,10 @@ form input, form select {
     font-size: 14px !important;
 }
 
+input[type=file] {
+    height: inherit !important;
+}
+
 .layout-l-r {
     display: table;
     width: 100%;
@@ -270,6 +274,6 @@ svg, .fas, .list-item i {
     margin: 50px auto 0;
 }
 
-.settings{
+.settings {
     width: 550px;
 }

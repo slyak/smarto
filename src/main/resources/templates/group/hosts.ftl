@@ -13,17 +13,17 @@
     <tr>
         <td><i class="fas fa-desktop"></i>NameNode1</td>
         <td>节点一</td>
-        <td><a class="btn-link mr-3" href="<@slyak.query url="/group/host"/>">编辑</a><a class="btn-link" href="<@slyak.query url='/group/delete'/>">删除</a></td>
+        <td><a class="btn-link mr-3" href="<@slyak.query url="/group/host"/>">编辑</a><a class="btn-link mr-3" href="<@slyak.query url="/group/host"/>">停用</a><a class="btn-link" href="<@slyak.query url='/group/delete'/>">删除</a></td>
     </tr>
     <tr>
         <td><i class="fas fa-desktop"></i>NameNode2</td>
         <td>节点二</td>
-        <td><a class="btn-link mr-3" href="<@slyak.query url="/group/host"/>">编辑</a><a class="btn-link" href="<@slyak.query url='/group/delete'/>">删除</a></td>
+        <td><a class="btn-link mr-3" href="<@slyak.query url="/group/host"/>">编辑</a><a class="btn-link mr-3" href="<@slyak.query url="/group/host"/>">停用</a><a class="btn-link" href="<@slyak.query url='/group/delete'/>">删除</a></td>
     </tr>
     <tr>
         <td><i class="fas fa-desktop"></i>NameNode3</td>
         <td>节点三</td>
-        <td><a class="btn-link mr-3" href="<@slyak.query url="/group/host"/>">编辑</a><a class="btn-link" href="<@slyak.query url='/group/delete'/>">删除</a></td>
+        <td><a class="btn-link mr-3" href="<@slyak.query url="/group/host"/>">编辑</a><a class="btn-link mr-3" href="<@slyak.query url="/group/host"/>">停用</a><a class="btn-link" href="<@slyak.query url='/group/delete'/>">删除</a></td>
     </tr>
     </tbody>
 </table>

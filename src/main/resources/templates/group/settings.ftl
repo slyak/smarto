@@ -6,10 +6,13 @@
         </@bootstrap.formgroup>
         <@bootstrap.formgroup label="操作系统" required=true>
             <@bootstrap.select name="os" value="${group.os}" options=[
-            {'title':'普通文件','value':'NORMAL'},
-            {'title':'YUM','value':'YUM'},
-            {'title':'URL','value':'URL'}
+            {'title':'CentOS-7.0','value':'123'},
+            {'title':'CentOS-7.3','value':'456'}
             ]/>
+            <a class="ml-3 btn-link" href="<@slyak.query url="/admin/os"/>">没有匹配的操作系统？</a>
+        </@bootstrap.formgroup>
+        <@bootstrap.formgroup label="">
+            <button type="submit" class="btn btn-primary btn-lg">保存</button>
         </@bootstrap.formgroup>
     </@bootstrap.form>
 </div>

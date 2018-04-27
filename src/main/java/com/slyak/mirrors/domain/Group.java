@@ -1,8 +1,11 @@
 package com.slyak.mirrors.domain;
 
 import lombok.Data;
+import org.springframework.data.jpa.domain.AbstractPersistable;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * machine group.
@@ -13,16 +16,9 @@ import javax.persistence.*;
 @Entity
 @Table(name = "t_group")
 @Data
-public class Group {
-
-    @Id
-    @GeneratedValue
-    private Long id;
+public class Group extends AbstractPersistable<Long> {
 
     private String name;
 
     private int projectId;
-
-    @Column(length = 3000)
-    private String script;
 }
