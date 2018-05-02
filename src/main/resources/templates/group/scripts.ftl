@@ -1,9 +1,4 @@
-<@layout.group title="脚本列表" btnCreate={'title':'运行脚本','url':'javascript:runscripts()'}>
-<script>
-    function runscripts() {
-        $(window).trigger('runScripts',{scriptId:1});
-    }
-</script>
+<@layout.group title="脚本列表" btnCreate={'title':'运行脚本','url':'javascript:runscripts(${groupHost.id})'}>
 <table class="table table-hover table-fa">
     <thead>
     <tr>
@@ -59,25 +54,33 @@
     <div class="tab-pane fade" id="NameNode2" role="tabpanel" aria-labelledby="NameNode2-tab"></div>
     <div class="tab-pane fade" id="NameNode3" role="tabpanel" aria-labelledby="NameNode3-tab"></div>
 </div>
-    <#list 1..3 as i>
-    <script>
-        var callback${i};
-    </script>
-        <@ace.init id="NameNode${i}" mode="powershell">
-        callback${i}=function(result){
+<script>
+    var editors = {};
+    var socketInstance;
+    var callback = function (result) {
         console.log(result);
+        var body = result.body;
+        var groupHostId = body.groupHostId;
+        var editor = editors[groupHostId];
         var len = editor.session.getLength();
         console.log(len);
-        editor.session.insert({row:len,column:0}, '\r\n'+result.body);
-        }
+        editor.session.insert({row: len, column: 0}, '\r\n' + body.response);
+    };
+    function runscripts(groupHostId) {
+        socketInstance.send("/ssh/exec", groupHostId);
+    }
+</script>
+    <#list 1..3 as i>
+        <#assign editorId = "NameNode${i}"/>
+        <@ace.init id="${editorId}" mode="powershell">
+        editors["${editorId}"]=editor;
         </@ace.init>
-        <@sockjs.connect topics=[
-            {"name":"/ssh/logs/NameNode${i}","callback":"callback${i}"}
-        ]>
-        ss.connect();
-        $(window).on('runScripts', function(){
-            ss.send("/ssh/exec",{"user":"NameNode${i}","scriptId":1})
-        });
-        </@sockjs.connect>
     </#list>
+
+    <@sockjs.connect topics=[
+    {"name":"/ssh/logs","callback":"callback"}
+    ]>
+    ss.connect();
+    socketInstance = ss;
+    </@sockjs.connect>
 </@layout.group>

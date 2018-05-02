@@ -116,7 +116,10 @@
             {'title':'创建分组','url':'/project/group','class':'fa-plus'},
             {'title':'下载离线安装包','url':'/project/download','class':'fa-download'}
             ]/>
-    <@layout.list title="导航" items=[{'title':'分组列表','url':'/project/groups','class':'fa-boxes'}]/>
+    <@layout.list title="导航" items=[
+        {'title':'机器列表','url':'/project/hosts','class':'fa-boxes'},
+        {'title':'机器角色','url':'/project/groups','class':'fa-boxes'}
+        ]/>
     <@layout.list items=[{'title':'配置','url':'/project/settings','class':'fa-cog'}]/>
         </div>
     </div>
