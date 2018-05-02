@@ -113,12 +113,14 @@
         </div>
         <div class="mt-2">
             <@layout.list title="操作" items=[
+            {'title':'添加主机','url':'/project/host','class':'fa-plus'},
             {'title':'创建分组','url':'/project/group','class':'fa-plus'},
             {'title':'下载离线安装包','url':'/project/download','class':'fa-download'}
             ]/>
     <@layout.list title="导航" items=[
-        {'title':'机器列表','url':'/project/hosts','class':'fa-boxes'},
-        {'title':'机器角色','url':'/project/groups','class':'fa-boxes'}
+        {'title':'主机列表','url':'/project/hosts','class':'fa-boxes'},
+        {'title':'主机分组','url':'/project/groups','class':'fa-boxes'},
+        {'title':'脚本与文件','url':'/project/scripts','class':'fa-boxes'}
         ]/>
     <@layout.list items=[{'title':'配置','url':'/project/settings','class':'fa-cog'}]/>
         </div>
@@ -150,7 +152,7 @@
         {'title':'依赖列表','url':'/group/dependencies','class':'fa-cubes'},
         {'title':'文件列表','url':'/group/files','class':'fa-file'},
         {'title':'变量列表','url':'/group/envs','class':'fa-subscript'},
-        {'title':'脚本列表','url':'/group/scripts','class':'fa-code'},
+        {'title':'主机分组','url':'/group/scripts','class':'fa-code'},
         {'title':'历史版本','url':'/group/history','class':'fa-code-branch'}
         ]/>
     <@layout.list items=[{'title':'配置','url':'/group/settings','class':'fa-cog'}]/>

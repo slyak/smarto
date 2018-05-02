@@ -1,4 +1,4 @@
-<@layout.group title="脚本列表" btnCreate={'title':'运行脚本','url':'javascript:runscripts(${groupHost.id})'}>
+<@layout.group title="主机分组" btnCreate={'title':'运行脚本','url':'javascript:runscripts(${groupHost.id})'}>
 <table class="table table-hover table-fa">
     <thead>
     <tr>

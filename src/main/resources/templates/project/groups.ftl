@@ -1,6 +1,6 @@
 <#-- @ftlvariable name="slyakRequestContext" type="com.slyak.web.support.freemarker.SlyakRequestContext" -->
 <#-- @ftlvariable name="page" type="org.springframework.data.domain.Page<com.slyak.mirrors.domain.Group>" -->
-<@layout.project title='机器分组'>
+<@layout.project title='主机分组'>
 <table class="table table-hover table-fa">
     <thead>
     <tr>

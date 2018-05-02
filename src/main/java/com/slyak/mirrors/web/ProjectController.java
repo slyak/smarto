@@ -29,6 +29,10 @@ public class ProjectController {
         modelMap.put("page", mirrorManager.queryProjects(pageable));
     }
 
+    @GetMapping("/hosts")
+    public void hosts(Long projectId) {
+    }
+
     @GetMapping("/groups")
     public void groups(Long projectId) {
     }
