@@ -9,7 +9,8 @@
 </head>
 <body>
     <@bootstrap.navbar brand="ITASM" left=[
-    {'title':'项目','url':'/'},
+    {'title':'脚本仓库','url':'/script/scripts'},
+    {'title':'项目','url':'/project/projects'},
     {'title':'镜像仓库','url':'/mirror/mirrors'}
     ] right=[
     {'title':'<i class="fa fa-question-circle fa-lg"></i>','url':'/help'},
@@ -113,14 +114,14 @@
         </div>
         <div class="mt-2">
             <@layout.list title="操作" items=[
-            {'title':'添加主机','url':'/project/host','class':'fa-plus'},
+            {'title':'创建主机','url':'/project/host','class':'fa-plus'},
             {'title':'创建分组','url':'/project/group','class':'fa-plus'},
             {'title':'下载离线安装包','url':'/project/download','class':'fa-download'}
             ]/>
     <@layout.list title="导航" items=[
-        {'title':'主机列表','url':'/project/hosts','class':'fa-boxes'},
+        {'title':'主机列表','url':'/project/hosts','class':'fa-desktop'},
         {'title':'主机分组','url':'/project/groups','class':'fa-boxes'},
-        {'title':'脚本与文件','url':'/project/scripts','class':'fa-boxes'}
+        {'title':'脚本与文件','url':'/project/scripts','class':'fa-code'}
         ]/>
     <@layout.list items=[{'title':'配置','url':'/project/settings','class':'fa-cog'}]/>
         </div>

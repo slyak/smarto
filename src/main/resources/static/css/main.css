@@ -33,7 +33,7 @@ a:hover, a:focus, a:active, a.btn-link, a.btn-link:hover, a.btn-link:focus, a.bt
     padding: 10px;
 }
 
-.navbar a.nav-link:hover, .navbar a.nav-link:focus /*,.active a*/
+.navbar a.nav-link:hover, .navbar a.nav-link:focus ,.active a
 {
     background-color: #296ca3 !important;
     color: #fff !important;
@@ -274,11 +274,11 @@ svg, .fas, .list-item i {
     margin: 50px auto 0;
 }
 
-#mirrorSearch{
+#mirrorSearch,#scriptSearch{
     margin: 14px 0 30px;
 }
 
-#mirrorSearch .btn{
+#mirrorSearch .btn,#scriptSearch .btn{
     height: inherit !important;
     width: 100px;
 }
