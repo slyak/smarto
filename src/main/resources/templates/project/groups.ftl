@@ -6,30 +6,25 @@
     <tr>
         <th scope="col">名称</th>
         <th scope="col">描述</th>
-        <th scope="col">操作</th>
     </tr>
     </thead>
     <tbody>
     <#--<#list page.content as group>-->
     <tr>
-        <td><i class="fas fa-boxes"></i>所有主机</td>
+        <td><i class="fas fa-boxes"></i><a href="<@slyak.query url="/group/hosts"/>">所有主机</a></td>
         <td>所有主机</td>
-        <td><a href="<@slyak.query url="/group/hosts"/>" class="mr-2">编辑</a><a href="<@slyak.query url="/"/>">删除</a></td>
     </tr>
     <tr>
-        <td><i class="fas fa-boxes"></i>NameNode</td>
+        <td><i class="fas fa-boxes"></i><a href="<@slyak.query url="/group/hosts"/>">NameNode</a></td>
         <td>NameNode JobExecutor HiveManager</td>
-        <td><a href="<@slyak.query url="/group/hosts"/>" class="mr-2">编辑</a><a href="<@slyak.query url="/"/>">删除</a></td>
     </tr>
     <tr>
-        <td><i class="fas fa-boxes"></i>DataNode</td>
+        <td><i class="fas fa-boxes"></i><a href="<@slyak.query url="/group/hosts"/>">DataNode</a></td>
         <td>DataNode TaskExecutor HiveNode</td>
-        <td><a href="<@slyak.query url="/group/hosts"/>" class="mr-2">编辑</a><a href="<@slyak.query url="/"/>">删除</a></td>
     </tr>
     <tr>
-        <td><i class="fas fa-boxes"></i>EdgeNode</td>
+        <td><i class="fas fa-boxes"></i><a href="<@slyak.query url="/group/hosts"/>">EdgeNode</a></td>
         <td>Zookeeper BI ReportServer</td>
-        <td><a href="<@slyak.query url="/group/hosts"/>" class="mr-2">编辑</a><a href="<@slyak.query url="/"/>">删除</a></td>
     </tr>
     </tbody>
 </table>

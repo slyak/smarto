@@ -9,9 +9,9 @@
 </head>
 <body>
     <@bootstrap.navbar brand="ITASM" left=[
-    {'title':'脚本仓库','url':'/script/scripts'},
+    {'title':'脚本','url':'/script/scripts'},
     {'title':'项目','url':'/project/projects'},
-    {'title':'镜像仓库','url':'/mirror/mirrors'}
+    {'title':'镜像','url':'/mirror/mirrors'}
     ] right=[
     {'title':'<i class="fa fa-question-circle fa-lg"></i>','url':'/help'},
     {'title':'<i class="fa fa-cog fa-lg"></i>','url':'/admin'}
@@ -108,14 +108,13 @@
 <#macro project title btnCreate={}>
     <#assign left>
     <div>
-        <div class="text-center">
+        <div class="text-center fa-">
             <img src="<@slyak.query url="/images/default-avatar.svg"/>">
             <div class="sidebar-title">大数据基础</div>
         </div>
         <div class="mt-2">
             <@layout.list title="操作" items=[
-            {'title':'创建主机','url':'/project/host','class':'fa-plus'},
-            {'title':'创建分组','url':'/project/group','class':'fa-plus'},
+            {'title':'运行分组脚本','url':'/project/host','class':'fa-paper-plane'},
             {'title':'下载离线安装包','url':'/project/download','class':'fa-download'}
             ]/>
     <@layout.list title="导航" items=[
@@ -145,16 +144,12 @@
         </div>
         <div class="mt-2">
             <@layout.list title="操作" items=[
-            {'title':'编辑初始化脚本','url':'/group/script','class':'fa-upload'},
-            {'title':'下载离线安装包','url':'/group/downloadPkg','class':'fa-download'}
+            {'title':'运行脚本','url':'/group/script','class':'fa-paper-plane'}
             ]/>
     <@layout.list title="导航" items=[
-        {'title':'主机列表','url':'/group/hosts','class':'fa-desktop'},
-        {'title':'依赖列表','url':'/group/dependencies','class':'fa-cubes'},
-        {'title':'文件列表','url':'/group/files','class':'fa-file'},
+        {'title':'脚本列表','url':'/group/scripts','class':'fa-code'},
         {'title':'变量列表','url':'/group/envs','class':'fa-subscript'},
-        {'title':'主机分组','url':'/group/scripts','class':'fa-code'},
-        {'title':'历史版本','url':'/group/history','class':'fa-code-branch'}
+        {'title':'运行日志','url':'/group/scriptsLogs','class':'fa-terminal'}
         ]/>
     <@layout.list items=[{'title':'配置','url':'/group/settings','class':'fa-cog'}]/>
         </div>
@@ -180,7 +175,7 @@
         {'title':'角色管理','url':'/admin/roles','class':'fa-user-secret'}
         ]/>
         <@layout.list title="文件" items=[
-        {'title':'镜像仓库','url':'/admin/mirrors','class':'fa-warehouse'},
+        {'title':'镜像','url':'/admin/mirrors','class':'fa-warehouse'},
         {'title':'操作系统','url':'/admin/os','class':'fa-linux'}
         ]/>
         <@layout.list title="备份" items=[

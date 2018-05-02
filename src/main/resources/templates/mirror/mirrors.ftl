@@ -41,4 +41,4 @@
 </div>
 </#assign>
 
-<@layout.leftMain title="镜像仓库" left=left right=right/>
+<@layout.leftMain title="镜像" left=left right=right/>
