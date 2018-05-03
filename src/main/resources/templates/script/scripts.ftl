@@ -13,35 +13,32 @@
     </thead>
     <tbody>
     <tr>
-        <td><a href="http://192.168.10.2/CentOS" target="_blank">CentOS7优化</a></td>
-        <td><a href="<@slyak.query url='/project/hosts'/>">CentOS基础</a></td>
+        <td><@slyakUI.a href="http://192.168.10.2/CentOS" target="_blank">CentOS7优化</@slyakUI.a></td>
+        <td><@slyakUI.a href="/project/hosts" target="_blank">CentOS基础</@slyakUI.a></td>
         <td>CentOS</td>
         <td>[7.0,7.4)</td>
         <td>
-            <a class="mr-3" href="<@slyak.query url="/project/groups"/>">使用帮助</a>
-            <a href="<@slyak.query url="/project/groups"/>">下载资源</a>
+            <@slyakUI.a href="/project/groups" class="mr-3">使用帮助</@slyakUI.a>
+            <@slyakUI.a href="/project/groups">下载资源</@slyakUI.a>
         </td>
     </tr>
     <tr>
-        <td><a href="http://192.168.10.2/CentOS" target="_blank">CentOS YUM离线镜像仓库</a></td>
-        <td><a href="<@slyak.query url='/project/hosts'/>">CentOS基础</a></td>
+        <td><@slyakUI.a href="http://192.168.10.2/CentOS" target="_blank">CentOS YUM离线镜像仓库</@slyakUI.a></td>
+        <td><@slyakUI.a href="/project/hosts" target="_blank">CentOS基础</@slyakUI.a></td>
         <td>CentOS</td>
         <td>[7.0,7.4)</td>
         <td>
-            <a class="mr-3" href="<@slyak.query url="/project/groups"/>">使用帮助</a>
-            <a href="<@slyak.query url="/project/groups"/>">下载资源</a>
+            <@slyakUI.a href="/project/groups" class="mr-3">使用帮助</@slyakUI.a>
+            <@slyakUI.a href="/project/groups">下载资源</@slyakUI.a>
         </td>
     </tr>
     </tbody>
 </table>
-    <@bootstrap.pagination value=page relativeUrl="/" />
+    <@slyakUI.pagination value=page/>
 </#assign>
 
 <#assign right>
-<img src="<@slyak.query url="/images/install-os.png"/>"/>
-<div class="text-center">
-    <a class="btn btn-lg btn-primary mt-2">下载OS镜像</a>
-</div>
+    <@layout.downloadOS/>
 </#assign>
 
 <@layout.leftMain title="脚本" left=left right=right/>

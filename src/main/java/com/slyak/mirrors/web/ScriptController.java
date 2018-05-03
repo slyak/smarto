@@ -14,6 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/script")
 public class ScriptController {
 
+    @GetMapping
+    public String index() {
+        return "redirect:/script/scripts";
+    }
+
+
     @GetMapping("/scripts")
     public void mirrors(String keyword) {
 

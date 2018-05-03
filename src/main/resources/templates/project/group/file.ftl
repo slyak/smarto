@@ -1,4 +1,4 @@
-<@layout.detail title="文件详情" action="/group/file">
+<@layout.detail title="文件详情" action="/project/group/file">
     <@bootstrap.formgroup label="详情" required=true>
     <div class="mt-2">
         <@bootstrap.radios name="fileType" data=[{'title':'普通文件','value':'NORMAL'},{'title':'URL','value':'URL'},{'title':'YUM','value':'YUM'}]/>

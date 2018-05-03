@@ -14,6 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/mirror")
 public class MirrorController {
 
+    @GetMapping
+    public String index() {
+        return "redirect:/mirror/mirrors";
+    }
+
     @GetMapping("/mirrors")
     public void mirrors(String keyword) {
 

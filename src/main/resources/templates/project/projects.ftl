@@ -18,14 +18,11 @@
     </tr>
     </tbody>
 </table>
-    <@bootstrap.pagination value=page relativeUrl="/" />
+    <@slyakUI.pagination value=page/>
 </#assign>
 
 <#assign right>
-<img src="<@slyak.query url="/images/install-os.png"/>"/>
-<div class="text-center">
-    <a class="btn btn-lg btn-primary mt-2">下载OS镜像</a>
-</div>
+    <@layout.downloadOS/>
 </#assign>
 
 <@layout.leftMain title='项目' left=left right=right btnCreate={'title':'创建新项目','url':'/project/project'}/>

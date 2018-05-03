@@ -9,9 +9,9 @@
 </head>
 <body>
     <@bootstrap.navbar brand="ITASM" left=[
-    {'title':'脚本','url':'/script/scripts'},
-    {'title':'项目','url':'/project/projects'},
-    {'title':'镜像','url':'/mirror/mirrors'}
+    {'title':'脚本','url':'/script'},
+    {'title':'项目','url':'/project'},
+    {'title':'镜像','url':'/mirror'}
     ] right=[
     {'title':'<i class="fa fa-question-circle fa-lg"></i>','url':'/help'},
     {'title':'<i class="fa fa-cog fa-lg"></i>','url':'/admin'}
@@ -105,6 +105,13 @@
 </div>
 </#macro>
 
+<#macro downloadOS>
+<img src="<@slyak.query url="/images/install-os.png"/>"/>
+<div class="text-center">
+    <a class="btn btn-lg btn-primary mt-2">下载OS镜像</a>
+</div>
+</#macro>
+
 <#macro project title btnCreate={}>
     <#assign left>
     <div>
@@ -144,14 +151,14 @@
         </div>
         <div class="mt-2">
             <@layout.list title="操作" items=[
-            {'title':'运行脚本','url':'/group/script','class':'fa-paper-plane'}
+            {'title':'运行脚本','url':'/project/group/script','class':'fa-paper-plane'}
             ]/>
     <@layout.list title="导航" items=[
-        {'title':'脚本列表','url':'/group/scripts','class':'fa-code'},
-        {'title':'变量列表','url':'/group/envs','class':'fa-subscript'},
-        {'title':'运行日志','url':'/group/scriptsLogs','class':'fa-terminal'}
+        {'title':'脚本与文件','url':'/project/group/scripts','class':'fa-code'},
+        {'title':'变量列表','url':'/project/group/envs','class':'fa-subscript'},
+        {'title':'运行日志','url':'/project/group/scriptsLogs','class':'fa-terminal'}
         ]/>
-    <@layout.list items=[{'title':'配置','url':'/group/settings','class':'fa-cog'}]/>
+    <@layout.list items=[{'title':'配置','url':'/project/group/settings','class':'fa-cog'}]/>
         </div>
     </div>
     </#assign>
@@ -192,7 +199,7 @@
     <@layout.rightMain title=title left=left right=right btnCreate=btnCreate/>
 </#macro>
 
-<#macro settings title btnCreate={}>
+<#--<#macro settings title btnCreate={}>
     <#assign left>
     <div>
         <div class="text-left mb-3">
@@ -222,7 +229,7 @@
         <#nested />
     </#assign>
     <@layout.rightMain title=title left=left right=right btnCreate=btnCreate/>
-</#macro>
+</#macro>-->
 
 <#macro detail title action enctype="application/x-www-form-urlencoded">
     <@html>

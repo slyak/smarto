@@ -1,6 +1,6 @@
 <@layout.group title="设置">
 <div class="settings">
-    <@bootstrap.form action="">
+    <@slyakUI.form action="">
         <@bootstrap.formgroup label="分组名称" required=true>
             <@bootstrap.input name="name" value="${group.name}"/>
         </@bootstrap.formgroup>
@@ -14,6 +14,6 @@
         <@bootstrap.formgroup label="">
             <button type="submit" class="btn btn-primary btn-lg">保存</button>
         </@bootstrap.formgroup>
-    </@bootstrap.form>
+    </@slyakUI.form>
 </div>
 </@layout.group>

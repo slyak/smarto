@@ -1,5 +1,5 @@
 <#-- @ftlvariable name="group" type="com.slyak.mirrors.domain.Group" -->
-<@layout.project title="主机列表" btnCreate={'title':'创建主机','url':'/group/host'}>
+<@layout.project title="主机列表" btnCreate={'title':'创建主机','url':'/project/group/host'}>
 <table class="table table-hover table-fa">
     <thead>
     <tr>

@@ -15,8 +15,8 @@
         <td>1.0</td>
         <td>执行成功 已停用</td>
         <td>
-            <a class="btn-link mr-3" href="<@slyak.query url="/group/file"/>">查看</a>
-            <a class="btn-link" href="<@slyak.query url='/group/file/delete'/>">启用</a>
+            <a class="btn-link mr-3" href="<@slyak.query url="/project/group/file"/>">查看</a>
+            <a class="btn-link" href="<@slyak.query url='/project/group/file/delete'/>">启用</a>
         </td>
     </tr>
     <tr>
@@ -24,8 +24,8 @@
         <td>1.1</td>
         <td>执行失败 已启用</td>
         <td>
-            <a class="btn-link mr-3" href="<@slyak.query url="/group/file"/>">查看</a>
-            <a class="btn-link" href="<@slyak.query url='/group/file/delete'/>">停用</a>
+            <a class="btn-link mr-3" href="<@slyak.query url="/project/group/file"/>">查看</a>
+            <a class="btn-link" href="<@slyak.query url='/project/group/file/delete'/>">停用</a>
         </td>
     </tr>
     </tbody>

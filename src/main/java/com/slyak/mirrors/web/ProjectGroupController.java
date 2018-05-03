@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @since 1.3.0
  */
 @Controller
-@RequestMapping("/group")
-public class GroupController {
+@RequestMapping("/project/group/*")
+public class ProjectGroupController {
 
     @Autowired
     private MirrorManager mirrorManager;

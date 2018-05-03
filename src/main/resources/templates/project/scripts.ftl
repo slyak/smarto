@@ -1,47 +1,29 @@
-<#-- @ftlvariable name="page" type="org.springframework.data.domain.Page<com.slyak.mirrors.domain.Project>" -->
-<#assign left>
-    <@bootstrap.keywordSearch id="scriptSearch"/>
+<@layout.project title='脚本与文件' btnCreate={"title":"创建分组","url":"/project/group"}>
 <table class="table table-hover table-fa">
     <thead>
     <tr>
         <th scope="col">名称</th>
-        <th scope="col">来源项目</th>
-        <th scope="col">操作系统</th>
-        <th scope="col">版本范围</th>
         <th scope="col">操作</th>
     </tr>
     </thead>
     <tbody>
+    <#--<#list page.content as group>-->
     <tr>
-        <td><a href="http://192.168.10.2/CentOS" target="_blank">CentOS7优化</a></td>
-        <td><a href="<@slyak.query url='/project/hosts'/>">CentOS基础</a></td>
-        <td>CentOS</td>
-        <td>[7.0,7.4)</td>
         <td>
-            <a class="mr-3" href="<@slyak.query url="/project/groups"/>">使用帮助</a>
-            <a href="<@slyak.query url="/project/groups"/>">下载资源</a>
+            <div><i class="fas fa-code"></i>CentOS优化</div>
+        </td>
+        <td>
+            <a class="btn-link mr-3" href="<@slyak.query url="/project/group/file"/>">查看</a>
+            <a class="btn-link mr-3" href="<@slyak.query url="/project/group/file"/>">运行</a>
         </td>
     </tr>
     <tr>
-        <td><a href="http://192.168.10.2/CentOS" target="_blank">CentOS YUM离线镜像仓库</a></td>
-        <td><a href="<@slyak.query url='/project/hosts'/>">CentOS基础</a></td>
-        <td>CentOS</td>
-        <td>[7.0,7.4)</td>
+        <td><i class="fas fa-code"></i>AmbariManager安装</td>
         <td>
-            <a class="mr-3" href="<@slyak.query url="/project/groups"/>">使用帮助</a>
-            <a href="<@slyak.query url="/project/groups"/>">下载资源</a>
+            <a class="btn-link mr-3" href="<@slyak.query url="/project/group/file"/>">查看</a>
+            <a class="btn-link mr-3" href="<@slyak.query url="/project/group/file"/>">运行</a>
         </td>
     </tr>
     </tbody>
 </table>
-    <@bootstrap.pagination value=page relativeUrl="/" />
-</#assign>
-
-<#assign right>
-<img src="<@slyak.query url="/images/install-os.png"/>"/>
-<div class="text-center">
-    <a class="btn btn-lg btn-primary mt-2">下载OS镜像</a>
-</div>
-</#assign>
-
-<@layout.leftMain title="脚本" left=left right=right/>
+</@layout.project>

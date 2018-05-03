@@ -1,4 +1,4 @@
-<@layout.detail title="主机信息" action="/group/">
+<@layout.detail title="主机信息" action="/project/group/">
     <@bootstrap.formgroup label="主机名" required=true left=3 right=9>
         <@bootstrap.input type="text" name="name" value="${host.name}"/>
     </@bootstrap.formgroup>

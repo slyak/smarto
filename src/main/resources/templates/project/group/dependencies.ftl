@@ -1,4 +1,4 @@
-<@layout.group title="依赖列表" btnCreate={'title':'添加依赖','url':'/group/dependency'}>
+<@layout.group title="依赖列表" btnCreate={'title':'添加依赖','url':'/project/group/dependency'}>
 <table class="table table-hover table-fa">
     <thead>
     <tr>
