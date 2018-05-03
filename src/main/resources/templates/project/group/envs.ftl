@@ -1,33 +1,33 @@
-<@layout.group title="变量列表" btnCreate={'title':'添加变量','url':'/group/env'}>
+<@layout.group title="变量列表" btnCreate={'title':'保存配置','url':'/group/env'}>
 <table class="table table-hover table-fa">
     <thead>
     <tr>
         <th scope="col">键</th>
+        <th scope="col">描述</th>
         <th scope="col">值</th>
-        <th scope="col">操作</th>
     </tr>
     </thead>
     <tbody>
     <#--<#list page.content as group>-->
     <tr>
         <td>JAVA_HOME</td>
-        <td>/opt/jdk-1.8</td>
-        <td><a class="btn-link pr-3" href="<@slyak.query url="/project/group/env"/>">编辑</a><a class="btn-link" href="">删除</a></td>
+        <td>JAVA根路径</td>
+        <td><@bootstrap.input name="value" value="/opt/jdk-1.8"/></td>
     </tr>
     <tr>
         <td>MAVEN_HOME</td>
-        <td>/opt/maven</td>
-        <td><a class="btn-link pr-3" href="<@slyak.query url="/project/group/env"/>">编辑</a><a class="btn-link" href="">删除</a></td>
+        <td>maven根路径</td>
+        <td><@bootstrap.input name="value" value="/opt/maven"/></td>
     </tr>
     <tr>
         <td>MYSQL_USER_NAME</td>
-        <td>SLYAK</td>
-        <td><a class="btn-link pr-3" href="<@slyak.query url="/project/group/env"/>">编辑</a><a class="btn-link" href="">删除</a></td>
+        <td>MYSQL默认用户名</td>
+        <td><@bootstrap.input name="value" value="SLYAK"/></td>
     </tr>
     <tr>
         <td>MYSQL_USER_PWD</td>
-        <td>123456</td>
-        <td><a class="btn-link pr-3" href="<@slyak.query url="/project/group/env"/>">编辑</a><a class="btn-link" href="">删除</a></td>
+        <td>MYSQL默认用户密码</td>
+        <td><@bootstrap.input name="value" value="123456"/></td>
     </tr>
     </tbody>
 </table>

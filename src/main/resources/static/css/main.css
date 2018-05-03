@@ -157,6 +157,10 @@ a:hover, a:focus, a:active, a.btn-link, a.btn-link:hover, a.btn-link:focus, a.bt
     text-align: left;
 }
 
+.table a{
+    padding-right: 10px;
+}
+
 form input, form select {
     height: 2.14285714em;
     line-height: 1.4285714285714;

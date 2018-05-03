@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @since 1.3.0
  */
 @Controller
-@RequestMapping("/admin")
+@RequestMapping("/admin/*")
 public class AdminController {
 
     @GetMapping

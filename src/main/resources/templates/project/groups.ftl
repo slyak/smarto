@@ -11,19 +11,19 @@
     <tbody>
     <#--<#list page.content as group>-->
     <tr>
-        <td><i class="fas fa-boxes"></i><a href="<@slyak.query url="/project/group/hosts"/>">所有主机</a></td>
+        <td><i class="fas fa-boxes"></i><a href="<@slyak.query url="/project/group/scripts"/>">所有主机</a></td>
         <td>所有主机</td>
     </tr>
     <tr>
-        <td><i class="fas fa-boxes"></i><a href="<@slyak.query url="/project/group/hosts"/>">NameNode</a></td>
+        <td><i class="fas fa-boxes"></i><a href="<@slyak.query url="/project/group/scripts"/>">NameNode</a></td>
         <td>NameNode JobExecutor HiveManager</td>
     </tr>
     <tr>
-        <td><i class="fas fa-boxes"></i><a href="<@slyak.query url="/project/group/hosts"/>">DataNode</a></td>
+        <td><i class="fas fa-boxes"></i><a href="<@slyak.query url="/project/group/scripts"/>">DataNode</a></td>
         <td>DataNode TaskExecutor HiveNode</td>
     </tr>
     <tr>
-        <td><i class="fas fa-boxes"></i><a href="<@slyak.query url="/project/group/hosts"/>">EdgeNode</a></td>
+        <td><i class="fas fa-boxes"></i><a href="<@slyak.query url="/project/group/scripts"/>">EdgeNode</a></td>
         <td>Zookeeper BI ReportServer</td>
     </tr>
     </tbody>

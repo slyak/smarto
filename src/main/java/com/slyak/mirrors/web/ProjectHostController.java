@@ -15,22 +15,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @since 1.3.0
  */
 @Controller
-public class ProjectController {
+@RequestMapping("/project/*")
+public class ProjectHostController {
 
     @Autowired
     private MirrorManager mirrorManager;
 
-    @RequestMapping("/projects")
+    @GetMapping("/hosts")
     public void index(Pageable pageable, ModelMap modelMap) {
         modelMap.put("page", mirrorManager.queryProjects(pageable));
     }
 
-    @GetMapping("/project")
-    public void project(Long projectId) {
-
+    @GetMapping("/host")
+    public void host() {
     }
 
-    @GetMapping("/project/{id}")
+    @GetMapping("/host/{id}")
     public void settings() {
     }
 }

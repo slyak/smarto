@@ -15,6 +15,6 @@ public class HomeController {
 
     @RequestMapping
     public String home() {
-        return "forward:/project/projects";
+        return "forward:/projects";
     }
 }

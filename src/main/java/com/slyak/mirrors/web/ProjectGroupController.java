@@ -2,9 +2,10 @@ package com.slyak.mirrors.web;
 
 import com.slyak.mirrors.service.MirrorManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -14,62 +15,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @since 1.3.0
  */
 @Controller
-@RequestMapping("/project/group/*")
+@RequestMapping("/project/*")
 public class ProjectGroupController {
 
     @Autowired
     private MirrorManager mirrorManager;
 
-    @GetMapping("/hosts")
-    public void hosts() {
+    @GetMapping("/groups")
+    public void groups(Pageable pageable, ModelMap modelMap) {
+        modelMap.put("page", mirrorManager.queryProjects(pageable));
     }
 
-    @GetMapping("/host")
-    public void host() {
-    }
-
-    @GetMapping("/dependency")
-    public void dependency() {
+    @GetMapping("/group")
+    public void group(Long projectId) {
 
     }
 
-    @GetMapping("/dependencies")
-    public void dependencies() {
+    @GetMapping("/logs")
+    public void logs(Long projectId) {
 
     }
 
-    @PostMapping
-    public void saveGroup() {
-        hosts();
-    }
-
-
-    @GetMapping("/files")
-    public void files() {
-    }
-
-    @GetMapping("/file")
-    public void file() {
-    }
-
-    @GetMapping("/script")
-    public void script() {
-    }
-
-
-    @GetMapping("/scripts")
-    public void scripts() {
-    }
-
-    @GetMapping("/envs")
-    public void envs() {
-    }
-
-    @GetMapping("/env")
-    public void env() {
-    }
-
-    @GetMapping("/settings")
+    @GetMapping("/group/{id}")
     public void settings() {
     }
 }

@@ -9,9 +9,9 @@
 </head>
 <body>
     <@bootstrap.navbar brand="ITASM" left=[
-    {'title':'脚本','url':'/script'},
-    {'title':'项目','url':'/project'},
-    {'title':'镜像','url':'/mirror'}
+    {'title':'脚本','url':'/scripts'},
+    {'title':'项目','url':'/projects'},
+    {'title':'镜像','url':'/mirrors'}
     ] right=[
     {'title':'<i class="fa fa-question-circle fa-lg"></i>','url':'/help'},
     {'title':'<i class="fa fa-cog fa-lg"></i>','url':'/admin'}
@@ -127,7 +127,7 @@
     <@layout.list title="导航" items=[
         {'title':'主机列表','url':'/project/hosts','class':'fa-desktop'},
         {'title':'主机分组','url':'/project/groups','class':'fa-boxes'},
-        {'title':'脚本与文件','url':'/project/scripts','class':'fa-code'}
+        {'title':'脚本列表','url':'/project/scripts','class':'fa-code'}
         ]/>
     <@layout.list items=[{'title':'配置','url':'/project/settings','class':'fa-cog'}]/>
         </div>
@@ -154,9 +154,9 @@
             {'title':'运行脚本','url':'/project/group/script','class':'fa-paper-plane'}
             ]/>
     <@layout.list title="导航" items=[
-        {'title':'脚本与文件','url':'/project/group/scripts','class':'fa-code'},
+        {'title':'脚本列表','url':'/project/group/scripts','class':'fa-code'},
         {'title':'变量列表','url':'/project/group/envs','class':'fa-subscript'},
-        {'title':'运行日志','url':'/project/group/scriptsLogs','class':'fa-terminal'}
+        {'title':'运行日志','url':'/project/group/logs','class':'fa-terminal'}
         ]/>
     <@layout.list items=[{'title':'配置','url':'/project/group/settings','class':'fa-cog'}]/>
         </div>
