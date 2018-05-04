@@ -9,8 +9,8 @@
 </head>
 <body>
     <@bootstrap.navbar brand="ITASM" left=[
-    {'title':'脚本','url':'/scripts'},
     {'title':'项目','url':'/projects'},
+    {'title':'脚本','url':'/scripts'},
     {'title':'镜像','url':'/mirrors'}
     ] right=[
     {'title':'<i class="fa fa-question-circle fa-lg"></i>','url':'/help'},

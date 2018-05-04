@@ -5,4 +5,7 @@
     <@bootstrap.formgroup label="描述" required=true>
         <@bootstrap.textarea name="desc" value="${group.desc}"/>
     </@bootstrap.formgroup>
+    <@bootstrap.formgroup label="主机选择" required=true>
+        <@bootstrap.checkboxes name="host" />
+    </@bootstrap.formgroup>
 </@layout.detail>
