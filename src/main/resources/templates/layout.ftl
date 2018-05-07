@@ -16,12 +16,12 @@
 <#macro html>
     <@cleanHtml>
         <@bootstrap.navbar brand="ITASM" left=[
-        {'title':'项目','url':'/projects'},
         {'title':'脚本','url':'/scripts'},
+        {'title':'项目','url':'/projects'},
         {'title':'镜像','url':'/mirrors'}
         ] right=[
         {'title':'<i class="fa fa-question-circle fa-lg"></i>','url':'/help'},
-        {'title':'<i class="fa fa-cog fa-lg"></i>','url':'/admin'}
+        {'title':'<i class="fa fa-cog fa-lg"></i>','url':'/admin/index'}
         ]/>
     <div class="container-fluid p-0">
         <#nested />
@@ -198,6 +198,35 @@
         {'title':'系统备份','url':'/admin/backup','class':'fa-archive'},
         {'title':'系统恢复','url':'/admin/recover','class':'fa-recycle'}
         ]/>
+    </div>
+    </#assign>
+    <#assign right>
+    <div class="settings">
+        <#nested />
+    </div>
+    </#assign>
+    <@layout.rightMain title=title left=left right=right btnCreate=btnCreate/>
+</#macro>
+
+<#macro script title btnCreate={}>
+    <#assign left>
+    <div>
+        <div class="text-center fa-">
+            <img src="<@slyak.query url="/images/default-avatar.svg"/>">
+            <div class="sidebar-title">CentOS优化</div>
+        </div>
+        <div class="mt-2">
+            <@layout.list title="操作" items=[
+            {'title':'测试一下','url':'/project/group/script','class':'fa-paper-plane'}
+            ]/>
+    <@layout.list title="导航" items=[
+        {'title':'文件列表','url':'/script/files','class':'fa-file'},
+        {'title':'变量列表','url':'/script/envs','class':'fa-subscript'},
+        {'title':'使用帮助','url':'/script/help','class':'fa-question-circle'},
+        {'title':'运行日志','url':'/script/logs','class':'fa-terminal'}
+        ]/>
+    <@layout.list items=[{'title':'配置','url':'/script/settings','class':'fa-cog'}]/>
+        </div>
     </div>
     </#assign>
     <#assign right>
