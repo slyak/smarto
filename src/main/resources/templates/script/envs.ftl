@@ -1,4 +1,5 @@
-<@layout.script title="变量列表" btnCreate={'title':'添加变量','url':'/script/env','modal':true}>
+<#-- @ftlvariable name="envs" type="java.util.List<com.slyak.mirrors.domain.ScriptEnv>" -->
+<@layout.script title="变量列表" btnCreate={'title':'添加变量','url':'/script/env','modal':true,"showSubmit":true}>
 <table class="table table-hover table-fa">
     <thead>
     <tr>
@@ -10,30 +11,42 @@
     </thead>
     <tbody>
     <#--<#list page.content as group>-->
-    <tr>
-        <td>JAVA_HOME</td>
-        <td>JAVA根路径</td>
-        <td>/opt/jdk-1.8</td>
-        <td><@slyakUI.a href="/script/env/delete">删除</@slyakUI.a></td>
-    </tr>
-    <tr>
-        <td>MAVEN_HOME</td>
-        <td>maven根路径</td>
-        <td>/opt/maven</td>
-        <td><@slyakUI.a href="/script/env/delete">删除</@slyakUI.a></td>
-    </tr>
-    <tr>
-        <td>MYSQL_USER_NAME</td>
-        <td>MYSQL默认用户名</td>
-        <td>ROOT</td>
-        <td><@slyakUI.a href="/script/env/delete">删除</@slyakUI.a></td>
-    </tr>
-    <tr>
-        <td>MYSQL_USER_PWD</td>
-        <td>MYSQL默认用户密码</td>
-        <td>123456</td>
-        <td><@slyakUI.a href="/script/env/delete">删除</@slyakUI.a></td>
-    </tr>
+    <#if envs?size gt 0>
+        <#list envs as env>
+            <tr>
+                <td>${env.key}</td>
+                <td>${env.description}</td>
+                <td>${env.defValue}</td>
+                <td><@slyakUI.a href="/script/env/delete">删除</@slyakUI.a></td>
+            </tr>
+        </#list>
+        <#else >
+        <#--<tr><td colspan="4" class="text-center">暂无记录</td></tr>-->
+        <tr>
+            <td>JAVA_HOME</td>
+            <td>JAVA根路径</td>
+            <td>/opt/jdk-1.8</td>
+            <td><@slyakUI.a href="/script/env/delete">删除</@slyakUI.a></td>
+        </tr>
+        <tr>
+            <td>MAVEN_HOME</td>
+            <td>maven根路径</td>
+            <td>/opt/maven</td>
+            <td><@slyakUI.a href="/script/env/delete">删除</@slyakUI.a></td>
+        </tr>
+        <tr>
+            <td>MYSQL_USER_NAME</td>
+            <td>MYSQL默认用户名</td>
+            <td>ROOT</td>
+            <td><@slyakUI.a href="/script/env/delete">删除</@slyakUI.a></td>
+        </tr>
+        <tr>
+            <td>MYSQL_USER_PWD</td>
+            <td>MYSQL默认用户密码</td>
+            <td>123456</td>
+            <td><@slyakUI.a href="/script/env/delete">删除</@slyakUI.a></td>
+        </tr>
+    </#if>
     </tbody>
 </table>
 <div class="alert alert-primary" role="alert">

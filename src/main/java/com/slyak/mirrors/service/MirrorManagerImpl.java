@@ -2,14 +2,8 @@ package com.slyak.mirrors.service;
 
 import com.slyak.core.util.SSH2;
 import com.slyak.core.util.StdCallback;
-import com.slyak.mirrors.domain.HostGroup;
-import com.slyak.mirrors.domain.ProjectHost;
-import com.slyak.mirrors.domain.HostGroupScript;
-import com.slyak.mirrors.domain.Project;
-import com.slyak.mirrors.repository.ProjectHostRepository;
-import com.slyak.mirrors.repository.GroupRepository;
-import com.slyak.mirrors.repository.ProjectRepository;
-import com.slyak.mirrors.repository.ScriptRepository;
+import com.slyak.mirrors.domain.*;
+import com.slyak.mirrors.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,7 +27,10 @@ public class MirrorManagerImpl implements MirrorManager {
     private ProjectRepository projectRepository;
 
     @Autowired
-    private ScriptRepository scriptRepository;
+    private ScriptFileRepository scriptFileRepository;
+
+    @Autowired
+    private ScriptEnvRepository scriptEnvRepository;
 
     @Autowired
     private GroupRepository groupRepository;
@@ -84,6 +81,16 @@ public class MirrorManagerImpl implements MirrorManager {
                 });
             }
         }
+    }
+
+    @Override
+    public List<ScriptFile> findScriptFiles(Long scriptId) {
+        return scriptFileRepository.findByScriptId(scriptId);
+    }
+
+    @Override
+    public List<ScriptEnv> findScriptEnvs(Long scriptId) {
+        return scriptEnvRepository.findByScriptId(scriptId);
     }
 
     private void execCommand(SSH2 ssh2, String command, StdCallback callback) {

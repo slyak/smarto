@@ -42,7 +42,7 @@
         <h1>${title}</h1>
         <#if btnCreate.title??>
             <#if btnCreate.modal??>
-                <@bootstrap.a href="${btnCreate.url}" title=btnCreate.title modal=true class="btn btn-sm ml-3"/>
+                <@bootstrap.a href="${btnCreate.url}" title=btnCreate.title modal=true showSubmit=btnCreate.showSubmit!false class="btn btn-sm ml-3"/>
                 <#else >
                 <a class="btn btn-sm ml-3" href="<@slyak.query url="${btnCreate.url}"/>">${btnCreate.title}</a>
             </#if>
@@ -216,7 +216,6 @@
         </div>
         <div class="mt-2">
             <@layout.list title="操作" items=[
-            {'title':'添加脚本','url':'/script','class':'fa-plus'},
             {'title':'运行脚本','url':'/project/group/script','class':'fa-paper-plane'}
             ]/>
     <@layout.list title="导航" items=[

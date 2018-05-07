@@ -1,7 +1,14 @@
 package com.slyak.mirrors.web;
 
+import com.slyak.mirrors.domain.ScriptEnv;
+import com.slyak.mirrors.domain.ScriptFile;
+import com.slyak.mirrors.service.MirrorManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.List;
 
 /**
  * .
@@ -11,6 +18,9 @@ import org.springframework.web.bind.annotation.GetMapping;
  */
 @Controller
 public class ScriptController {
+
+    @Autowired
+    private MirrorManager mirrorManager;
 
     @GetMapping("/scripts")
     public void scripts(String keyword) {
@@ -33,8 +43,9 @@ public class ScriptController {
     }
 
     @GetMapping("/script/files")
-    public void files(String keyword) {
-
+    public void files(Long scriptId, ModelMap modelMap) {
+        List<ScriptFile> files = mirrorManager.findScriptFiles(scriptId);
+        modelMap.put("files", files);
     }
 
     @GetMapping("/script/file")
@@ -43,8 +54,9 @@ public class ScriptController {
     }
 
     @GetMapping("/script/envs")
-    public void envs() {
-
+    public void envs(Long scriptId, ModelMap modelMap) {
+        List<ScriptEnv> envs = mirrorManager.findScriptEnvs(scriptId);
+        modelMap.put("envs", envs);
     }
 
     @GetMapping("/script/logs")
@@ -58,7 +70,12 @@ public class ScriptController {
     }
 
     @GetMapping("/script/help")
-    public void help() {
+    public void help(Long scriptId) {
+
+    }
+
+    @GetMapping("/script/showHelp")
+    public void showHelp(Long scriptId) {
 
     }
 

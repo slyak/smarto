@@ -41,4 +41,4 @@
     <@layout.downloadOS/>
 </#assign>
 
-<@layout.leftMain title="脚本" left=left right=right/>
+<@layout.leftMain title="脚本" left=left right=right btnCreate={'title':'创建脚本','url':'/script'}/>

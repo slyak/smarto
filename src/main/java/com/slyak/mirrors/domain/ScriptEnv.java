@@ -7,23 +7,21 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
- * group file.
+ * .
  *
- * @author stormning 2018/4/16
+ * @author stormning 2018/5/7
  * @since 1.3.0
  */
 @Entity
-@Table(name = "t_script_file")
+@Table(name = "t_script_env")
 @Data
-public class ScriptFile extends AbstractPersistable<Long> {
+public class ScriptEnv extends AbstractPersistable<Long> {
 
     private Long scriptId;
 
-    private String name;
-
-    private String localPath;
-
-    private String scpPath;
+    private String key;
 
     private String description;
+
+    private String defValue;
 }

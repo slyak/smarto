@@ -1,9 +1,6 @@
 package com.slyak.mirrors.service;
 
-import com.slyak.mirrors.domain.HostGroup;
-import com.slyak.mirrors.domain.ProjectHost;
-import com.slyak.mirrors.domain.HostGroupScript;
-import com.slyak.mirrors.domain.Project;
+import com.slyak.mirrors.domain.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -25,4 +22,8 @@ public interface MirrorManager {
     List<ProjectHost> findGroupHosts(Long groupId);
 
     void execGroupScripts(Long groupId, GroupScriptCallback callback);
+
+    List<ScriptFile> findScriptFiles(Long scriptId);
+
+    List<ScriptEnv> findScriptEnvs(Long scriptId);
 }

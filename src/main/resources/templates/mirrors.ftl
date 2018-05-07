@@ -15,19 +15,21 @@
         <td><a href="http://192.168.10.2/CentOS" target="_blank">CentOS</a></td>
         <td>2018-04-27 10:30:00</td>
         <td class="text-success">success</td>
-        <td><a href="<@slyak.query url="/project/groups"/>">使用帮助</a></td>
+        <td>
+            <@bootstrap.a href="/mirror/help" title="使用帮助" modal=true/>
+        </td>
     </tr>
     <tr>
         <td><a href="http://192.168.10.2/HDP" target="_blank">HDP</a></td>
         <td>2018-04-27 10:30:00</td>
         <td class="text-success">success</td>
-        <td><a href="<@slyak.query url="/project/groups"/>">使用帮助</a></td>
+        <td><@bootstrap.a href="/mirror/help" title="使用帮助" modal=true/></td>
     </tr>
     <tr>
         <td><a href="http://192.168.10.2/HDP-UTILS-1.1.0.20/" target="_blank">HDP-UTILS</a></td>
         <td>2018-04-27 10:30:00</td>
         <td class="text-success">success</td>
-        <td><a href="<@slyak.query url="/project/groups"/>">使用帮助</a></td>
+        <td><@bootstrap.a href="/mirror/help" title="使用帮助" modal=true/></td>
     </tr>
     </tbody>
 </table>

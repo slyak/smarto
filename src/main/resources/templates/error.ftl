@@ -5,5 +5,4 @@
         <a href="javascript:history.back()" style="font-size: 18px">返回</a>
     </div>
 </div>
-<div>${exception.message}</div>
 </@layout.html>
