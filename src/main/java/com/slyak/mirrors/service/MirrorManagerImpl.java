@@ -2,11 +2,11 @@ package com.slyak.mirrors.service;
 
 import com.slyak.core.util.SSH2;
 import com.slyak.core.util.StdCallback;
-import com.slyak.mirrors.domain.Group;
-import com.slyak.mirrors.domain.GroupHost;
-import com.slyak.mirrors.domain.GroupScript;
+import com.slyak.mirrors.domain.HostGroup;
+import com.slyak.mirrors.domain.ProjectHost;
+import com.slyak.mirrors.domain.HostGroupScript;
 import com.slyak.mirrors.domain.Project;
-import com.slyak.mirrors.repository.GroupHostRepository;
+import com.slyak.mirrors.repository.ProjectHostRepository;
 import com.slyak.mirrors.repository.GroupRepository;
 import com.slyak.mirrors.repository.ProjectRepository;
 import com.slyak.mirrors.repository.ScriptRepository;
@@ -39,7 +39,7 @@ public class MirrorManagerImpl implements MirrorManager {
     private GroupRepository groupRepository;
 
     @Autowired
-    private GroupHostRepository groupHostRepository;
+    private ProjectHostRepository projectHostRepository;
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
@@ -50,36 +50,36 @@ public class MirrorManagerImpl implements MirrorManager {
     }
 
     @Override
-    public List<GroupScript> getGroupScripts(Long groupId) {
+    public List<HostGroupScript> getGroupScripts(Long groupId) {
         return null;
     }
 
     @Override
-    public Group findGroup(Long groupId) {
+    public HostGroup findGroup(Long groupId) {
         return groupRepository.findOne(groupId);
     }
 
     @Override
-    public List<GroupHost> findGroupHosts(Long groupId) {
-        return groupHostRepository.findByGroupId(groupId);
+    public List<ProjectHost> findGroupHosts(Long groupId) {
+        return projectHostRepository.findByGroupId(groupId);
     }
 
     @Override
     public void execGroupScripts(Long groupId, GroupScriptCallback callback) {
-        List<GroupHost> groupHosts = findGroupHosts(groupId);
-        List<GroupScript> groupScripts = getGroupScripts(groupId);
-        for (GroupHost groupHost : groupHosts) {
-            SSH2 ssh2 = SSH2.connect(groupHost.getHost(), groupHost.getSshPort()).auth(groupHost.getUser(), groupHost.getPassword());
-            for (GroupScript groupScript : groupScripts) {
-                execCommand(ssh2, "sh -c " + groupScript.getStorePath(), new StdCallback() {
+        List<ProjectHost> projectHosts = findGroupHosts(groupId);
+        List<HostGroupScript> hostGroupScripts = getGroupScripts(groupId);
+        for (ProjectHost projectHost : projectHosts) {
+            SSH2 ssh2 = SSH2.connect(projectHost.getHost(), projectHost.getSshPort()).auth(projectHost.getUser(), projectHost.getPassword());
+            for (HostGroupScript hostGroupScript : hostGroupScripts) {
+                execCommand(ssh2, "sh -c " + hostGroupScript.getScriptFile().getScpPath(), new StdCallback() {
                     @Override
                     public void processOut(String out) {
-                        callback.processOut(groupHost, groupScript, out);
+                        callback.processOut(projectHost, hostGroupScript, out);
                     }
 
                     @Override
                     public void processError(String error) {
-                        callback.processError(groupHost, groupScript, error);
+                        callback.processError(projectHost, hostGroupScript, error);
                     }
                 });
             }

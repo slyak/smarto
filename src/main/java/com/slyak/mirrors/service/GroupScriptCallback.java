@@ -1,7 +1,7 @@
 package com.slyak.mirrors.service;
 
-import com.slyak.mirrors.domain.GroupHost;
-import com.slyak.mirrors.domain.GroupScript;
+import com.slyak.mirrors.domain.ProjectHost;
+import com.slyak.mirrors.domain.HostGroupScript;
 
 /**
  * .
@@ -10,7 +10,7 @@ import com.slyak.mirrors.domain.GroupScript;
  * @since 1.3.0
  */
 public interface GroupScriptCallback {
-    void processOut(GroupHost groupHost, GroupScript groupScript, String out);
+    void processOut(ProjectHost projectHost, HostGroupScript hostGroupScript, String out);
 
-    void processError(GroupHost groupHost, GroupScript groupScript, String error);
+    void processError(ProjectHost projectHost, HostGroupScript hostGroupScript, String error);
 }

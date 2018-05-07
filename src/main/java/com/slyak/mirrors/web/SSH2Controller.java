@@ -1,7 +1,7 @@
 package com.slyak.mirrors.web;
 
-import com.slyak.mirrors.domain.GroupHost;
-import com.slyak.mirrors.domain.GroupScript;
+import com.slyak.mirrors.domain.ProjectHost;
+import com.slyak.mirrors.domain.HostGroupScript;
 import com.slyak.mirrors.dto.GroupHostResponse;
 import com.slyak.mirrors.service.GroupScriptCallback;
 import com.slyak.mirrors.service.MirrorManager;
@@ -36,13 +36,13 @@ public class SSH2Controller {
         Long groupId = message.getPayload();
         mirrorManager.execGroupScripts(groupId, new GroupScriptCallback() {
             @Override
-            public void processOut(GroupHost groupHost, GroupScript groupScript, String out) {
-                messagingTemplate.convertAndSend("/ssh/logs/", new GroupHostResponse(groupHost.getId(), out));
+            public void processOut(ProjectHost projectHost, HostGroupScript hostGroupScript, String out) {
+                messagingTemplate.convertAndSend("/ssh/logs/", new GroupHostResponse(projectHost.getId(), out));
             }
 
             @Override
-            public void processError(GroupHost groupHost, GroupScript groupScript, String error) {
-                messagingTemplate.convertAndSend("/ssh/logs/", new GroupHostResponse(groupHost.getId(), error));
+            public void processError(ProjectHost projectHost, HostGroupScript hostGroupScript, String error) {
+                messagingTemplate.convertAndSend("/ssh/logs/", new GroupHostResponse(projectHost.getId(), error));
             }
         });
     }

@@ -9,6 +9,6 @@
         <@bootstrap.input type="text" name="sshPort" value="22"/>
     </@bootstrap.formgroup>
     <@bootstrap.formgroup label="描述" required=true left=3>
-        <@bootstrap.textarea name="desc" value="${group.desc}"/>
+        <@bootstrap.textarea name="desc">${group.desc}</@bootstrap.textarea>
     </@bootstrap.formgroup>
 </@layout.detail>

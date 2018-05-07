@@ -134,8 +134,7 @@
             ]/>
     <@layout.list title="导航" items=[
         {'title':'主机列表','url':'/project/hosts','class':'fa-desktop'},
-        {'title':'主机分组','url':'/project/groups','class':'fa-boxes'},
-        {'title':'脚本列表','url':'/project/scripts','class':'fa-code'}
+        {'title':'主机分组','url':'/project/groups','class':'fa-boxes'}
         ]/>
     <@layout.list items=[{'title':'配置','url':'/project/settings','class':'fa-cog'}]/>
         </div>

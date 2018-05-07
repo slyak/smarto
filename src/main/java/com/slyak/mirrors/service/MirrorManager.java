@@ -1,9 +1,8 @@
 package com.slyak.mirrors.service;
 
-import com.slyak.core.util.StdCallback;
-import com.slyak.mirrors.domain.Group;
-import com.slyak.mirrors.domain.GroupHost;
-import com.slyak.mirrors.domain.GroupScript;
+import com.slyak.mirrors.domain.HostGroup;
+import com.slyak.mirrors.domain.ProjectHost;
+import com.slyak.mirrors.domain.HostGroupScript;
 import com.slyak.mirrors.domain.Project;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,11 +18,11 @@ import java.util.List;
 public interface MirrorManager {
     Page<Project> queryProjects(Pageable pageable);
 
-    List<GroupScript> getGroupScripts(Long groupId);
+    List<HostGroupScript> getGroupScripts(Long groupId);
 
-    Group findGroup(Long groupId);
+    HostGroup findGroup(Long groupId);
 
-    List<GroupHost> findGroupHosts(Long groupId);
+    List<ProjectHost> findGroupHosts(Long groupId);
 
     void execGroupScripts(Long groupId, GroupScriptCallback callback);
 }

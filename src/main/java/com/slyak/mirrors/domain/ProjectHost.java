@@ -13,10 +13,10 @@ import javax.persistence.Table;
  * @since 1.3.0
  */
 @Entity
-@Table(name = "t_group_host")
+@Table(name = "t_project_host")
 @Data
-public class GroupHost extends AbstractPersistable<Long> {
-    private Long groupId;
+public class ProjectHost extends AbstractPersistable<Long> {
+    private Long projectId;
 
     private String host;
 

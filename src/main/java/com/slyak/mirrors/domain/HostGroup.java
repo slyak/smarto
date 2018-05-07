@@ -16,7 +16,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "t_group")
 @Data
-public class Group extends AbstractPersistable<Long> {
+public class HostGroup extends AbstractPersistable<Long> {
 
     private String name;
 
