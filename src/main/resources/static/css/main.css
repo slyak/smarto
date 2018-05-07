@@ -4,6 +4,10 @@ body {
     font-size: 14px;
 }
 
+body.clean-html{
+    background-color: inherit;
+}
+
 a {
     color: #3572b0;
     text-decoration: none;

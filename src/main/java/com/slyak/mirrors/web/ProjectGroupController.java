@@ -31,6 +31,12 @@ public class ProjectGroupController {
 
     }
 
+    @GetMapping("/group/hosts")
+    public void hosts(Long projectId) {
+
+    }
+
+
     @GetMapping("/logs")
     public void logs(Long projectId) {
 

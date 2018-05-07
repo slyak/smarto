@@ -1,4 +1,4 @@
-<@layout.group title="脚本列表" btnCreate={'title':'管理脚本','url':'/project/group/script'}>
+<@layout.group title="脚本列表" btnCreate={'title':'管理脚本','modal':true,'url':'/script/picker'}>
 <table class="table table-hover table-fa">
     <thead>
     <tr>
@@ -32,14 +32,4 @@
     </tr>
     </tbody>
 </table>
-
-<button type="button" data-toggle="modal" data-target="#exampleModal">选择</button>
-
-<script>
-    function chooseScripts() {
-        return "<iframe src='/projects'/>"
-    }
-</script>
-
-    <@bootstrap.model id="exampleModal" title="选择脚本" onShown='chooseScripts'/>
 </@layout.group>

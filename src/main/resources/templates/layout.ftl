@@ -1,5 +1,5 @@
 <#-- @ftlvariable name="slyakRequestContext" type="com.slyak.web.support.freemarker.SlyakRequestContext" -->
-<#macro html>
+<#macro cleanHtml>
 <html>
 <head>
     <@bootstrap.cssAndJs/>
@@ -7,20 +7,26 @@
     <@slyak.css url="/webjars/font-awesome/web-fonts-with-css/css/fontawesome-all.css"/>
     <@slyak.css url="/css/main.css"/>
 </head>
-<body>
-    <@bootstrap.navbar brand="ITASM" left=[
-    {'title':'项目','url':'/projects'},
-    {'title':'脚本','url':'/scripts'},
-    {'title':'镜像','url':'/mirrors'}
-    ] right=[
-    {'title':'<i class="fa fa-question-circle fa-lg"></i>','url':'/help'},
-    {'title':'<i class="fa fa-cog fa-lg"></i>','url':'/admin'}
-    ]/>
-<div class="container-fluid p-0">
+<body class="clean-html">
     <#nested />
-</div>
 </body>
 </html>
+</#macro>
+
+<#macro html>
+    <@cleanHtml>
+        <@bootstrap.navbar brand="ITASM" left=[
+        {'title':'项目','url':'/projects'},
+        {'title':'脚本','url':'/scripts'},
+        {'title':'镜像','url':'/mirrors'}
+        ] right=[
+        {'title':'<i class="fa fa-question-circle fa-lg"></i>','url':'/help'},
+        {'title':'<i class="fa fa-cog fa-lg"></i>','url':'/admin'}
+        ]/>
+    <div class="container-fluid p-0">
+        <#nested />
+    </div>
+    </@cleanHtml>
 </#macro>
 
 <#macro footer>
@@ -35,8 +41,11 @@
     <div class="title-line-main">
         <h1>${title}</h1>
         <#if btnCreate.title??>
-            <a class="btn btn-sm ml-3"
-               href="<@slyak.query url="${btnCreate.url}"/>">${btnCreate.title}</a>
+            <#if btnCreate.modal??>
+                <@bootstrap.a href="${btnCreate.url}" title=btnCreate.title modal=true class="btn btn-sm ml-3"/>
+                <#else >
+                <a class="btn btn-sm ml-3" href="<@slyak.query url="${btnCreate.url}"/>">${btnCreate.title}</a>
+            </#if>
         </#if>
     </div>
 </div>
@@ -50,7 +59,6 @@
     </div>
     </@html>
 </#macro>
-
 
 <#macro rightMain left right title btnCreate={}>
     <@html>
@@ -154,6 +162,7 @@
             {'title':'运行脚本','url':'/project/group/script','class':'fa-paper-plane'}
             ]/>
     <@layout.list title="导航" items=[
+        {'title':'主机列表','url':'/project/group/hosts','class':'fa-desktop'},
         {'title':'脚本列表','url':'/project/group/scripts','class':'fa-code'},
         {'title':'变量列表','url':'/project/group/envs','class':'fa-subscript'},
         {'title':'运行日志','url':'/project/group/logs','class':'fa-terminal'}

@@ -16,4 +16,9 @@ public class ScriptController {
     public void scripts(String keyword) {
 
     }
+
+    @GetMapping("/script/picker")
+    public void picker(String keyword) {
+
+    }
 }
