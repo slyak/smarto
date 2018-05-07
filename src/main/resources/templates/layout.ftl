@@ -217,7 +217,7 @@
         </div>
         <div class="mt-2">
             <@layout.list title="操作" items=[
-            {'title':'测试一下','url':'/project/group/script','class':'fa-paper-plane'}
+            {'title':'运行脚本','url':'/project/group/script','class':'fa-paper-plane'}
             ]/>
     <@layout.list title="导航" items=[
         {'title':'文件列表','url':'/script/files','class':'fa-file'},

@@ -1,10 +1,11 @@
-<@layout.script title="变量列表" btnCreate={'title':'保存配置','url':'/group/env'}>
+<@layout.script title="变量列表" btnCreate={'title':'添加变量','url':'/script/env','modal':true}>
 <table class="table table-hover table-fa">
     <thead>
     <tr>
         <th scope="col">键</th>
         <th scope="col">描述</th>
-        <th scope="col">值</th>
+        <th scope="col">默认值</th>
+        <th scope="col">操作</th>
     </tr>
     </thead>
     <tbody>
@@ -12,22 +13,26 @@
     <tr>
         <td>JAVA_HOME</td>
         <td>JAVA根路径</td>
-        <td><@bootstrap.input name="value" value="/opt/jdk-1.8"/></td>
+        <td>/opt/jdk-1.8</td>
+        <td><@slyakUI.a href="/script/env/delete">删除</@slyakUI.a></td>
     </tr>
     <tr>
         <td>MAVEN_HOME</td>
         <td>maven根路径</td>
-        <td><@bootstrap.input name="value" value="/opt/maven"/></td>
+        <td>/opt/maven</td>
+        <td><@slyakUI.a href="/script/env/delete">删除</@slyakUI.a></td>
     </tr>
     <tr>
         <td>MYSQL_USER_NAME</td>
         <td>MYSQL默认用户名</td>
-        <td><@bootstrap.input name="value" value="SLYAK"/></td>
+        <td>ROOT</td>
+        <td><@slyakUI.a href="/script/env/delete">删除</@slyakUI.a></td>
     </tr>
     <tr>
         <td>MYSQL_USER_PWD</td>
         <td>MYSQL默认用户密码</td>
-        <td><@bootstrap.input name="value" value="123456"/></td>
+        <td>123456</td>
+        <td><@slyakUI.a href="/script/env/delete">删除</@slyakUI.a></td>
     </tr>
     </tbody>
 </table>

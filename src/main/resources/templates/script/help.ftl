@@ -1,4 +1,6 @@
-<@layout.script title="使用帮助" btnCreate={'title':'保存配置','url':'/group/env'}>
-1、撒地方了；可；
-2、省得浪费
+<@layout.script title="使用帮助">
+    <@slyakUI.form action="">
+        <@bootstrap.textarea name="">hello world</@bootstrap.textarea>
+    <button class="btn btn-primary btn-lg float-right mt-4" type="submit">保存</button>
+    </@slyakUI.form>
 </@layout.script>
