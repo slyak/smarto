@@ -23,7 +23,7 @@ public class ScriptController {
     }
 
     @GetMapping("/script")
-    public void script(String keyword) {
+    public void script() {
 
     }
 
