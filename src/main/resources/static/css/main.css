@@ -4,7 +4,7 @@ body {
     font-size: 14px;
 }
 
-body.clean-html{
+body.clean-html {
     background-color: inherit;
 }
 
@@ -37,8 +37,7 @@ a:hover, a:focus, a:active, a.btn-link, a.btn-link:hover, a.btn-link:focus, a.bt
     padding: 10px;
 }
 
-.navbar a.nav-link:hover, .navbar a.nav-link:focus ,.active a
-{
+.navbar a.nav-link:hover, .navbar a.nav-link:focus, .active a {
     background-color: #296ca3 !important;
     color: #fff !important;
 }
@@ -161,7 +160,7 @@ a:hover, a:focus, a:active, a.btn-link, a.btn-link:hover, a.btn-link:focus, a.bt
     text-align: left;
 }
 
-.table a{
+.table a {
     padding-right: 10px;
 }
 
@@ -282,11 +281,29 @@ svg, .fas, .list-item i {
     margin: 50px auto 0;
 }
 
-#mirrorSearch,#scriptSearch{
+#mirrorSearch, #scriptSearch {
     margin: 14px 0 30px;
 }
 
-#mirrorSearch .btn,#scriptSearch .btn{
+#mirrorSearch .btn, #scriptSearch .btn {
     height: inherit !important;
     width: 100px;
+}
+
+.file-caption {
+    padding: 0 0 0 10px;
+}
+
+.file-caption .file-caption-icon {
+    margin-top: 5px;
+}
+
+.file-caption-name {
+    height: 28px;
+}
+
+.file-preview {
+    border-radius: 0 !important;
+    border: 0 !important;
+    padding: 0 !important;
 }

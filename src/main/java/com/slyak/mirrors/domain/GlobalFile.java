@@ -1,9 +1,9 @@
 package com.slyak.mirrors.domain;
 
 import lombok.Data;
-import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
@@ -15,9 +15,9 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "t_mfile")
 @Data
-public class GlobalFile extends AbstractPersistable<Long> {
+public class GlobalFile {
+    @Id
+    private String id;
     private String name;
-    private String path;
-    private String version;
     private long size;
 }

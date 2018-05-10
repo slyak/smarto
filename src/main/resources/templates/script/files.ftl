@@ -1,5 +1,5 @@
 <#-- @ftlvariable name="files" type="java.util.List<com.slyak.mirrors.domain.ScriptFile>" -->
-<@layout.script title="文件列表" btnCreate={'title':"上传文件",'url':'/script/file','modal':true}>
+<@layout.script title="文件列表" btnCreate={'title':"上传文件",'url':'/script/file?scriptId=${RequestParameters.id}','modal':true,'showSubmit':true}>
 <table class="table table-hover table-fa">
     <thead>
     <tr>

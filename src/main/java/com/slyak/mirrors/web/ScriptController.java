@@ -53,6 +53,11 @@ public class ScriptController {
 
     }
 
+    @GetMapping("/script/file/add")
+    public void fileAdd() {
+
+    }
+
     @GetMapping("/script/envs")
     public void envs(Long scriptId, ModelMap modelMap) {
         List<ScriptEnv> envs = mirrorManager.findScriptEnvs(scriptId);
