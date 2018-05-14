@@ -1,4 +1,4 @@
-<@layout.script title="运行日志">
+<@layout.layout_script title="运行日志">
     <@ace.cssAndJs/>
     <@sockjs.cssAndJs/>
 <textarea id="logArea"></textarea>
@@ -29,4 +29,4 @@
     ss.connect();
     socketInstance = ss;
     </@sockjs.connect>
-</@layout.script>
+</@layout.layout_script>

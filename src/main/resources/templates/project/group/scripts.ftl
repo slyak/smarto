@@ -1,4 +1,4 @@
-<@layout.group title="脚本列表" btnCreate={'title':'管理脚本','modal':true,'url':'/script/picker'}>
+<@layout.layout_group title="脚本列表" btnCreate={'title':'管理脚本','modal':true,'url':'/script/picker'}>
 <table class="table table-hover table-fa">
     <thead>
     <tr>
@@ -32,4 +32,4 @@
     </tr>
     </tbody>
 </table>
-</@layout.group>
+</@layout.layout_group>

@@ -1,5 +1,5 @@
 <#-- @ftlvariable name="group" type="com.slyak.mirrors.domain.HostGroup" -->
-<@layout.group title="主机列表" btnCreate={'title':'选择主机','url':'/project/host/picker',"modal":true}>
+<@layout.layout_group title="主机列表" btnCreate={'title':'选择主机','url':'/project/host/picker',"modal":true}>
 <table class="table table-hover table-fa">
     <thead>
     <tr>
@@ -23,4 +23,4 @@
     </tr>
     </tbody>
 </table>
-</@layout.group>
+</@layout.layout_group>

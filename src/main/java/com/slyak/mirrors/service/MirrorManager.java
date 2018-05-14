@@ -26,4 +26,14 @@ public interface MirrorManager {
     List<ScriptFile> findScriptFiles(Long scriptId);
 
     List<ScriptEnv> findScriptEnvs(Long scriptId);
+
+    void saveScript(Script script);
+
+    Page<Script> queryScripts(String keyword, Pageable pageable);
+
+    void saveOs(OS os);
+
+    void saveScriptFile(ScriptFile scriptFile);
+
+    List<OS> queryOss();
 }

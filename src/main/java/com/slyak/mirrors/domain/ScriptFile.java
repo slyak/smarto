@@ -5,6 +5,7 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * group file.
@@ -19,11 +20,13 @@ public class ScriptFile extends AbstractPersistable<Long> {
 
     private Long scriptId;
 
-    private String name;
-
-    private String localPath;
+    private String globalFileId;
 
     private String scpPath;
 
     private String description;
+
+    @Transient
+    private GlobalFile globalFile;
+
 }

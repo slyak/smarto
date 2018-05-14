@@ -1,4 +1,4 @@
-<@layout.project title="配置" btnCreate={'title':'删除','url':'/project/delete'}>
+<@layout.layout_project title="配置" btnCreate={'title':'删除','url':'/project/delete'}>
 <div class="settings">
     <@slyakUI.form action="">
         <@bootstrap.formgroup label="项目名称">
@@ -12,4 +12,4 @@
         </@bootstrap.formgroup>
     </@slyakUI.form>
 </div>
-</@layout.project>
+</@layout.layout_project>

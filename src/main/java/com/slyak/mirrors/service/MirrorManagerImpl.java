@@ -2,13 +2,13 @@ package com.slyak.mirrors.service;
 
 import com.slyak.core.util.SSH2;
 import com.slyak.core.util.StdCallback;
+import com.slyak.core.util.StringUtils;
 import com.slyak.mirrors.domain.*;
 import com.slyak.mirrors.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,7 +39,10 @@ public class MirrorManagerImpl implements MirrorManager {
     private ProjectHostRepository projectHostRepository;
 
     @Autowired
-    private SimpMessagingTemplate messagingTemplate;
+    private ScriptRepository scriptRepository;
+
+    @Autowired
+    private OSRepository osRepository;
 
     @Override
     public Page<Project> queryProjects(Pageable pageable) {
@@ -91,6 +94,31 @@ public class MirrorManagerImpl implements MirrorManager {
     @Override
     public List<ScriptEnv> findScriptEnvs(Long scriptId) {
         return scriptEnvRepository.findByScriptId(scriptId);
+    }
+
+    @Override
+    public void saveScript(Script script) {
+        scriptRepository.save(script);
+    }
+
+    @Override
+    public Page<Script> queryScripts(String keyword, Pageable pageable) {
+        return scriptRepository.queryByNameLike(StringUtils.isEmpty(keyword) ? null : "%" + keyword + "%", pageable);
+    }
+
+    @Override
+    public void saveOs(OS os) {
+        osRepository.save(os);
+    }
+
+    @Override
+    public void saveScriptFile(ScriptFile scriptFile) {
+        scriptFileRepository.save(scriptFile);
+    }
+
+    @Override
+    public List<OS> queryOss() {
+        return osRepository.findAll();
     }
 
     private void execCommand(SSH2 ssh2, String command, StdCallback callback) {

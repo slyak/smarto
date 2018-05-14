@@ -1,5 +1,5 @@
-<@layout.layout_admin title="全局设置">
-    <@slyakUI.form action="/admin/filepath">
+<@layout.layout_admin title="操作系统">
+    <@slyakUI.form action="/admin/os">
         <@bootstrap.formgroup label="站点地址" required=true>
             <@bootstrap.input name="domain"/>
         </@bootstrap.formgroup>

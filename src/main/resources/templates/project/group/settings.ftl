@@ -1,4 +1,4 @@
-<@layout.group title="设置">
+<@layout.layout_group title="设置">
 <div class="settings">
     <@slyakUI.form action="">
         <@bootstrap.formgroup label="分组名称" required=true>
@@ -16,4 +16,4 @@
         </@bootstrap.formgroup>
     </@slyakUI.form>
 </div>
-</@layout.group>
+</@layout.layout_group>

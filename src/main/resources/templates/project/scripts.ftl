@@ -1,4 +1,4 @@
-<@layout.project title='脚本列表' btnCreate={"title":"选择脚本","url":"/project/script"}>
+<@layout.layout_project title='脚本列表' btnCreate={"title":"选择脚本","url":"/project/script"}>
 <table class="table table-hover table-fa">
     <thead>
     <tr>
@@ -22,4 +22,4 @@
     </tr>
     </tbody>
 </table>
-</@layout.project>
+</@layout.layout_project>

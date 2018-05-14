@@ -1,4 +1,4 @@
-<@layout.group title="运行日志">
+<@layout.layout_group title="运行日志">
     <@ace.cssAndJs/>
     <@sockjs.cssAndJs/>
 <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -49,4 +49,4 @@
     ss.connect();
     socketInstance = ss;
     </@sockjs.connect>
-</@layout.group>
+</@layout.layout_group>

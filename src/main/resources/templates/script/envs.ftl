@@ -1,5 +1,5 @@
 <#-- @ftlvariable name="envs" type="java.util.List<com.slyak.mirrors.domain.ScriptEnv>" -->
-<@layout.script title="变量列表" btnCreate={'title':'添加变量','url':'/script/env','modal':true,"showSubmit":true}>
+<@layout.layout_script title="变量列表" btnCreate={'title':'添加变量','url':'/script/env','modal':true,"showSubmit":true}>
 <table class="table table-hover table-fa">
     <thead>
     <tr>
@@ -54,4 +54,4 @@
     1. <b>HOST_IP</b>   当前主机IP<br/>
     2. <b>HOST_NAME</b> 主机名
 </div>
-</@layout.script>
+</@layout.layout_script>

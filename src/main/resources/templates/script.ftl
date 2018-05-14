@@ -1,6 +1,10 @@
-<@layout.detail title="上传脚本" action="/script" enctype="multipart/form-data">
-    <@bootstrap.formgroup label="脚本文件" required=true left=3 right=9>
-        <@bootstrap.input type="file" name="file" value="${script.file}" class="upload"/>
+<@layout.layout_detail title="创建脚本" action="/script">
+    <@bootstrap.formgroup label="名称" required=true left=3 right=9>
+        <@bootstrap.input name="name"/>
     </@bootstrap.formgroup>
-    <@bootstrap.fileupload cssSelector=".upload" uploadUrl="/test" maxFileCount=1 imageWidth=100 showPreview=false/>
-</@layout.detail>
+    <@bootstrap.formgroup label="操作系统" required=true left=3 right=9>
+        <@bootstrap.radios name="osName" data=[{'title':'test','value':'test'}]/>
+    </@bootstrap.formgroup>
+    <@bootstrap.formgroup label="版本范围" left=3 right=9>
+    </@bootstrap.formgroup>
+</@layout.layout_detail>

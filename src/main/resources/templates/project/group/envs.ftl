@@ -1,4 +1,4 @@
-<@layout.group title="变量列表" btnCreate={'title':'保存配置','url':'/group/env'}>
+<@layout.layout_group title="变量列表" btnCreate={'title':'保存配置','url':'/group/env'}>
 <table class="table table-hover table-fa">
     <thead>
     <tr>
@@ -36,4 +36,4 @@
     1. <b>HOST_IP</b>   当前主机IP<br/>
     2. <b>HOST_NAME</b> 主机名
 </div>
-</@layout.group>
+</@layout.layout_group>

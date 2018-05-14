@@ -1,6 +1,8 @@
-<@layout.script title="使用帮助">
-    <@slyakUI.form action="">
-        <@bootstrap.textarea name="">hello world</@bootstrap.textarea>
-    <button class="btn btn-primary btn-lg float-right mt-4" type="submit">保存</button>
+<#-- @ftlvariable name="script" type="com.slyak.mirrors.domain.Script" -->
+<@layout.layout_script title="使用帮助">
+    <@slyakUI.form action="/script">
+    <input type="hidden" name="id" value="${script.id}">
+        <@bootstrap.textarea name="content" rows=10>${script.content}</@bootstrap.textarea>
+    <button type="submit" class="btn btn-lg btn-primary mt-3">提交</button>
     </@slyakUI.form>
-</@layout.script>
+</@layout.layout_script>

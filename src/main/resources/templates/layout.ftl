@@ -1,3 +1,4 @@
+<#-- @ftlvariable name="script" type="com.slyak.mirrors.domain.Script" -->
 <#-- @ftlvariable name="slyakRequestContext" type="com.slyak.web.support.freemarker.SlyakRequestContext" -->
 <#macro cleanHtml>
 <html>
@@ -43,7 +44,7 @@
         <#if btnCreate.title??>
             <#if btnCreate.modal??>
                 <@bootstrap.a href="${btnCreate.url}" title=btnCreate.title modal=true showSubmit=btnCreate.showSubmit!false class="btn btn-sm ml-3"/>
-                <#else >
+            <#else >
                 <a class="btn btn-sm ml-3" href="<@slyak.query url="${btnCreate.url}"/>">${btnCreate.title}</a>
             </#if>
         </#if>
@@ -102,7 +103,7 @@
     <ul>
         <#list items as item>
             <li class="list-item">
-                <a href="<@slyak.query url="${item.url}"/>"
+                <a href="<@slyak.query url="${item.url}" extra=RequestParameters/>"
                    <#if slyakRequestContext.isSameUrl(item.url)>class="active" </#if>>
                     <i class="fas ${item.class}"></i>
                     <span>${item.title}</span>
@@ -120,7 +121,7 @@
 </div>
 </#macro>
 
-<#macro project title btnCreate={}>
+<#macro layout_project title btnCreate={}>
     <#assign left>
     <div>
         <div class="text-center fa-">
@@ -146,7 +147,7 @@
     <@layout.rightMain title=title left=left right=right btnCreate=btnCreate/>
 </#macro>
 
-<#macro group title btnCreate={}>
+<#macro layout_group title btnCreate={}>
     <#assign left>
     <div>
         <div class="text-left mb-3">
@@ -176,13 +177,13 @@
     <@layout.rightMain title=title left=left right=right btnCreate=btnCreate/>
 </#macro>
 
-<#macro admin title btnCreate={}>
+<#macro layout_admin title btnCreate={}>
     <#assign left>
     <div>
         <h4>系统管理</h4>
         <div class="mt-2">
             <@layout.list items=[
-            {'title':'全局设置','url':'/admin','class':'fa-globe'}
+            {'title':'全局设置','url':'/admin/index','class':'fa-globe'}
             ]/>
         </div>
         <@layout.list title="用户" items=[
@@ -191,7 +192,7 @@
         ]/>
         <@layout.list title="文件" items=[
         {'title':'镜像','url':'/admin/mirrors','class':'fa-warehouse'},
-        {'title':'操作系统','url':'/admin/os','class':'fa-linux'}
+        {'title':'操作系统','url':'/admin/osList','class':'fa-hdd'}
         ]/>
         <@layout.list title="备份" items=[
         {'title':'系统备份','url':'/admin/backup','class':'fa-archive'},
@@ -207,16 +208,16 @@
     <@layout.rightMain title=title left=left right=right btnCreate=btnCreate/>
 </#macro>
 
-<#macro script title btnCreate={}>
+<#macro layout_script title btnCreate={}>
     <#assign left>
     <div>
         <div class="text-center fa-">
             <img src="<@slyak.query url="/images/default-avatar.svg"/>">
-            <div class="sidebar-title">CentOS优化</div>
+            <div class="sidebar-title">${script.name}</div>
         </div>
         <div class="mt-2">
             <@layout.list title="操作" items=[
-            {'title':'运行脚本','url':'/project/group/script','class':'fa-paper-plane'}
+            {'title':'运行脚本','url':'/script/run','class':'fa-paper-plane'}
             ]/>
     <@layout.list title="导航" items=[
         {'title':'文件列表','url':'/script/files','class':'fa-file'},
@@ -236,55 +237,23 @@
     <@layout.rightMain title=title left=left right=right btnCreate=btnCreate/>
 </#macro>
 
-<#--<#macro settings title btnCreate={}>
-    <#assign left>
-    <div>
-        <div class="text-left mb-3">
-            <img src="<@slyak.query url="/images/default-avatar.svg"/>" style="width: 48px;position: absolute">
-            <div style="padding-left: 58px;padding-top: 4px;height: 45px;">
-                <a href="">NameNode</a>
-                <div>大数据基础</div>
-            </div>
-        </div>
-        <div class="mt-2">
-            <@layout.list title="操作" items=[
-            {'title':'运行所有脚本','url':'/group','class':'fa-paper-plane'},
-            {'title':'下载离线安装包','url':'/group','class':'fa-download'}
-            ]/>
-    <@layout.list title="导航" items=[
-        {'title':'主机列表','url':'/group/hosts','class':'fa-desktop'},
-        {'title':'依赖列表','url':'/group/dependencies','class':'fa-cubes'},
-        {'title':'文件列表','url':'/group/files','class':'fa-file'},
-        {'title':'变量列表','url':'/group/envs','class':'fa-subscript'},
-        {'title':'初始化脚本','url':'/group/scripts','class':'fa-code'}
-        ]/>
-    <@layout.list items=[{'title':'配置','url':'/group/settings','class':'fa-cog'}]/>
-        </div>
-    </div>
-    </#assign>
-    <#assign right>
-        <#nested />
-    </#assign>
-    <@layout.rightMain title=title left=left right=right btnCreate=btnCreate/>
-</#macro>-->
-
-<#macro detail title action enctype="application/x-www-form-urlencoded">
+<#macro layout_detail title action enctype="application/x-www-form-urlencoded">
     <@html>
     <div class="detail">
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">${title}</h5>
                 <hr/>
-                <form action="<@slyak.query url=action/>" method="post" autocomplete="off" enctype="${enctype}">
+                <@slyakUI.form action=action enctype=enctype>
                     <input style="display:none" type="text" name="fakename">
                     <input style="display:none" type="password" name="fakepwd">
                     <#nested />
-                </form>
-                <hr/>
-                <div class="text-right">
-                    <button class="btn btn-lg btn-primary">保存</button>
-                    <button class="btn btn-lg btn-link" onclick="history.back()">取消</button>
-                </div>
+                    <hr/>
+                    <div class="text-right">
+                        <button class="btn btn-lg btn-primary" type="submit">保存</button>
+                        <button class="btn btn-lg btn-link" type="button" onclick="history.back()">取消</button>
+                    </div>
+                </@slyakUI.form>
             </div>
         </div>
     </div>
