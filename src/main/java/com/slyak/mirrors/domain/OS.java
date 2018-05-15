@@ -1,6 +1,7 @@
 package com.slyak.mirrors.domain;
 
 import com.slyak.spring.jpa.hibernate.JSONType;
+import lombok.Data;
 import org.hibernate.annotations.Type;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
@@ -17,6 +18,7 @@ import java.util.List;
  */
 @Entity
 @Table(name = "t_os", uniqueConstraints = @UniqueConstraint(columnNames = "os"))
+@Data
 public class OS extends AbstractPersistable<Long> {
 
     private String os;

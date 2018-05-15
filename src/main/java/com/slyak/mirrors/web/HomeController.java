@@ -1,6 +1,6 @@
 package com.slyak.mirrors.web;
 
-import com.slyak.mirrors.domain.OS;
+import com.slyak.mirrors.converter.OsVersionsOptionConverter;
 import com.slyak.mirrors.domain.Script;
 import com.slyak.mirrors.service.MirrorManager;
 import com.slyak.web.support.data.RequestParamBind;
@@ -11,8 +11,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.util.List;
 
 /**
  * .
@@ -25,6 +23,9 @@ public class HomeController {
 
     @Autowired
     private MirrorManager mirrorManager;
+
+    @Autowired
+    private OsVersionsOptionConverter optionConverter;
 
     @RequestMapping("")
     public String home() {
@@ -42,8 +43,11 @@ public class HomeController {
     }
 
     @GetMapping("/script")
-    public void script(ModelMap modelMap) {
-        modelMap.put("os",mirrorManager.queryOss());
+    public void script(@RequestParamBind("id") Script script, ModelMap modelMap) {
+        modelMap.put("oss", optionConverter.convert(mirrorManager.queryOss()));
+        if (script != null) {
+            modelMap.put("script", script);
+        }
     }
 
     @PostMapping("/script")

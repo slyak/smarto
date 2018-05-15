@@ -121,6 +121,11 @@ public class MirrorManagerImpl implements MirrorManager {
         return osRepository.findAll();
     }
 
+    @Override
+    public OS findOs(String osName) {
+        return osRepository.findByOs(osName);
+    }
+
     private void execCommand(SSH2 ssh2, String command, StdCallback callback) {
         try {
             ssh2.execCommand(command, callback);

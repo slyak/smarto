@@ -10,4 +10,6 @@ import com.slyak.spring.jpa.GenericJpaRepository;
  * @since 1.3.0
  */
 public interface OSRepository extends GenericJpaRepository<OS, Long> {
+
+    OS findByOs(String os);
 }

@@ -1,10 +1,7 @@
 package com.slyak.mirrors.web;
 
 import com.google.common.collect.Lists;
-import com.slyak.mirrors.domain.GlobalFile;
-import com.slyak.mirrors.domain.Script;
-import com.slyak.mirrors.domain.ScriptEnv;
-import com.slyak.mirrors.domain.ScriptFile;
+import com.slyak.mirrors.domain.*;
 import com.slyak.mirrors.service.MirrorManager;
 import com.slyak.web.support.data.RequestParamBind;
 import com.slyak.web.support.freemarker.bootstrap.InitialPreviewConfigConverter;
@@ -29,6 +26,14 @@ public class ScriptController {
 
     @Autowired
     private InitialPreviewConfigConverter<GlobalFile> converter;
+
+    @GetMapping("/osVersions")
+    public void osVersions(String osName, ModelMap modelMap) {
+        OS os = mirrorManager.findOs(osName);
+        if (os != null) {
+            modelMap.put("versions", os.getVersions());
+        }
+    }
 
     @GetMapping("/settings")
     public void settings() {
@@ -74,7 +79,12 @@ public class ScriptController {
     }
 
     @GetMapping("/help")
-    public void help(Long scriptId) {
+    public void help() {
+
+    }
+
+    @GetMapping("/content")
+    public void content() {
 
     }
 

@@ -307,3 +307,8 @@ svg, .fas, .list-item i {
     border: 0 !important;
     padding: 0 !important;
 }
+
+.ace_editor {
+    border: 1px solid #ddd;
+    font-size: 14px !important;
+}

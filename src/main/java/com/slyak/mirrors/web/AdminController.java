@@ -2,13 +2,13 @@ package com.slyak.mirrors.web;
 
 import com.slyak.mirrors.domain.OS;
 import com.slyak.mirrors.service.MirrorManager;
+import com.slyak.web.support.data.RequestParamBind;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * .
@@ -27,18 +27,18 @@ public class AdminController {
     public void index() {
     }
 
-    @GetMapping("/osList")
-    public void osList() {
-
+    @GetMapping("/oss")
+    public void oss(ModelMap modelMap) {
+        modelMap.put("oss", mirrorManager.queryOss());
     }
 
     @GetMapping("/os")
-    public void os(@RequestParam("id") OS os, ModelMap map) {
+    public void os(@RequestParamBind("id") OS os, ModelMap map) {
         map.put("os", os);
     }
 
     @PostMapping("/os")
-    public void saveOs(OS os) {
+    public void saveOs(@RequestParamBind("id") OS os) {
         mirrorManager.saveOs(os);
     }
 

@@ -5,7 +5,8 @@
 <head>
     <@bootstrap.cssAndJs/>
     <@slyak.js url="/webjars/jquery-migrate/jquery-migrate.min.js"/>
-    <@slyak.css url="/webjars/font-awesome/web-fonts-with-css/css/fontawesome-all.css"/>
+    <@slyakUI.handlebars/>
+    <@slyakUI.fontasome/>
     <@slyak.css url="/css/main.css"/>
 </head>
 <body class="clean-html">
@@ -38,21 +39,23 @@
 </#macro>
 
 <#macro titleLine title btnCreate={}>
-<div class="title-line">
-    <div class="title-line-main">
-        <h1>${title}</h1>
-        <#if btnCreate.title??>
-            <#if btnCreate.modal??>
-                <@bootstrap.a href="${btnCreate.url}" title=btnCreate.title modal=true showSubmit=btnCreate.showSubmit!false class="btn btn-sm ml-3"/>
-            <#else >
-                <a class="btn btn-sm ml-3" href="<@slyak.query url="${btnCreate.url}"/>">${btnCreate.title}</a>
+    <#if title?has_content>
+    <div class="title-line">
+        <div class="title-line-main">
+            <h1>${title}</h1>
+            <#if btnCreate.title??>
+                <#if btnCreate.modal??>
+                    <@bootstrap.a href="${btnCreate.url}" title=btnCreate.title modal=true showSubmit=btnCreate.showSubmit!false class="btn btn-sm ml-3"/>
+                <#else >
+                    <a class="btn btn-sm ml-3" href="<@slyak.query url="${btnCreate.url}"/>">${btnCreate.title}</a>
+                </#if>
             </#if>
-        </#if>
+        </div>
     </div>
-</div>
+    </#if>
 </#macro>
 
-<#macro main title btnCreate={}>
+<#macro main title="" btnCreate={}>
     <@html>
         <@titleLine title=title btnCreate=btnCreate/>
     <div class="main">
@@ -61,7 +64,7 @@
     </@html>
 </#macro>
 
-<#macro rightMain left right title btnCreate={}>
+<#macro rightMain left right title="" btnCreate={}>
     <@html>
     <div class="layout-l-r bg-white">
         <div class="layout-cell sidebar left">
@@ -192,7 +195,7 @@
         ]/>
         <@layout.list title="文件" items=[
         {'title':'镜像','url':'/admin/mirrors','class':'fa-warehouse'},
-        {'title':'操作系统','url':'/admin/osList','class':'fa-hdd'}
+        {'title':'操作系统','url':'/admin/oss','class':'fa-hdd'}
         ]/>
         <@layout.list title="备份" items=[
         {'title':'系统备份','url':'/admin/backup','class':'fa-archive'},
@@ -201,9 +204,7 @@
     </div>
     </#assign>
     <#assign right>
-    <div class="settings">
         <#nested />
-    </div>
     </#assign>
     <@layout.rightMain title=title left=left right=right btnCreate=btnCreate/>
 </#macro>
@@ -221,41 +222,46 @@
             ]/>
     <@layout.list title="导航" items=[
         {'title':'文件列表','url':'/script/files','class':'fa-file'},
+        {'title':'脚本内容','url':'/script/content','class':'fa-tasks'},
         {'title':'变量列表','url':'/script/envs','class':'fa-subscript'},
         {'title':'使用帮助','url':'/script/help','class':'fa-question-circle'},
         {'title':'运行日志','url':'/script/logs','class':'fa-terminal'}
         ]/>
-    <@layout.list items=[{'title':'配置','url':'/script/settings','class':'fa-cog'}]/>
+    <@layout.list items=[{'title':'配置','url':'/script','class':'fa-cog'}]/>
         </div>
     </div>
     </#assign>
     <#assign right>
-    <div class="settings">
         <#nested />
-    </div>
     </#assign>
     <@layout.rightMain title=title left=left right=right btnCreate=btnCreate/>
 </#macro>
 
-<#macro layout_detail title action enctype="application/x-www-form-urlencoded">
-    <@html>
-    <div class="detail">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">${title}</h5>
+<#macro cardForm title action enctype="application/x-www-form-urlencoded">
+<div class="detail">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">${title}</h5>
+            <hr/>
+            <@slyakUI.form action=action enctype=enctype>
+                <input style="display:none" type="text" name="fakename">
+                <input style="display:none" type="password" name="fakepwd">
+                <#nested />
                 <hr/>
-                <@slyakUI.form action=action enctype=enctype>
-                    <input style="display:none" type="text" name="fakename">
-                    <input style="display:none" type="password" name="fakepwd">
-                    <#nested />
-                    <hr/>
-                    <div class="text-right">
-                        <button class="btn btn-lg btn-primary" type="submit">保存</button>
-                        <button class="btn btn-lg btn-link" type="button" onclick="history.back()">取消</button>
-                    </div>
-                </@slyakUI.form>
-            </div>
+                <div class="text-right">
+                    <button class="btn btn-lg btn-primary" type="submit">保存</button>
+                    <button class="btn btn-lg btn-link" type="button" onclick="history.back()">取消</button>
+                </div>
+            </@slyakUI.form>
         </div>
     </div>
+</div>
+</#macro>
+
+<#macro layout_detail title action enctype="application/x-www-form-urlencoded">
+    <@html>
+        <@cardForm title=title action=action enctype=enctype>
+            <#nested />
+        </@cardForm>
     </@html>
 </#macro>

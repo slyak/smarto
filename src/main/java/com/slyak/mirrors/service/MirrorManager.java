@@ -36,4 +36,6 @@ public interface MirrorManager {
     void saveScriptFile(ScriptFile scriptFile);
 
     List<OS> queryOss();
+
+    OS findOs(String osName);
 }
