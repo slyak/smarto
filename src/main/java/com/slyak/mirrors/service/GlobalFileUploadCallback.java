@@ -35,7 +35,8 @@ public class GlobalFileUploadCallback implements FileUploadCallback<GlobalFile, 
     @Autowired
     private InitialPreviewConfigConverter<GlobalFile> converter;
 
-    private FileStoreService<String> fileStoreService = new LocalFileStoreService();
+    @Autowired
+    private FileStoreService<String> fileStoreService;
 
 
     @Override

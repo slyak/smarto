@@ -1,7 +1,7 @@
 <@layout.layout_script title="运行日志">
     <@ace.cssAndJs/>
     <@sockjs.cssAndJs/>
-<textarea id="logArea"></textarea>
+<textarea id="logArea" style=""></textarea>
 <script>
     var editors = {};
     var socketInstance;
@@ -18,8 +18,8 @@
         socketInstance.send("/ssh/exec", groupHostId);
     }
 </script>
-    <#assign editorId = "logArea"/>
-    <@ace.init id="${editorId}" mode="powershell" minLines=30 maxLines=30>
+    <#assign editorId = "#logArea"/>
+    <@ace.init cssSelector="${editorId}" mode="sh" theme="tomorrow" minLines=30 maxLines=30>
     editors["${editorId}"]=editor;
     </@ace.init>
 

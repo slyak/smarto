@@ -1,7 +1,10 @@
 package com.slyak.mirrors.web;
 
 import com.google.common.collect.Lists;
-import com.slyak.mirrors.domain.*;
+import com.slyak.mirrors.domain.GlobalFile;
+import com.slyak.mirrors.domain.OS;
+import com.slyak.mirrors.domain.Script;
+import com.slyak.mirrors.domain.ScriptFile;
 import com.slyak.mirrors.service.MirrorManager;
 import com.slyak.web.support.data.RequestParamBind;
 import com.slyak.web.support.freemarker.bootstrap.InitialPreviewConfigConverter;
@@ -63,18 +66,22 @@ public class ScriptController {
     }
 
     @GetMapping("/envs")
-    public void envs(Long scriptId, ModelMap modelMap) {
-        List<ScriptEnv> envs = mirrorManager.findScriptEnvs(scriptId);
-        modelMap.put("envs", envs);
+    public void envs(ModelMap modelMap) {
     }
 
-    @GetMapping("/logs")
-    public void logs() {
-
+    @PostMapping("/envs")
+    public String saveEnvs(@RequestParamBind("id") Script script) {
+        mirrorManager.saveScript(script);
+        return "redirect:/script/envs?id=" + script.getId();
     }
 
     @GetMapping("/env")
     public void env() {
+
+    }
+
+    @GetMapping("/logs")
+    public void logs() {
 
     }
 
@@ -86,6 +93,11 @@ public class ScriptController {
     @GetMapping("/content")
     public void content() {
 
+    }
+
+    @GetMapping("/run")
+    public void run(@RequestParam("id") Long id) {
+        mirrorManager.execScript(id,"脚本测试");
     }
 
     @ModelAttribute("script")

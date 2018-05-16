@@ -1,6 +1,8 @@
 package com.slyak.mirrors.config;
 
 import com.google.common.collect.Maps;
+import com.slyak.file.FileStoreService;
+import com.slyak.file.LocalFileStoreService;
 import com.slyak.mirrors.domain.GlobalFile;
 import com.slyak.web.support.freemarker.bootstrap.Fileinput;
 import com.slyak.web.support.freemarker.bootstrap.InitialPreviewConfigConverter;
@@ -17,6 +19,11 @@ import java.util.HashMap;
  */
 @Configuration
 public class GlobalConfig {
+
+    @Bean
+    public FileStoreService<String> fileStoreService() {
+        return new LocalFileStoreService();
+    }
 
     @Bean
     public InitialPreviewConfigConverter<GlobalFile> previewConfigConverter() {

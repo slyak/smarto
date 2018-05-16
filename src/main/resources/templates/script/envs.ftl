@@ -1,57 +1,36 @@
-<#-- @ftlvariable name="envs" type="java.util.List<com.slyak.mirrors.domain.ScriptEnv>" -->
-<@layout.layout_script title="变量列表" btnCreate={'title':'添加变量','url':'/script/env','modal':true,"showSubmit":true}>
-<table class="table table-hover table-fa">
-    <thead>
-    <tr>
-        <th scope="col">键</th>
-        <th scope="col">描述</th>
-        <th scope="col">默认值</th>
-        <th scope="col">操作</th>
-    </tr>
-    </thead>
-    <tbody>
-    <#--<#list page.content as group>-->
-    <#if envs?size gt 0>
-        <#list envs as env>
+<#-- @ftlvariable name="script" type="com.slyak.mirrors.domain.Script" -->
+<@layout.layout_script title="变量列表" btnCreate={'title':'保存','url':'javascript:saveEnvs()'}>
+    <@slyakUI.form action="/script/envs" id="envsForm">
+    <input type="hidden" name="id" value="${script.id}"/>
+    <table class="table table-hover table-fa">
+        <thead>
+        <tr>
+            <th scope="col">键</th>
+            <th scope="col">描述</th>
+            <th scope="col">默认值</th>
+        </tr>
+        </thead>
+        <tbody>
+        <#--<#list page.content as group>-->
+            <#list script.envs as env>
             <tr>
-                <td>${env.key}</td>
-                <td>${env.description}</td>
-                <td>${env.defValue}</td>
-                <td><@slyakUI.a href="/script/env/delete">删除</@slyakUI.a></td>
+                <td>${env.key}<input type="hidden" name="envs[${env_index}].key" value="${env.key}"></td>
+                <td><@bootstrap.input name="envs[${env_index}].description" value="${env.description}"/></td>
+                <td><@bootstrap.input name="envs[${env_index}].defValue" value="${env.defValue}"/></td>
             </tr>
-        </#list>
-        <#else >
-        <#--<tr><td colspan="4" class="text-center">暂无记录</td></tr>-->
-        <tr>
-            <td>JAVA_HOME</td>
-            <td>JAVA根路径</td>
-            <td>/opt/jdk-1.8</td>
-            <td><@slyakUI.a href="/script/env/delete">删除</@slyakUI.a></td>
-        </tr>
-        <tr>
-            <td>MAVEN_HOME</td>
-            <td>maven根路径</td>
-            <td>/opt/maven</td>
-            <td><@slyakUI.a href="/script/env/delete">删除</@slyakUI.a></td>
-        </tr>
-        <tr>
-            <td>MYSQL_USER_NAME</td>
-            <td>MYSQL默认用户名</td>
-            <td>ROOT</td>
-            <td><@slyakUI.a href="/script/env/delete">删除</@slyakUI.a></td>
-        </tr>
-        <tr>
-            <td>MYSQL_USER_PWD</td>
-            <td>MYSQL默认用户密码</td>
-            <td>123456</td>
-            <td><@slyakUI.a href="/script/env/delete">删除</@slyakUI.a></td>
-        </tr>
-    </#if>
-    </tbody>
-</table>
+            <#else >
+            </#list>
+        </tbody>
+    </table>
+    </@slyakUI.form>
 <div class="alert alert-primary" role="alert">
-    <p><i class="fa fa-info-circle pr-1"></i>变量可以使用在脚本中，以${r'${变量名称}'}方式引用，依赖项目的变量也会继承下来，供您修改。默认系统变量如下：</p>
-    1. <b>HOST_IP</b>   当前主机IP<br/>
-    2. <b>HOST_NAME</b> 主机名
+    <i class="fa fa-info-circle pr-1"></i>上述变量均来自脚本中形如 ： <b class="text-success">$变量名称</b>或<b
+        class="text-success">${r'${变量名称}'}</b>的变量，请补全描述信息和默认值。
 </div>
+<script>
+    function saveEnvs() {
+        $("#envsForm").submit();
+    }
+</script>
+
 </@layout.layout_script>

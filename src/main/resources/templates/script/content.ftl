@@ -6,5 +6,5 @@
     <button type="submit" class="btn btn-lg btn-primary mt-3">提交</button>
     </@slyakUI.form>
     <@ace.cssAndJs/>
-    <@ace.init id="contentArea" mode="sh" theme="tomorrow"/>
+    <@ace.init cssSelector="#contentArea" mode="sh" theme="tomorrow"/>
 </@layout.layout_script>

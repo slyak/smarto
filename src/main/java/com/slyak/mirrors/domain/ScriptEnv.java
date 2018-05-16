@@ -1,10 +1,10 @@
 package com.slyak.mirrors.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.data.jpa.domain.AbstractPersistable;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import java.io.Serializable;
 
 /**
  * .
@@ -12,16 +12,15 @@ import javax.persistence.Table;
  * @author stormning 2018/5/7
  * @since 1.3.0
  */
-@Entity
-@Table(name = "t_script_env")
 @Data
-public class ScriptEnv extends AbstractPersistable<Long> {
-
-    private Long scriptId;
+@NoArgsConstructor
+@AllArgsConstructor
+public class ScriptEnv implements Serializable {
 
     private String key;
 
     private String description;
 
     private String defValue;
+
 }

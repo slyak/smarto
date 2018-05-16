@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 /**
  * .
@@ -15,7 +16,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "t_mfile")
 @Data
-public class GlobalFile {
+public class GlobalFile implements Serializable {
     @Id
     private String id;
     private String name;

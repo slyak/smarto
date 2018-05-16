@@ -1,6 +1,7 @@
 package com.slyak.mirrors.web;
 
 import com.slyak.mirrors.converter.OsVersionsOptionConverter;
+import com.slyak.mirrors.domain.Batch;
 import com.slyak.mirrors.domain.Script;
 import com.slyak.mirrors.service.MirrorManager;
 import com.slyak.web.support.data.RequestParamBind;
@@ -11,6 +12,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * .
