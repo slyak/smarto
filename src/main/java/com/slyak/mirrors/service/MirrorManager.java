@@ -21,8 +21,6 @@ public interface MirrorManager {
 
     List<ProjectHost> findGroupHosts(Long groupId);
 
-    void execGroupScripts(Long groupId, GroupScriptCallback callback);
-
     List<ScriptFile> findScriptFiles(Long scriptId);
 
     void saveScript(Script script);
@@ -37,5 +35,9 @@ public interface MirrorManager {
 
     OS findOs(String osName);
 
-    void execScript(Long id, String description);
+    void testExecScript(Long scriptId);
+
+    void execScripts(List<Long> scriptId, List<Long> hostIds);
+
+    Host getGlobalTestHost();
 }

@@ -1,9 +1,9 @@
 package com.slyak.mirrors.service;
 
-import ch.ethz.ssh2.SCPClient;
-import ch.ethz.ssh2.SCPOutputStream;
-import com.slyak.core.util.SSH2;
-import com.slyak.core.util.StdCallback;
+import com.google.common.collect.Maps;
+import com.slyak.core.ssh2.CustomStdLogger;
+import com.slyak.core.ssh2.SSH2;
+import com.slyak.core.util.LoggerUtils;
 import com.slyak.core.util.StringUtils;
 import com.slyak.file.FileStoreService;
 import com.slyak.mirrors.domain.*;
@@ -11,19 +11,18 @@ import com.slyak.mirrors.repository.*;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.io.UnsupportedEncodingException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -36,31 +35,64 @@ import java.util.stream.Collectors;
 @Slf4j
 public class MirrorManagerImpl implements MirrorManager {
 
-    @Autowired
-    private ProjectRepository projectRepository;
-
-    @Autowired
-    private ScriptFileRepository scriptFileRepository;
-
-    @Autowired
-    private GroupRepository groupRepository;
-
-    @Autowired
-    private ProjectHostRepository projectHostRepository;
-
-    @Autowired
-    private ScriptRepository scriptRepository;
-
-    @Autowired
-    private OSRepository osRepository;
-
-    @Autowired
-    private BatchRepository batchRepository;
-
-    @Autowired
-    private FileStoreService<String> fileStoreService;
-
     private static final String ENV_PATTERN = "\\$[{]?([A-Za-z0-9_-]+)[}]?";
+
+    private static final String INIT_SCRIPT = "__init.sh";
+
+    private static final String COMMAND_PREFIX = "sh -c ";
+
+    private static final String USER_HOME = "~";
+
+    private static final char SEPARATOR = '/';
+
+    private static final String DEFAULT_CHARSET = "UTF-8";
+
+    private static final Object BATCH_RESULT_LOCK = new Object();
+
+    private final ProjectRepository projectRepository;
+
+    private final ScriptFileRepository scriptFileRepository;
+
+    private final GroupRepository groupRepository;
+
+    private final ProjectHostRepository projectHostRepository;
+
+    private final ScriptRepository scriptRepository;
+
+    private final OSRepository osRepository;
+
+    private final BatchRepository batchRepository;
+
+    private final HostRepository hostRepository;
+
+    private final GlobalRepository globalRepository;
+
+    private final FileStoreService<String> fileStoreService;
+
+    @Autowired
+    public MirrorManagerImpl(
+            ProjectRepository projectRepository,
+            ScriptFileRepository scriptFileRepository,
+            GroupRepository groupRepository,
+            ProjectHostRepository projectHostRepository,
+            ScriptRepository scriptRepository,
+            OSRepository osRepository,
+            BatchRepository batchRepository,
+            HostRepository hostRepository,
+            GlobalRepository globalRepository,
+            FileStoreService<String> fileStoreService
+    ) {
+        this.projectRepository = projectRepository;
+        this.scriptFileRepository = scriptFileRepository;
+        this.groupRepository = groupRepository;
+        this.projectHostRepository = projectHostRepository;
+        this.scriptRepository = scriptRepository;
+        this.osRepository = osRepository;
+        this.batchRepository = batchRepository;
+        this.hostRepository = hostRepository;
+        this.globalRepository = globalRepository;
+        this.fileStoreService = fileStoreService;
+    }
 
     @Override
     public Page<Project> queryProjects(Pageable pageable) {
@@ -83,28 +115,6 @@ public class MirrorManagerImpl implements MirrorManager {
     }
 
     @Override
-    public void execGroupScripts(Long groupId, GroupScriptCallback callback) {
-        List<ProjectHost> projectHosts = findGroupHosts(groupId);
-        List<HostGroupScript> hostGroupScripts = getGroupScripts(groupId);
-        for (ProjectHost projectHost : projectHosts) {
-            SSH2 ssh2 = SSH2.connect(projectHost.getHost(), projectHost.getSshPort()).auth(projectHost.getUser(), projectHost.getPassword());
-            for (HostGroupScript hostGroupScript : hostGroupScripts) {
-                execCommand(ssh2, "sh -c " + hostGroupScript.getScriptFile().getScpPath(), new StdCallback() {
-                    @Override
-                    public void processOut(String out) {
-                        callback.processOut(projectHost, hostGroupScript, out);
-                    }
-
-                    @Override
-                    public void processError(String error) {
-                        callback.processError(projectHost, hostGroupScript, error);
-                    }
-                });
-            }
-        }
-    }
-
-    @Override
     public List<ScriptFile> findScriptFiles(Long scriptId) {
         return scriptFileRepository.findByScriptId(scriptId);
     }
@@ -122,7 +132,9 @@ public class MirrorManagerImpl implements MirrorManager {
 
     private void generateScriptEnvs(Script script) {
         String content = script.getContent();
-        Set<String> envs = content == null ? Collections.emptySet() : new HashSet<>(StringUtils.findGroupsIfMatch(ENV_PATTERN, content));
+        Set<String> envs
+                = content == null ?
+                Collections.emptySet() : new HashSet<>(StringUtils.findGroupsIfMatch(ENV_PATTERN, content));
         List<ScriptEnv> existEnvs = script.getEnvs();//null or empty
         if (envs.isEmpty() || CollectionUtils.isEmpty(existEnvs)) {
             script.setEnvs(toScriptEnvs(envs));
@@ -175,49 +187,120 @@ public class MirrorManagerImpl implements MirrorManager {
     }
 
     @Override
-    public void execScript(Long id, String description) {
-        execScripts(Collections.singletonList(id), description);
+    public void testExecScript(Long scriptId) {
+        Host host = getGlobalTestHost();
+        runBatch(createBatch(Collections.singletonList(scriptId), Collections.singletonList(host.getId())));
     }
 
-    private void execScripts(List<Long> scripts, String description) {
-        runBatch(createBatch(scripts, description));
+    @Override
+    public void execScripts(List<Long> scriptIds, List<Long> hostIds) {
+        runBatch(createBatch(scriptIds, hostIds));
+    }
+
+    private Global getGlobal() {
+        Global global = globalRepository.findOne(Global.ONLY_ID);
+        return global == null ? new Global() : global;
+    }
+
+    @Override
+    public Host getGlobalTestHost() {
+        Global global = getGlobal();
+        Assert.notNull(global, "Global config must be set");
+        return hostRepository.findOne(global.getHostId());
     }
 
     @SneakyThrows
     private void runBatch(Batch batch) {
-        SSH2 ssh2 = SSH2.connect("", 22).auth("root", "123456");
-        for (Long scriptId : batch.getScriptIds()) {
-            List<ScriptFile> files = findScriptFiles(scriptId);
-            //do scp, if file exist skip
-            for (ScriptFile sf : files) {
-                GlobalFile gf = sf.getGlobalFile();
-                File nativeFile = fileStoreService.lookup(gf.getId());
-                SCPClient scpClient = ssh2.scpClient();
-
-                @Cleanup FileInputStream in = new FileInputStream(nativeFile);
-                @Cleanup SCPOutputStream out = scpClient.put(gf.getName(), gf.getSize(), sf.getScpPath(), "7777");
-                //TODO continues copy
-                IOUtils.copy(in, out);
-                out.flush();
-            }
-
+        Global global = getGlobal();
+        List<Host> hosts = hostRepository.findAll(batch.getHostIds());
+        List<Script> scripts = scriptRepository.findAll(batch.getScriptIds());
+        String homePath = global.getHomePath();
+        Long batchId = batch.getId();
+        for (Host host : hosts) {
+            //run command in one host
+            String logFile = getBatchLogfile(homePath, batchId, host.getId());
+            asyncConnectExecute(batchId, host, scripts, logFile);
         }
     }
 
-    private Batch createBatch(List<Long> scriptIds, String description) {
-        Batch batch = new Batch();
-        batch.setDescription(description);
-        batch.setScriptIds(scriptIds);
-        return batchRepository.save(batch);
-    }
-
-    private void execCommand(SSH2 ssh2, String command, StdCallback callback) {
+    @Async
+    public void asyncConnectExecute(Long batchId, Host host, List<Script> scripts, String logfile) {
+        //connect and auth
+        SSH2 ssh2 = connectToHost(host);
+        //custom std logger
+        CustomStdLogger stdLogger = new CustomStdLogger(LoggerUtils.createLogger(logfile));
         try {
-            ssh2.execCommand(command, callback);
+            for (Script script : scripts) {
+                //copy script files
+                copyScriptFiles(script.getId(), ssh2);
+                String bashScript = script.getContent();
+                //run bash script
+                runBashScript(ssh2, bashScript, stdLogger);
+            }
+        } catch (Exception e) {
+            log.error("An error occurred : {}", e);
         } finally {
-            log.info("closing ssh connection");
             ssh2.disconnect();
         }
+        //log batch host result
+        synchronized (BATCH_RESULT_LOCK) {
+            Batch batch = findBath(batchId);
+            Map<Long, Boolean> hostResult = Maps.newHashMap(batch.getHostResult());
+            hostResult.put(host.getId(), !stdLogger.hasError());
+            saveBatch(batch);
+        }
+    }
+
+    private void runBashScript(SSH2 ssh2, String bashScript, CustomStdLogger stdLogger) throws UnsupportedEncodingException {
+        @Cleanup ByteArrayInputStream is
+                = new ByteArrayInputStream(bashScript.getBytes(DEFAULT_CHARSET));
+        ssh2.scp(is, INIT_SCRIPT, USER_HOME);
+        //init script
+        ssh2.execCommand(COMMAND_PREFIX + USER_HOME + SEPARATOR + INIT_SCRIPT, stdLogger);
+    }
+
+    private SSH2 connectToHost(Host host) {
+        //connect
+        SSH2 ssh2 = SSH2.connect(host.getAddress(), host.getSshPort());
+        String privateKey = host.getPrivateKey();
+        String user = host.getUser();
+        String password = host.getPassword();
+        //authenticate
+        if (StringUtils.isNotEmpty(privateKey)) {
+            ssh2.authWithPublicKey(user, password, privateKey.toCharArray());
+        } else {
+            ssh2.auth(user, password);
+        }
+        return ssh2;
+    }
+
+    private Batch findBath(Long batchId) {
+        return batchRepository.findOne(batchId);
+    }
+
+    private String getBatchLogfile(String homePath, Long batchId, Long hostId) {
+        return homePath + SEPARATOR + "logs" + SEPARATOR + batchId + SEPARATOR + hostId + ".log";
+    }
+
+    private void copyScriptFiles(Long scriptId, SSH2 ssh2) {
+        List<ScriptFile> files = findScriptFiles(scriptId);
+        //do scp, if file exist skip
+        for (ScriptFile sf : files) {
+            GlobalFile gf = sf.getGlobalFile();
+            File nativeFile = fileStoreService.lookup(gf.getId());
+            ssh2.scp(nativeFile, gf.getName(), sf.getScpPath());
+        }
+    }
+
+    private Batch createBatch(List<Long> scriptIds, List<Long> hostIds) {
+        Batch batch = new Batch();
+        batch.setScriptIds(scriptIds);
+        batch.setHostIds(hostIds);
+        return saveBatch(batch);
+    }
+
+    private Batch saveBatch(Batch batch) {
+        return batchRepository.save(batch);
     }
 
 }

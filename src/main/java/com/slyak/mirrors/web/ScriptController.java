@@ -1,10 +1,7 @@
 package com.slyak.mirrors.web;
 
 import com.google.common.collect.Lists;
-import com.slyak.mirrors.domain.GlobalFile;
-import com.slyak.mirrors.domain.OS;
-import com.slyak.mirrors.domain.Script;
-import com.slyak.mirrors.domain.ScriptFile;
+import com.slyak.mirrors.domain.*;
 import com.slyak.mirrors.service.MirrorManager;
 import com.slyak.web.support.data.RequestParamBind;
 import com.slyak.web.support.freemarker.bootstrap.InitialPreviewConfigConverter;
@@ -13,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -97,7 +95,7 @@ public class ScriptController {
 
     @GetMapping("/run")
     public void run(@RequestParam("id") Long id) {
-        mirrorManager.execScript(id,"脚本测试");
+        mirrorManager.testExecScript(id);
     }
 
     @ModelAttribute("script")

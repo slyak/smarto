@@ -1,9 +1,9 @@
 package com.slyak.mirrors.domain;
 
 import lombok.Data;
-import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
@@ -15,7 +15,15 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "t_global")
 @Data
-public class Global extends AbstractPersistable<Long> {
+public class Global {
 
-    private String homePath;
+    public static final Long ONLY_ID = 1L;
+
+    @Id
+    private Long id = ONLY_ID;
+
+    private String homePath = "/opt/.global";
+
+    private Long hostId;
+
 }

@@ -1,8 +1,9 @@
 package com.slyak.mirrors.domain;
 
+import org.springframework.data.jpa.domain.AbstractPersistable;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import java.io.Serializable;
 
 /**
  * .
@@ -12,6 +13,11 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "t_batch_log")
-public class BatchLog implements Serializable{
+public class BatchLog extends AbstractPersistable<Long> {
 
+    private Long batchId;
+
+    private Long scriptId;
+
+    private Long hostId;
 }
