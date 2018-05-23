@@ -43,10 +43,6 @@ public class MirrorManagerImpl implements MirrorManager {
 
     private static final String ENV_PATTERN = "\\$[{]?([A-Za-z0-9_-]+)[}]?";
 
-    private static final String COMMAND_PREFIX = "sh -c ";
-
-    private static final String USER_HOME = "~";
-
     private static final String SH = ".sh";
 
     private static final char SEPARATOR = '/';
@@ -245,12 +241,12 @@ public class MirrorManagerImpl implements MirrorManager {
         for (Host host : hosts) {
             //run command in one host
             String logFile = getBatchLogfile(homePath, batchId, host.getId());
-            asyncConnectExecute(batchId, host, scripts, logFile);
+            asyncConnectExecute(homePath, batchId, host, scripts, logFile);
         }
     }
 
     @Async
-    public void asyncConnectExecute(Long batchId, Host host, List<Script> scripts, String logfile) {
+    public void asyncConnectExecute(String homePath, Long batchId, Host host, List<Script> scripts, String logfile) {
         //connect and auth
         SSH2 ssh2 = null;
         //custom std logger
@@ -277,10 +273,13 @@ public class MirrorManagerImpl implements MirrorManager {
                     }
 
                     //run bash script
-                    fileScpPaths.add(USER_HOME);
-                    String bashScript = script.getContent();
+                    fileScpPaths.add(homePath);
+                    //\r\n will cause dos file format and will cause file not found exception
+                    String bashScript = StringUtils.replace(script.getContent(), "\r\n", "\n");
                     @Cleanup ByteArrayInputStream is = new ByteArrayInputStream(bashScript.getBytes(DEFAULT_CHARSET));
-                    ssh2.scp(is, script.getId() + SH, USER_HOME);
+                    String scriptName = script.getId() + SH;
+                    ssh2.scp(is, scriptName, homePath);
+                    scriptFiles.add(homePath + SEPARATOR + scriptName);
                 }
 
                 ScriptContext context = ScriptContexts.select(host, ssh2, stdLogger, fileScpPaths);

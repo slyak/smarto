@@ -9,12 +9,15 @@ import com.slyak.mirrors.service.MirrorManager;
 import com.slyak.web.support.data.RequestParamBind;
 import com.slyak.web.support.freemarker.bootstrap.InitialPreviewConfigConverter;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 /**
@@ -148,12 +151,18 @@ public class ScriptController {
 
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws UnsupportedEncodingException {
         SSH2 ssh2 = SSH2.connect("192.168.230.8", 22).auth("root", "123456");
         String name = RandomStringUtils.randomAlphanumeric(6);
         String osName = "centos";
         String osVersion = "7";
-        ssh2.execCommand("docker run -idt --name " + name + " " + osName + ":" + osVersion, SimpleStdCallback.INSTANCE);
-        ssh2.execCommand("docker exec " + name + " /opt/.global/__init.sh", SimpleStdCallback.INSTANCE);
+        String test = "#!/bin/sh\r\n" +
+                "mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup\r\n" +
+                "wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo";
+        String test2 = StringUtils.chomp(test);
+
+        /*ssh2.scp(new ByteArrayInputStream(test.getBytes("UTF-8")), "hello.sh", "/opt/test");
+        ssh2.execCommand("docker run -idt -v /opt/test:/opt/test --name " + name + " " + osName + ":" + osVersion, SimpleStdCallback.INSTANCE);
+        ssh2.execCommand("docker exec " + name + " /opt/test/hello.sh", SimpleStdCallback.INSTANCE);*/
     }
 }

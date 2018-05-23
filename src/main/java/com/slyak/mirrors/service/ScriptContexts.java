@@ -79,12 +79,12 @@ public abstract class ScriptContexts implements ScriptContext {
         DockerScriptRunnerContext(SSH2 ssh2, StdCallback callback, Set<String> filePaths, Host host) {
             super(ssh2, callback, filePaths);
             this.callback = callback;
-            this.container = RandomStringUtils.random(6);
-            StringBuilder builder = new StringBuilder("docker run --name " + container);
+            this.container = RandomStringUtils.randomAlphabetic(6);
+            StringBuilder builder = new StringBuilder("docker run -idt --name " + container);
             for (String filePath : filePaths) {
                 builder.append(" -v ").append(filePath).append(":").append(filePath);
             }
-            builder.append(host.getOsName()).append(":").append(host.getOsVersion());
+            builder.append(" ").append(host.getOsName()).append(":").append(host.getOsVersion());
 
             //createContainer
             ssh2.execCommand(builder.toString(), callback);
@@ -92,12 +92,12 @@ public abstract class ScriptContexts implements ScriptContext {
 
         @Override
         String generateCommand(String scriptFile) {
-            return "docker exec " + container + " sh -c " + scriptFile;
+            return "docker exec " + container + " " + scriptFile;
         }
 
         @Override
         protected void finishExec() {
-            ssh2.execCommand("docker rm -f " + container, callback);
+//            ssh2.execCommand("docker rm -f " + container, callback);
         }
     }
 }
