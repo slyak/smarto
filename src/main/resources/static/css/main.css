@@ -34,7 +34,7 @@ a:hover, a:focus, a:active, a.btn-link, a.btn-link:hover, a.btn-link:focus, a.bt
 .navbar a.nav-link {
     color: #fff;
     line-height: 20px;
-    padding: 10px;
+    padding: 10px 15px !important;
 }
 
 .navbar a.nav-link:hover, .navbar a.nav-link:focus, .active a {
@@ -174,7 +174,6 @@ form input, form select {
     margin: 0;
     /*max-width: 250px;*/
     vertical-align: baseline;
-    width: 100%;
     background: #fff;
     color: #333;
     font-family: inherit;

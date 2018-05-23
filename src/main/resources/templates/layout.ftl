@@ -5,9 +5,10 @@
 <head>
     <@bootstrap.cssAndJs/>
     <@slyak.js url="/webjars/jquery-migrate/jquery-migrate.min.js"/>
-    <@slyakUI.handlebars/>
+    <@slyakUI.cssAndJs/>
     <@slyakUI.fontasome/>
     <@slyak.css url="/css/main.css"/>
+    <@slyak.js url="/js/main.js"/>
 </head>
 <body class="clean-html">
     <#nested />
@@ -19,6 +20,8 @@
     <@cleanHtml>
         <@bootstrap.navbar brand="ITASM" left=[
         {'title':'脚本','url':'/scripts'},
+        {'title':'日志','url':'/logs'},
+        {'title':'主机','url':'/hosts'},
         {'title':'项目','url':'/projects'},
         {'title':'镜像','url':'/mirrors'}
         ] right=[
@@ -106,8 +109,7 @@
     <ul>
         <#list items as item>
             <li class="list-item">
-                <a href="<@slyak.query url="${item.url}" extra=RequestParameters/>"
-                   <#if slyakRequestContext.isSameUrl(item.url)>class="active" </#if>>
+                <a class="<#if slyakRequestContext.isSameUrl(item.url)>active</#if><@slyak.addClass values=[item.aClass]/>" href="<@slyak.query url="${item.url}" extra=RequestParameters/>">
                     <i class="fas ${item.class}"></i>
                     <span>${item.title}</span>
                 </a>
@@ -137,7 +139,6 @@
             {'title':'下载离线安装包','url':'/project/download','class':'fa-download'}
             ]/>
     <@layout.list title="导航" items=[
-        {'title':'主机列表','url':'/project/hosts','class':'fa-desktop'},
         {'title':'主机分组','url':'/project/groups','class':'fa-boxes'}
         ]/>
     <@layout.list items=[{'title':'配置','url':'/project/settings','class':'fa-cog'}]/>
@@ -218,14 +219,14 @@
         </div>
         <div class="mt-2">
             <@layout.list title="操作" items=[
-            {'title':'运行脚本','url':'/script/run','class':'fa-paper-plane'}
+            {'title':'运行脚本','url':'/script/run','class':'fa-paper-plane','aClass':'run-script'},
+            {'title':'查看日志','url':'/logs','class':'fa-terminal'}
             ]/>
     <@layout.list title="导航" items=[
-        {'title':'文件列表','url':'/script/files','class':'fa-file'},
         {'title':'脚本内容','url':'/script/content','class':'fa-tasks'},
+        {'title':'文件列表','url':'/script/files','class':'fa-file'},
         {'title':'变量列表','url':'/script/envs','class':'fa-subscript'},
-        {'title':'使用帮助','url':'/script/help','class':'fa-question-circle'},
-        {'title':'运行日志','url':'/script/logs','class':'fa-terminal'}
+        {'title':'使用帮助','url':'/script/help','class':'fa-question-circle'}
         ]/>
     <@layout.list items=[{'title':'配置','url':'/script','class':'fa-cog'}]/>
         </div>

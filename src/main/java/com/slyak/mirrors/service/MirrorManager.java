@@ -1,6 +1,7 @@
 package com.slyak.mirrors.service;
 
 import com.slyak.mirrors.domain.*;
+import com.slyak.mirrors.dto.BatchQuery;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -35,9 +36,25 @@ public interface MirrorManager {
 
     OS findOs(String osName);
 
-    void testExecScript(Long scriptId);
+    Batch execScript(Long scriptId);
 
-    void execScripts(List<Long> scriptId, List<Long> hostIds);
+    Batch execScripts(Long bizId, List<Long> scriptIds, List<Long> hostIds);
 
-    Host getGlobalTestHost();
+    Global findGlobal();
+
+    Global saveGlobal(Global global);
+
+    Host getTestHost();
+
+    boolean validateHost(Host host);
+
+    String getBatchLogfile(Long batchId, Long hostId);
+
+    Page<Batch> queryBatches(BatchQuery batchQuery, Pageable pageable);
+
+    Page<Host> queryHosts(Pageable pageable);
+
+    void saveHost(Host host);
+
+    boolean validateHost(Host testHost, String command, String contains);
 }

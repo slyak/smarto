@@ -13,7 +13,7 @@
     <tbody>
         <#list page.content as sc>
         <tr>
-            <td><@slyakUI.a href="/script/files?id=${sc.id}">${sc.name}</@slyakUI.a></td>
+            <td><@slyakUI.a href="/script/content?id=${sc.id}">${sc.name}</@slyakUI.a></td>
             <td>${sc.osName}</td>
             <td><#if sc.osVersions?has_content>${sc.osVersions?join(",")}</#if></td>
             <td>

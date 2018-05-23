@@ -25,4 +25,4 @@
     <@layout.downloadOS/>
 </#assign>
 
-<@layout.leftMain title='项目' left=left right=right btnCreate={'title':'创建新项目','url':'/project/project'}/>
+<@layout.leftMain title='项目' left=left right=right btnCreate={'title':'创建项目','url':'/project/project'}/>

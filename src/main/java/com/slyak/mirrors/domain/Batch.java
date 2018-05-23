@@ -1,6 +1,5 @@
 package com.slyak.mirrors.domain;
 
-import com.google.common.collect.Maps;
 import com.slyak.spring.jpa.hibernate.JSONType;
 import lombok.Data;
 import org.hibernate.annotations.Type;
@@ -8,6 +7,7 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.List;
 import java.util.Map;
 
@@ -32,8 +32,15 @@ public class Batch extends AbstractPersistable<Long> {
 
     private long createAt = System.currentTimeMillis();
 
-    private BatchStatus status;
+    private BatchTaskStatus status;
 
-    @Type(type = JSONType.TYPE)
-    private Map<Long, Boolean> hostResult = Maps.newHashMap();
+    @Transient
+    //hostTasks
+    private Map<Long, BatchTask> tasks;
+
+    @Transient
+    private List<Script> scripts;
+
+    @Transient
+    private List<Host> hosts;
 }

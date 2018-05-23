@@ -33,4 +33,62 @@ public class ProjectController {
     @GetMapping("/project/{id}")
     public void settings() {
     }
+
+
+    @Controller
+    @RequestMapping("/project/*")
+    public static class ProjectActionsController {
+        @Autowired
+        private MirrorManager mirrorManager;
+
+        //host start
+
+        @GetMapping("/hosts")
+        public void hosts(Pageable pageable, ModelMap modelMap) {
+            modelMap.put("page", mirrorManager.queryProjects(pageable));
+        }
+
+        @GetMapping("/host")
+        public void host() {
+        }
+
+        @GetMapping("/host/{id}")
+        public void hostSettings() {
+        }
+
+
+        //group start
+
+        @GetMapping("/groups")
+        public void groups(Pageable pageable, ModelMap modelMap) {
+            modelMap.put("page", mirrorManager.queryProjects(pageable));
+        }
+
+        @GetMapping("/group")
+        public void group(Long projectId) {
+
+        }
+
+        @GetMapping("/group/hosts")
+        public void hosts(Long projectId) {
+
+        }
+
+        @GetMapping("/group/{id}")
+        public void groupSettings() {
+        }
+
+        //script start
+        @GetMapping("/scripts")
+        public void scripts() {
+        }
+
+        @GetMapping("/script")
+        public void script() {
+        }
+
+        @GetMapping("/script/{id}")
+        public void settings() {
+        }
+    }
 }

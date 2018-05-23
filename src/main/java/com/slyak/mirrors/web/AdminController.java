@@ -1,5 +1,6 @@
 package com.slyak.mirrors.web;
 
+import com.slyak.mirrors.domain.Host;
 import com.slyak.mirrors.domain.OS;
 import com.slyak.mirrors.service.MirrorManager;
 import com.slyak.web.support.data.RequestParamBind;
@@ -9,6 +10,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * .
@@ -24,7 +26,8 @@ public class AdminController {
     private MirrorManager mirrorManager;
 
     @GetMapping("/index")
-    public void index() {
+    public void index(ModelMap modelMap) {
+        modelMap.put("global", mirrorManager.findGlobal());
     }
 
     @GetMapping("/oss")
@@ -40,6 +43,13 @@ public class AdminController {
     @PostMapping("/os")
     public void saveOs(@RequestParamBind("id") OS os) {
         mirrorManager.saveOs(os);
+    }
+
+    @GetMapping("/testHost")
+    @ResponseBody
+    public boolean validateTestHost() {
+        Host testHost = mirrorManager.getTestHost();
+        return mirrorManager.validateHost(testHost, "docker -v", "version");
     }
 
 

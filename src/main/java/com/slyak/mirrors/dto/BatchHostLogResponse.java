@@ -13,7 +13,6 @@ import java.io.Serializable;
  */
 @Data
 @AllArgsConstructor
-public class GroupHostResponse implements Serializable {
-    private Long groupHostId;
-    private String response;
+public class BatchHostLogResponse implements Serializable {
+    String line;
 }

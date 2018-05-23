@@ -17,7 +17,7 @@ import javax.persistence.Table;
 @Data
 public class Host extends AbstractPersistable<Long> {
 
-    private String address = "127.0.0.1";
+    private String ip = "127.0.0.1";
 
     private String name = "127.0.0.1";
 
@@ -28,4 +28,10 @@ public class Host extends AbstractPersistable<Long> {
     private String password;
 
     private String privateKey;
+
+    private boolean testHost = false;
+
+    private String osName;
+
+    private String osVersion;
 }

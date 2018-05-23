@@ -24,6 +24,4 @@ public class Global {
 
     private String homePath = "/opt/.global";
 
-    private Long hostId;
-
 }

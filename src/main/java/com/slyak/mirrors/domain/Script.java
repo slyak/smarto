@@ -36,4 +36,9 @@ public class Script extends AbstractPersistable<Long> {
 
     @Type(type = JSONType.TYPE)
     private List<String> osVersions;
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }
