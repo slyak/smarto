@@ -13,9 +13,9 @@ $(function () {
         $.get(ctx + "/admin/testHost", function (ret) {
             if (ret) {
                 //host is good , then run script
-                $.ajax(link.attr("href"), function (batchId) {
-                    alert(1);
-                    location.href = ctx + "/log?batchId=" + batchId;
+                $.get(link.attr("href"), function (batchId) {
+                    alert(batchId);
+                    location.href = ctx + "/logs?batchId=" + batchId;
                 })
             } else {
                 alert("测试主机不可用或未安装docker环境");

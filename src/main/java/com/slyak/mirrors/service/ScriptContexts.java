@@ -97,7 +97,7 @@ public abstract class ScriptContexts implements ScriptContext {
 
         @Override
         protected void finishExec() {
-//            ssh2.execCommand("docker rm -f " + container, callback);
+            ssh2.execCommand("docker rm -f " + container, callback);
         }
     }
 }

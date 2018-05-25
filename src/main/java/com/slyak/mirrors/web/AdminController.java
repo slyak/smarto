@@ -52,8 +52,12 @@ public class AdminController {
         return mirrorManager.validateHost(testHost, "docker -v", "version");
     }
 
-
     @GetMapping("/files")
     public void files() {
+    }
+
+    @GetMapping("/sysEnvs")
+    public void sysEnvs(ModelMap modelMap) {
+        modelMap.put("sysEnvs", mirrorManager.querySysEnvs());
     }
 }

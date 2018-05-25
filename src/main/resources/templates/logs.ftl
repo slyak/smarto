@@ -36,13 +36,18 @@
                     </#if>
                     <span class="badge ${badgeClass}">${task.status.title}</span>
                 </td>
-                <td><@bootstrap.a href="/batch?id=${batch.id}&testHostId=${host.id}" title="查看日志"/></td>
+                <td><@bootstrap.a href="/log/detail?batchId=${batch.id}&hostId=${host.id}" title="查看日志" modal=true/></td>
             </tr>
             </#list>
         </#list>
     </tbody>
 </table>
     <@slyakUI.pagination value=page/>
+
+<script>
+
+</script>
+
 </#assign>
 
 <#assign right>

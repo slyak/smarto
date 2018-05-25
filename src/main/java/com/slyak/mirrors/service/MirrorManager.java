@@ -2,6 +2,7 @@ package com.slyak.mirrors.service;
 
 import com.slyak.mirrors.domain.*;
 import com.slyak.mirrors.dto.BatchQuery;
+import com.slyak.mirrors.dto.SysEnv;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -57,4 +58,8 @@ public interface MirrorManager {
     void saveHost(Host host);
 
     boolean validateHost(Host testHost, String command, String contains);
+
+    Batch findBatch(Long batchId);
+
+    List<SysEnv> querySysEnvs();
 }

@@ -11,14 +11,13 @@ import java.io.Serializable;
  * @since 1.3.0
  */
 @Data
-public class BatchHostLog implements Serializable {
+public class TaskLogRequest implements Serializable {
+
+    private String id;
 
     private Long batchId;
 
     private Long hostId;
 
-
-    public String getLogKey() {
-        return batchId + "_" + hostId;
-    }
+    private int line = 0;
 }

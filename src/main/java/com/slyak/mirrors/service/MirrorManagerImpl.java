@@ -2,33 +2,39 @@ package com.slyak.mirrors.service;
 
 import ch.qos.logback.classic.Logger;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.slyak.core.ssh2.CustomStdLogger;
 import com.slyak.core.ssh2.SSH2;
 import com.slyak.core.ssh2.StdCallback;
+import com.slyak.core.ssh2.StdEvent;
+import com.slyak.core.ssh2.StdEventLogger;
 import com.slyak.core.util.LoggerUtils;
 import com.slyak.core.util.StringUtils;
 import com.slyak.file.FileStoreService;
 import com.slyak.mirrors.domain.*;
 import com.slyak.mirrors.dto.BatchQuery;
+import com.slyak.mirrors.dto.SysEnv;
 import com.slyak.mirrors.repository.*;
+import com.slyak.web.support.freemarker.FmUtils;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.SystemUtils;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -39,7 +45,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
-public class MirrorManagerImpl implements MirrorManager {
+public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublisherAware, ApplicationContextAware {
 
     private static final String ENV_PATTERN = "\\$[{]?([A-Za-z0-9_-]+)[}]?";
 
@@ -48,6 +54,8 @@ public class MirrorManagerImpl implements MirrorManager {
     private static final char SEPARATOR = '/';
 
     private static final String DEFAULT_CHARSET = "UTF-8";
+
+    private static final String PROJECT_HOME = SystemUtils.getUserHome().getPath() + SEPARATOR + ".itasm";
 
     private final ProjectRepository projectRepository;
 
@@ -71,6 +79,11 @@ public class MirrorManagerImpl implements MirrorManager {
 
     private final BatchTaskRepository batchTaskRepository;
 
+    private final TaskExecutor taskExecutor;
+
+    private ApplicationEventPublisher eventPublisher;
+
+    private ApplicationContext appContext;
 
     @Autowired
     public MirrorManagerImpl(
@@ -84,7 +97,9 @@ public class MirrorManagerImpl implements MirrorManager {
             HostRepository hostRepository,
             GlobalRepository globalRepository,
             FileStoreService<String> fileStoreService,
-            BatchTaskRepository batchTaskRepository) {
+            BatchTaskRepository batchTaskRepository,
+            TaskExecutor taskExecutor
+    ) {
         this.projectRepository = projectRepository;
         this.scriptFileRepository = scriptFileRepository;
         this.groupRepository = groupRepository;
@@ -96,6 +111,7 @@ public class MirrorManagerImpl implements MirrorManager {
         this.globalRepository = globalRepository;
         this.fileStoreService = fileStoreService;
         this.batchTaskRepository = batchTaskRepository;
+        this.taskExecutor = taskExecutor;
     }
 
     @Override
@@ -211,14 +227,6 @@ public class MirrorManagerImpl implements MirrorManager {
     @Override
     @SneakyThrows
     public Global saveGlobal(Global global) {
-        Global old = globalRepository.findOne(Global.ONLY_ID);
-        String newPath = global.getHomePath();
-        if (old != null) {
-            String oldPath = old.getHomePath();
-            if (!StringUtils.equals(oldPath, newPath)) {
-                FileUtils.moveDirectory(new File(oldPath), new File(newPath));
-            }
-        }
         return globalRepository.save(global);
     }
 
@@ -233,75 +241,101 @@ public class MirrorManagerImpl implements MirrorManager {
 
     @SneakyThrows
     private void runBatch(Batch batch) {
-        Global global = findGlobal();
-        List<Host> hosts = hostRepository.findAll(batch.getHostIds());
-        List<Script> scripts = scriptRepository.findAll(batch.getScriptIds());
-        String homePath = global.getHomePath();
-        Long batchId = batch.getId();
-        for (Host host : hosts) {
-            //run command in one host
-            String logFile = getBatchLogfile(homePath, batchId, host.getId());
-            asyncConnectExecute(homePath, batchId, host, scripts, logFile);
+        taskExecutor.execute(() -> {
+            List<Host> hosts = hostRepository.findAll(batch.getHostIds());
+            List<Script> scripts = scriptRepository.findAll(batch.getScriptIds());
+            Long batchId = batch.getId();
+            for (Host host : hosts) {
+                //run command in one host
+                String logFile = getBatchLogfile(batchId, host.getId());
+                asyncConnectExecute(batchId, host, scripts, logFile);
+            }
+        });
+
+    }
+
+    private void asyncConnectExecute(Long batchId, Host host, List<Script> scripts, String logfile) {
+        taskExecutor.execute(() -> {
+            //connect and auth
+            SSH2 ssh2 = null;
+            //custom std logger
+            StdEventLogger stdLogger = null;
+            try {
+                ssh2 = connectToHost(host);
+                if (ssh2 != null && ssh2.isAuthSuccess()) {
+                    Logger logger = LoggerUtils.createLogger(logfile, "%msg%n");
+                    stdLogger = new StdEventLogger(logger, eventPublisher) {
+                        @Override
+                        protected StdEvent decorate(StdEvent stdEvent) {
+                            stdEvent.setProperty("batchId", batchId);
+                            stdEvent.setProperty("hostId", host.getId());
+                            return stdEvent;
+                        }
+                    };
+                    Set<String> fileScpPaths = Sets.newHashSet();
+                    List<String> scriptFiles = Lists.newArrayList();
+                    for (Script script : scripts) {
+                        //copy script files
+                        List<ScriptFile> files = findScriptFiles(script.getId());
+                        //do scp, if file exist skip
+                        for (ScriptFile sf : files) {
+                            GlobalFile gf = sf.getGlobalFile();
+                            File nativeFile = fileStoreService.lookup(gf.getId());
+                            String fileName = gf.getName();
+                            String scpPath = sf.getScpPath();
+                            ssh2.scp(nativeFile, fileName, scpPath);
+                            logger.info("Scp file {} to host path {}:{}", fileName, host.getIp(), scpPath);
+                            fileScpPaths.add(scpPath);
+                        }
+
+                        //run bash script
+                        fileScpPaths.add(PROJECT_HOME);
+                        Map<String, Object> model = Maps.newHashMap();
+                        setupSysEnvs(model, batchId, host);
+                        //\r\n will cause dos file format and will cause file not found exception
+                        String bashScript = StringUtils.replace(FmUtils.renderStringTpl(script.getContent(), model), "\r\n", "\n");
+                        @Cleanup ByteArrayInputStream is = new ByteArrayInputStream(bashScript.getBytes(DEFAULT_CHARSET));
+                        String scriptName = script.getId() + SH;
+                        ssh2.scp(is, scriptName, PROJECT_HOME);
+                        scriptFiles.add(PROJECT_HOME + SEPARATOR + scriptName);
+                    }
+
+                    ScriptContext context = ScriptContexts.select(host, ssh2, stdLogger, fileScpPaths);
+                    context.exec(scriptFiles);
+                }
+            } catch (Exception e) {
+                log.error("An error occurred : {}", e);
+            } finally {
+                if (ssh2 != null) {
+                    ssh2.disconnect();
+                }
+            }
+            //log batch host result
+            BatchTaskKey taskKey = new BatchTaskKey();
+            taskKey.setBatchId(batchId);
+            taskKey.setHostId(host.getId());
+            BatchTask batchTask = batchTaskRepository.findOne(taskKey);
+            batchTask.setStopAt(System.currentTimeMillis());
+            BatchTaskStatus status = stdLogger == null ?
+                    BatchTaskStatus.FAILED :
+                    (stdLogger.hasError() ? BatchTaskStatus.FAILED : BatchTaskStatus.SUCCESS);
+            batchTask.setStatus(status);
+            batchTaskRepository.save(batchTask);
+        });
+    }
+
+    private void setupSysEnvs(Map<String, Object> model, Long batchId, Host host) {
+        Collection<SysEnvProvider> sysEnvProviders = getSysEnvProviders();
+        if (!CollectionUtils.isEmpty(sysEnvProviders)) {
+            for (SysEnvProvider provider : sysEnvProviders) {
+                SysEnv metadata = provider.getMetadata();
+                model.put(metadata.getName(), provider.provide(batchId, host));
+            }
         }
     }
 
-    @Async
-    public void asyncConnectExecute(String homePath, Long batchId, Host host, List<Script> scripts, String logfile) {
-        //connect and auth
-        SSH2 ssh2 = null;
-        //custom std logger
-        CustomStdLogger stdLogger = null;
-        try {
-            ssh2 = connectToHost(host);
-            if (ssh2 != null && ssh2.isAuthSuccess()) {
-                Logger logger = LoggerUtils.createLogger(logfile);
-                stdLogger = new CustomStdLogger(logger);
-                Set<String> fileScpPaths = Sets.newHashSet();
-                List<String> scriptFiles = Lists.newArrayList();
-                for (Script script : scripts) {
-                    //copy script files
-                    List<ScriptFile> files = findScriptFiles(script.getId());
-                    //do scp, if file exist skip
-                    for (ScriptFile sf : files) {
-                        GlobalFile gf = sf.getGlobalFile();
-                        File nativeFile = fileStoreService.lookup(gf.getId());
-                        String fileName = gf.getName();
-                        String scpPath = sf.getScpPath();
-                        ssh2.scp(nativeFile, fileName, scpPath);
-                        logger.info("Scp file {} to host path {}:{}", fileName, host.getIp(), scpPath);
-                        fileScpPaths.add(scpPath);
-                    }
-
-                    //run bash script
-                    fileScpPaths.add(homePath);
-                    //\r\n will cause dos file format and will cause file not found exception
-                    String bashScript = StringUtils.replace(script.getContent(), "\r\n", "\n");
-                    @Cleanup ByteArrayInputStream is = new ByteArrayInputStream(bashScript.getBytes(DEFAULT_CHARSET));
-                    String scriptName = script.getId() + SH;
-                    ssh2.scp(is, scriptName, homePath);
-                    scriptFiles.add(homePath + SEPARATOR + scriptName);
-                }
-
-                ScriptContext context = ScriptContexts.select(host, ssh2, stdLogger, fileScpPaths);
-                context.exec(scriptFiles);
-            }
-        } catch (Exception e) {
-            log.error("An error occurred : {}", e);
-        } finally {
-            if (ssh2 != null) {
-                ssh2.disconnect();
-            }
-        }
-        //log batch host result
-        BatchTaskKey taskKey = new BatchTaskKey();
-        taskKey.setBatchId(batchId);
-        taskKey.setHostId(host.getId());
-        BatchTask batchTask = batchTaskRepository.findOne(taskKey);
-        batchTask.setStopAt(System.currentTimeMillis());
-        BatchTaskStatus status = stdLogger == null ?
-                BatchTaskStatus.FAILED :
-                (stdLogger.hasError() ? BatchTaskStatus.FAILED : BatchTaskStatus.SUCCESS);
-        batchTask.setStatus(status);
+    private Collection<SysEnvProvider> getSysEnvProviders() {
+        return appContext.getBeansOfType(SysEnvProvider.class).values();
     }
 
     private SSH2 connectToHost(Host host) {
@@ -369,9 +403,22 @@ public class MirrorManagerImpl implements MirrorManager {
     }
 
     @Override
+    public Batch findBatch(Long batchId) {
+        return batchRepository.findOne(batchId);
+    }
+
+    @Override
+    public List<SysEnv> querySysEnvs() {
+        List<SysEnv> sysEnvs = Lists.newArrayList();
+        for (SysEnvProvider provider : getSysEnvProviders()) {
+            sysEnvs.add(provider.getMetadata());
+        }
+        return sysEnvs;
+    }
+
+    @Override
     public String getBatchLogfile(Long batchId, Long hostId) {
-        Global global = findGlobal();
-        return getBatchLogfile(global.getHomePath(), batchId, hostId);
+        return getBatchLogDirectory() + SEPARATOR + batchId + SEPARATOR + hostId + ".log";
     }
 
     @Override
@@ -389,12 +436,8 @@ public class MirrorManagerImpl implements MirrorManager {
         hostRepository.save(host);
     }
 
-    private String getBatchLogDirectory(String homePath) {
-        return homePath + SEPARATOR + "logs";
-    }
-
-    private String getBatchLogfile(String homePath, Long batchId, Long hostId) {
-        return getBatchLogDirectory(homePath) + SEPARATOR + batchId + SEPARATOR + hostId + ".log";
+    private String getBatchLogDirectory() {
+        return PROJECT_HOME + SEPARATOR + "logs";
     }
 
     private Batch createBatch(Long ownerId, List<Long> scriptIds, List<Long> hostIds) {
@@ -418,5 +461,15 @@ public class MirrorManagerImpl implements MirrorManager {
 
     private Batch saveBatch(Batch batch) {
         return batchRepository.save(batch);
+    }
+
+    @Override
+    public void setApplicationEventPublisher(ApplicationEventPublisher eventPublisher) {
+        this.eventPublisher = eventPublisher;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext appContext) throws BeansException {
+        this.appContext = appContext;
     }
 }

@@ -8,6 +8,7 @@
             <th scope="col">键</th>
             <th scope="col">描述</th>
             <th scope="col">默认值</th>
+            <th scope="col">操作</th>
         </tr>
         </thead>
         <tbody>
@@ -17,6 +18,7 @@
                 <td>${env.key}<input type="hidden" name="envs[${env_index}].key" value="${env.key}"></td>
                 <td><@bootstrap.input name="envs[${env_index}].description" value="${env.description}"/></td>
                 <td><@bootstrap.input name="envs[${env_index}].defValue" value="${env.defValue}"/></td>
+                <td>asd</td>
             </tr>
             <#else >
             </#list>

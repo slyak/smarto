@@ -1,14 +1,24 @@
 package com.slyak.mirrors.web;
 
-import com.slyak.mirrors.dto.BatchHostLog;
+import ch.qos.logback.classic.Logger;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.slyak.core.ssh2.StdEvent;
+import com.slyak.core.util.LoggerUtils;
 import com.slyak.mirrors.dto.BatchHostLogResponse;
 import com.slyak.mirrors.dto.BatchQuery;
+import com.slyak.mirrors.dto.TaskLogRequest;
 import com.slyak.mirrors.service.MirrorManager;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -18,6 +28,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * .
@@ -33,30 +46,82 @@ public class LogController {
 
     private final MirrorManager mirrorManager;
 
+    private Cache<String, TaskLogRequest> onlineRequests =
+            CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build();
+
+
     @Autowired
-    public LogController(SimpMessagingTemplate messagingTemplate, MirrorManager mirrorManager) throws IOException {
+    public LogController(
+            SimpMessagingTemplate messagingTemplate,
+            MirrorManager mirrorManager
+    ) throws IOException {
         this.messagingTemplate = messagingTemplate;
         this.mirrorManager = mirrorManager;
     }
 
     @MessageMapping("/ssh/logs")
-    public void logs(Message<BatchHostLog> message) throws IOException {
-        BatchHostLog batchHostLog = message.getPayload();
-        String logfile = mirrorManager.getBatchLogfile(batchHostLog.getBatchId(), batchHostLog.getHostId());
+    public void logs(Message<TaskLogRequest> message) throws IOException {
+        TaskLogRequest taskLogRequest = message.getPayload();
+        onlineRequests.put(taskLogRequest.getId(), taskLogRequest);
+
+        String logfile = mirrorManager.getBatchLogfile(taskLogRequest.getBatchId(), taskLogRequest.getHostId());
         LineIterator iterator = FileUtils.lineIterator(new File(logfile));
+        int lineCount = 0;
         while (iterator.hasNext()) {
-            messagingTemplate.convertAndSend("/ssh/receive/" + batchHostLog.getLogKey(),
-                    new BatchHostLogResponse(iterator.next()));
+            send(taskLogRequest.getId(), iterator.next(), ++lineCount);
+        }
+    }
+
+    @EventListener(StdEvent.class)
+    public void processStdEvent(StdEvent stdEvent) {
+        if (onlineRequests.size() > 0) {
+            Long batchId = stdEvent.getProperty("batchId");
+            Long hostId = stdEvent.getProperty("hostId");
+            Collection<TaskLogRequest> requests = onlineRequests.asMap().values();
+            for (TaskLogRequest request : requests) {
+                if (Objects.equals(request.getBatchId(), batchId) && Objects.equals(request.getHostId(), hostId)) {
+                    send(request.getId(), stdEvent.getLine(), stdEvent.getNumber());
+                }
+            }
+        }
+    }
+
+    private void send(String requestId, String log, int belongsToLine) {
+        TaskLogRequest request = onlineRequests.getIfPresent(requestId);
+        if (request != null) {
+            int line = request.getLine();
+            if (belongsToLine > line) {
+                messagingTemplate.convertAndSend("/ssh/receive/" + requestId, new BatchHostLogResponse(log));
+                request.setLine(belongsToLine);
+            }
         }
     }
 
     @RequestMapping("/log/detail")
-    public void detail() {
+    public void detail(ModelMap modelMap) {
+        modelMap.put("requestId", RandomStringUtils.randomAlphabetic(6));
     }
 
     @RequestMapping("/logs")
-    public void logs(BatchQuery batchQuery, Pageable pageable, ModelMap modelMap) {
+    public void logs(BatchQuery batchQuery, @PageableDefault(size = 20,sort = "id",direction = Sort.Direction.DESC) Pageable pageable, ModelMap modelMap) {
         modelMap.put("page", mirrorManager.queryBatches(batchQuery, pageable));
+    }
+
+    public static void main(String[] args) {
+        /*try {
+            FileUtils.forceMkdirParent(new File("/opt/itasm/logs/321/65.log"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+        String PROJECT_HOME = SystemUtils.getUserHome().getPath() + '/' + ".itasm";
+        System.out.println(PROJECT_HOME);
+        Logger logger = LoggerUtils.createLogger(PROJECT_HOME + "/logs/321/65.log", "%msg%n");
+        logger.info("this is a test");
+        logger.info("this is a test");
+        logger.info("this is a test");
+        logger.info("this is a test");
+
+        System.out.println(System.getProperty("user.home"));
     }
 
 }

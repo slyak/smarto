@@ -19,7 +19,7 @@ public class Host extends AbstractPersistable<Long> {
 
     private String ip = "127.0.0.1";
 
-    private String name = "127.0.0.1";
+    private String name = "some name";
 
     private int sshPort = 22;
 

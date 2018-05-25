@@ -245,8 +245,6 @@
             <h5 class="card-title">${title}</h5>
             <hr/>
             <@slyakUI.form action=action enctype=enctype>
-                <input style="display:none" type="text" name="fakename">
-                <input style="display:none" type="password" name="fakepwd">
                 <#nested />
                 <hr/>
                 <div class="text-right">
