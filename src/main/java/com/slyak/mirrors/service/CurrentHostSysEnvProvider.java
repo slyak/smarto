@@ -18,7 +18,7 @@ public class CurrentHostSysEnvProvider extends AbstractSysEnvProvider<Host> {
     }
 
     @Override
-    protected String getStructure() {
+    protected String getDescription() {
         return "当前主机";
     }
 

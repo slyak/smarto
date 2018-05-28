@@ -2,7 +2,6 @@ package com.slyak.mirrors.web;
 
 import com.google.common.collect.Lists;
 import com.slyak.core.ssh2.SSH2;
-import com.slyak.core.ssh2.SimpleStdCallback;
 import com.slyak.mirrors.converter.OsVersionsOptionConverter;
 import com.slyak.mirrors.domain.*;
 import com.slyak.mirrors.service.MirrorManager;
@@ -14,11 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * .
@@ -125,6 +125,22 @@ public class ScriptController {
         @GetMapping("/env")
         public void env() {
 
+        }
+
+        @GetMapping("/env/delete")
+        @ResponseBody
+        public boolean envDelete(@RequestParamBind("scriptId") Script script, String key) {
+            List<ScriptEnv> envs = script.getEnvs();
+            if (!CollectionUtils.isEmpty(envs)) {
+                for (int i = envs.size() - 1; i >= 0; i--) {
+                    ScriptEnv env = envs.get(i);
+                    if (Objects.equals(env.getKey(), key)){
+                        envs.remove(i);
+                    }
+                }
+                mirrorManager.saveScript(script);
+            }
+            return true;
         }
 
         @GetMapping("/help")

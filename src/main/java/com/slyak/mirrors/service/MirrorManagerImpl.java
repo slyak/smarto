@@ -146,10 +146,14 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
 
     @Override
     public void saveScript(Script script) {
-        generateScriptEnvs(script);
         scriptRepository.save(script);
     }
 
+    /**
+     * @Deprecated
+     *
+     * @param script
+     */
     private void generateScriptEnvs(Script script) {
         String content = script.getContent();
         Set<String> envs = content == null ?
@@ -292,6 +296,7 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
                         fileScpPaths.add(PROJECT_HOME);
                         Map<String, Object> model = Maps.newHashMap();
                         setupSysEnvs(model, batchId, host);
+                        model.putAll(getBatchScriptEnvs(batchId, script));
                         //\r\n will cause dos file format and will cause file not found exception
                         String bashScript = StringUtils.replace(FmUtils.renderStringTpl(script.getContent(), model), "\r\n", "\n");
                         @Cleanup ByteArrayInputStream is = new ByteArrayInputStream(bashScript.getBytes(DEFAULT_CHARSET));
@@ -322,6 +327,23 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
             batchTask.setStatus(status);
             batchTaskRepository.save(batchTask);
         });
+    }
+
+    private Map<String, String> getBatchScriptEnvs(Long batchId, Script script) {
+        Map<String, String> envs = Maps.newHashMap();
+        Map<String, String> batchEnvs = getBatchScriptEnvs(batchId, script.getId());
+        for (ScriptEnv env : script.getEnvs()) {
+            String key = env.getKey();
+            String current = batchEnvs.get(key);
+            envs.put(key, StringUtils.isEmpty(current) ? env.getDefValue() : current);
+
+        }
+        return envs;
+    }
+
+    //TODO project batch
+    private Map<String, String> getBatchScriptEnvs(Long batchId, Long scriptId) {
+        return Collections.emptyMap();
     }
 
     private void setupSysEnvs(Map<String, Object> model, Long batchId, Host host) {

@@ -1,5 +1,5 @@
 <#-- @ftlvariable name="script" type="com.slyak.mirrors.domain.Script" -->
-<@layout.layout_script title="变量列表" btnCreate={'title':'保存','url':'javascript:saveEnvs()'}>
+<@layout.layout_script title="变量列表" btnCreate={'title':'添加变量','url':'/script/env?scriptId=${script.id}','modal':true,'showSubmit':true}>
     <@slyakUI.form action="/script/envs" id="envsForm">
     <input type="hidden" name="id" value="${script.id}"/>
     <table class="table table-hover table-fa">
@@ -18,7 +18,11 @@
                 <td>${env.key}<input type="hidden" name="envs[${env_index}].key" value="${env.key}"></td>
                 <td><@bootstrap.input name="envs[${env_index}].description" value="${env.description}"/></td>
                 <td><@bootstrap.input name="envs[${env_index}].defValue" value="${env.defValue}"/></td>
-                <td>asd</td>
+                <td>
+                    <@bootstrap.a href="/script/env?scriptId=${script.id}&key=${env.key}" title="编辑变量" modal="true" showSubmit=true/>
+                    <@slyakUI.a href="/script/env/delete?scriptId=${script.id}&key=${env.key}" class="confirm">
+                        删除</@slyakUI.a>
+                </td>
             </tr>
             <#else >
             </#list>
@@ -29,10 +33,5 @@
     <i class="fa fa-info-circle pr-1"></i>上述变量均来自脚本中形如 ： <b class="text-success">$变量名称</b>或<b
         class="text-success">${r'${变量名称}'}</b>的变量，请补全描述信息和默认值。
 </div>
-<script>
-    function saveEnvs() {
-        $("#envsForm").submit();
-    }
-</script>
 
 </@layout.layout_script>

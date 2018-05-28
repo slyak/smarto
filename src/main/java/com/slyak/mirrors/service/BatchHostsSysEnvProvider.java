@@ -29,7 +29,7 @@ public class BatchHostsSysEnvProvider extends AbstractSysEnvProvider<List<Host>>
     }
 
     @Override
-    protected String getStructure() {
+    protected String getDescription() {
         return "执行目标主机列表";
     }
 

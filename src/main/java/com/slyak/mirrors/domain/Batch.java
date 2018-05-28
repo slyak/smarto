@@ -34,6 +34,10 @@ public class Batch extends AbstractPersistable<Long> {
 
     private BatchTaskStatus status;
 
+    //{scriptId:{key:value}}
+    @Type(type = JSONType.TYPE)
+    private Map<Long, Map<String, String>> scriptEnvs;
+
     @Transient
     //hostTasks
     private Map<Long, BatchTask> tasks;

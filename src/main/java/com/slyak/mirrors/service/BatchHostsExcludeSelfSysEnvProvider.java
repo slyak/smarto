@@ -36,7 +36,7 @@ public class BatchHostsExcludeSelfSysEnvProvider extends AbstractSysEnvProvider<
     }
 
     @Override
-    protected String getStructure() {
+    protected String getDescription() {
         return "除本机之外的目标主机列表";
     }
 

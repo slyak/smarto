@@ -47,12 +47,12 @@ public abstract class AbstractSysEnvProvider<T> implements SysEnvProvider<T> {
     public SysEnv getMetadata() {
         SysEnv env = new SysEnv();
         env.setName(getName());
-        env.setDescription(getStructure());
+        env.setDescription(getDescription());
         env.setStructure(structure);
         return env;
     }
 
-    protected abstract String getStructure();
+    protected abstract String getDescription();
 
     protected abstract String getName();
 }
