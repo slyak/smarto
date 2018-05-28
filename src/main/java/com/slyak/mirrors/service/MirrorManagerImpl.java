@@ -15,7 +15,7 @@ import com.slyak.mirrors.domain.*;
 import com.slyak.mirrors.dto.BatchQuery;
 import com.slyak.mirrors.dto.SysEnv;
 import com.slyak.mirrors.repository.*;
-import com.slyak.web.support.freemarker.FmUtils;
+import com.slyak.web.support.freemarker.FreemarkerTemplateRender;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -63,7 +63,7 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
 
     private final GroupRepository groupRepository;
 
-    private final ProjectHostRepository projectHostRepository;
+    private final ProjectRoleRepository projectRoleRepository;
 
     private final ScriptRepository scriptRepository;
 
@@ -81,6 +81,8 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
 
     private final TaskExecutor taskExecutor;
 
+    private final FreemarkerTemplateRender templateRender;
+
     private ApplicationEventPublisher eventPublisher;
 
     private ApplicationContext appContext;
@@ -90,7 +92,7 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
             ProjectRepository projectRepository,
             ScriptFileRepository scriptFileRepository,
             GroupRepository groupRepository,
-            ProjectHostRepository projectHostRepository,
+            ProjectRoleRepository projectRoleRepository,
             ScriptRepository scriptRepository,
             OSRepository osRepository,
             BatchRepository batchRepository,
@@ -98,12 +100,13 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
             GlobalRepository globalRepository,
             FileStoreService<String> fileStoreService,
             BatchTaskRepository batchTaskRepository,
-            TaskExecutor taskExecutor
+            TaskExecutor taskExecutor,
+            FreemarkerTemplateRender templateRender
     ) {
         this.projectRepository = projectRepository;
         this.scriptFileRepository = scriptFileRepository;
         this.groupRepository = groupRepository;
-        this.projectHostRepository = projectHostRepository;
+        this.projectRoleRepository = projectRoleRepository;
         this.scriptRepository = scriptRepository;
         this.osRepository = osRepository;
         this.batchRepository = batchRepository;
@@ -112,6 +115,7 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
         this.fileStoreService = fileStoreService;
         this.batchTaskRepository = batchTaskRepository;
         this.taskExecutor = taskExecutor;
+        this.templateRender = templateRender;
     }
 
     @Override
@@ -120,28 +124,13 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
     }
 
     @Override
-    public List<HostGroupScript> getGroupScripts(Long groupId) {
+    public ProjectRole findProjectRole(Long roleId) {
         return null;
-    }
-
-    @Override
-    public HostGroup findGroup(Long groupId) {
-        return groupRepository.findOne(groupId);
-    }
-
-    @Override
-    public List<ProjectHost> findGroupHosts(Long groupId) {
-        return projectHostRepository.findByGroupId(groupId);
     }
 
     @Override
     public List<ScriptFile> findScriptFiles(Long scriptId) {
         return scriptFileRepository.findByScriptId(scriptId);
-    }
-
-
-    private Script findScript(Long id) {
-        return scriptRepository.findOne(id);
     }
 
     @Override
@@ -150,9 +139,8 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
     }
 
     /**
-     * @Deprecated
-     *
      * @param script
+     * @Deprecated
      */
     private void generateScriptEnvs(Script script) {
         String content = script.getContent();
@@ -298,7 +286,7 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
                         setupSysEnvs(model, batchId, host);
                         model.putAll(getBatchScriptEnvs(batchId, script));
                         //\r\n will cause dos file format and will cause file not found exception
-                        String bashScript = StringUtils.replace(FmUtils.renderStringTpl(script.getContent(), model), "\r\n", "\n");
+                        String bashScript = StringUtils.replace(templateRender.renderStringTpl(script.getContent(), model), "\r\n", "\n");
                         @Cleanup ByteArrayInputStream is = new ByteArrayInputStream(bashScript.getBytes(DEFAULT_CHARSET));
                         String scriptName = script.getId() + SH;
                         ssh2.scp(is, scriptName, PROJECT_HOME);
@@ -436,6 +424,26 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
             sysEnvs.add(provider.getMetadata());
         }
         return sysEnvs;
+    }
+
+    @Override
+    public Project saveProject(Project project) {
+        return projectRepository.save(project);
+    }
+
+    @Override
+    public List<ProjectRole> findProjectRoles(Long groupId) {
+        return projectRoleRepository.findByProjectId(groupId);
+    }
+
+    @Override
+    public ProjectRole saveProjectRole(ProjectRole projectRole) {
+        return projectRoleRepository.save(projectRole);
+    }
+
+    @Override
+    public List<Host> findHostsNotInProjectRole(Long roleId) {
+        return hostRepository.findHostNotInProjectRole(roleId);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.slyak.mirrors.domain;
 
+import com.google.common.collect.Lists;
 import com.slyak.spring.jpa.hibernate.JSONType;
 import lombok.Data;
 import org.hibernate.annotations.Type;
@@ -32,7 +33,7 @@ public class Script extends AbstractPersistable<Long> {
     private String osName;
 
     @Type(type = JSONType.TYPE)
-    private List<ScriptEnv> envs;
+    private List<ScriptEnv> envs = Lists.newArrayList();
 
     @Type(type = JSONType.TYPE)
     private List<String> osVersions;

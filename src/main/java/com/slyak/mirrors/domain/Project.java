@@ -1,10 +1,9 @@
 package com.slyak.mirrors.domain;
 
 import lombok.Data;
+import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
@@ -14,15 +13,12 @@ import javax.persistence.Table;
  * @since 1.3.0
  */
 @Entity
-@Table
+@Table(name = "t_project")
 @Data
-public class Project {
-
-    @Id
-    @GeneratedValue
-    private Long id;
+public class Project extends AbstractPersistable<Long> {
 
     private String name;
 
-    private int parentId;
+
+    private String description;
 }

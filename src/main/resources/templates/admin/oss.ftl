@@ -19,7 +19,7 @@
             </td>
             <td>
                 <@bootstrap.a href="/admin/os?id=${os.id}" title="编辑" modal=true showSubmit=true/>
-                <@slyakUI.a href="/admin/os/delete?id=${os.id}">删除</@slyakUI.a>
+                <@slyakUI.a href="/admin/os/delete?id=${os.id}" class="confirm ajax">删除</@slyakUI.a>
             </td>
         </tr>
         <#else >

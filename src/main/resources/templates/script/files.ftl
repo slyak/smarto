@@ -16,8 +16,9 @@
                 <td><i class="fas fa-file"></i>${f.globalFile.name}</td>
                 <td>${f.scpPath}</td>
                 <td>${f.description}</td>
-                <td><@bootstrap.a modal=true showSubmit=true href="/script/file?id=${f.id}" title="编辑"/><@slyakUI.a href="/script/file/delete?id=${f.id}">
-                    删除</@slyakUI.a></td>
+                <td>
+                    <@bootstrap.a modal=true showSubmit=true href="/script/file?id=${f.id}" title="编辑"/>
+                    <@slyakUI.a href="/script/file/delete?id=${f.id}" class="confirm ajax">删除</@slyakUI.a></td>
             </tr>
             </#list>
         <#else >

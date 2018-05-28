@@ -1,0 +1,2 @@
+--findHostNotInProjectRole
+SELECT * from t_host h where h.id not in

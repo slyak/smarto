@@ -1,2 +1,0 @@
---findByGroupId
-SELECT ph.* FROM t_project_host ph LEFT JOIN t_host_group hg on ph.host_id=hg.host_id WHERE ph.project_id=:projectId

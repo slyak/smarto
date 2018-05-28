@@ -1,12 +1,14 @@
 package com.slyak.mirrors.web;
 
+import com.slyak.mirrors.domain.Project;
+import com.slyak.mirrors.domain.ProjectRole;
 import com.slyak.mirrors.service.MirrorManager;
+import com.slyak.web.support.data.RequestParamBind;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * .
@@ -26,69 +28,84 @@ public class ProjectController {
     }
 
     @GetMapping("/project")
-    public void project(Long projectId) {
-
+    public void project(@RequestParamBind("id") Project project, ModelMap modelMap) {
+        if (project != null) {
+            modelMap.put("project", project);
+        }
     }
 
-    @GetMapping("/project/{id}")
-    public void settings() {
+    @PostMapping("/project")
+    public String saveProject(@RequestParamBind("id") Project project) {
+        mirrorManager.saveProject(project);
+        return "redirect:/project/roles?id=" + project.getId();
     }
-
 
     @Controller
     @RequestMapping("/project/*")
     public static class ProjectActionsController {
+        private final MirrorManager mirrorManager;
+
         @Autowired
-        private MirrorManager mirrorManager;
-
-        //host start
-
-        @GetMapping("/hosts")
-        public void hosts(Pageable pageable, ModelMap modelMap) {
-            modelMap.put("page", mirrorManager.queryProjects(pageable));
+        public ProjectActionsController(MirrorManager mirrorManager) {
+            this.mirrorManager = mirrorManager;
         }
-
-        @GetMapping("/host")
-        public void host() {
-        }
-
-        @GetMapping("/host/{id}")
-        public void hostSettings() {
-        }
-
 
         //group start
-
-        @GetMapping("/groups")
-        public void groups(Pageable pageable, ModelMap modelMap) {
-            modelMap.put("page", mirrorManager.queryProjects(pageable));
+        @GetMapping("/roles")
+        public void roles(Long id, ModelMap modelMap) {
+            modelMap.put("roles", mirrorManager.findProjectRoles(id));
         }
 
-        @GetMapping("/group")
-        public void group(Long projectId) {
-
-        }
-
-        @GetMapping("/group/hosts")
-        public void hosts(Long projectId) {
+        @GetMapping("/role")
+        public void role(@RequestParamBind("id") ProjectRole projectRole) {
 
         }
 
-        @GetMapping("/group/{id}")
-        public void groupSettings() {
+        @PostMapping("/role")
+        public void saveRole(@RequestParamBind("id") ProjectRole projectRole) {
+            mirrorManager.saveProjectRole(projectRole);
         }
 
-        //script start
+        @ModelAttribute("project")
+        public Project getProject(@RequestParam(value = "id", required = false) Project project) {
+            return project;
+        }
+    }
+
+
+    @Controller
+    @RequestMapping("/project/role/*")
+    public static class ProjectRoleController {
+        private final MirrorManager mirrorManager;
+
+        @Autowired
+        public ProjectRoleController(MirrorManager mirrorManager) {
+            this.mirrorManager = mirrorManager;
+        }
+
+        @GetMapping("/hosts")
+        public void hosts() {
+
+        }
+
         @GetMapping("/scripts")
         public void scripts() {
+
         }
 
-        @GetMapping("/script")
-        public void script() {
+        @GetMapping("/envs")
+        public void envs() {
+
         }
 
-        @GetMapping("/script/{id}")
-        public void settings() {
+        @GetMapping("/hostsPicker")
+        public void hostsPicker(Long id, ModelMap modelMap) {
+            mirrorManager.findHostsNotInProjectRole(id);
+        }
+
+        @ModelAttribute("projectRole")
+        public ProjectRole getProjectRole(@RequestParam(value = "id", required = false) ProjectRole projectRole) {
+            return projectRole;
         }
     }
 }

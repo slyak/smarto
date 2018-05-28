@@ -5,17 +5,22 @@
     <tr>
         <th scope="col">名称</th>
         <th scope="col">描述</th>
+        <th scope="col">操作</th>
     </tr>
     </thead>
     <tbody>
-    <tr>
-        <td><a href="<@slyak.query url="/project/hosts"/>">大数据基础</a></td>
-        <td>基于Ambari PHD的大数据基础环境</td>
-    </tr>
-    <tr>
-        <td><a href="<@slyak.query url="/project/hosts"/>">大数据日志审计</a></td>
-        <td>大数据日志审计基础环境</td>
-    </tr>
+        <#list page.content as project>
+        <tr>
+            <td>${project.name}</td>
+            <td>${project.description}</td>
+            <td>
+                <a href="<@slyak.query url="/project/roles?id=${project.id}"/>">编辑</a>
+                <@bootstrap.a href="/project/delete?id=${project.id}" title="删除" class="confirm ajax"/>
+            </td>
+        </tr>
+        <#else >
+        <tr><td colspan="3" class="text-center">暂无记录</td></tr>
+        </#list>
     </tbody>
 </table>
     <@slyakUI.pagination value=page/>

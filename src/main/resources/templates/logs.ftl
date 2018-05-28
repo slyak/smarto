@@ -24,8 +24,13 @@
                 <td>${host.name}[${host.ip}]</td>
                 <td>${batch.scripts?join(",")}</td>
                 <#assign task = batch.tasks?api.get(host.id)/>
-                <td rowspan="${row}">${task.startAt?number_to_date?string("yyyy-MM-dd")}</td>
-                <td rowspan="${row}">${task.stopAt?number_to_date?string("yyyy-MM-dd")}</td>
+                <td rowspan="${row}">${task.startAt?number_to_date?string("MM/dd HH:mm:ss")}</td>
+                <td rowspan="${row}">
+                    <#if task.stopAt gt 0>
+                        ${task.stopAt?number_to_date?string("MM/dd HH:mm:ss")}
+                        <#else > --
+                    </#if>
+                </td>
                 <td>
                     <#if task.status == 'RUNNING'>
                         <#assign badgeClass="badge-secondary"/>

@@ -4,11 +4,13 @@ import com.google.common.collect.Maps;
 import com.slyak.file.FileStoreService;
 import com.slyak.file.LocalFileStoreService;
 import com.slyak.mirrors.domain.GlobalFile;
+import com.slyak.web.support.freemarker.FreemarkerTemplateRender;
 import com.slyak.web.support.freemarker.bootstrap.Fileinput;
 import com.slyak.web.support.freemarker.bootstrap.InitialPreviewConfigConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.io.PrintWriter;
 import java.util.HashMap;
 
 /**
@@ -40,5 +42,18 @@ public class GlobalConfig {
                 return fileinput;
             }
         };
+    }
+
+    @Bean("shellScriptTemplateRender")
+    public FreemarkerTemplateRender shellScriptTemplateRender() {
+        freemarker.template.Configuration cfg = new freemarker.template.Configuration(freemarker.template.Configuration.VERSION_2_3_0);
+        cfg.setTemplateExceptionHandler((te, env, out) -> {
+            if (!env.isInAttemptBlock()) {
+                PrintWriter pw = (out instanceof PrintWriter) ? (PrintWriter) out : new PrintWriter(out);
+                pw.print("${" + te.getBlamedExpressionString() + "}");
+                pw.flush();  // To commit the HTTP response
+            }
+        });
+        return new FreemarkerTemplateRender(cfg);
     }
 }

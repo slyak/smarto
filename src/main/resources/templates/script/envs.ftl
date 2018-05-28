@@ -15,12 +15,12 @@
         <#--<#list page.content as group>-->
             <#list script.envs as env>
             <tr>
-                <td>${env.key}<input type="hidden" name="envs[${env_index}].key" value="${env.key}"></td>
-                <td><@bootstrap.input name="envs[${env_index}].description" value="${env.description}"/></td>
-                <td><@bootstrap.input name="envs[${env_index}].defValue" value="${env.defValue}"/></td>
+                <td>${env.key}</td>
+                <td>${env.description}</td>
+                <td>${env.defValue}</td>
                 <td>
                     <@bootstrap.a href="/script/env?scriptId=${script.id}&key=${env.key}" title="编辑变量" modal="true" showSubmit=true/>
-                    <@slyakUI.a href="/script/env/delete?scriptId=${script.id}&key=${env.key}" class="confirm">
+                    <@slyakUI.a href="/script/env/delete?scriptId=${script.id}&key=${env.key}" class="confirm ajax">
                         删除</@slyakUI.a>
                 </td>
             </tr>
@@ -30,8 +30,7 @@
     </table>
     </@slyakUI.form>
 <div class="alert alert-primary" role="alert">
-    <i class="fa fa-info-circle pr-1"></i>上述变量均来自脚本中形如 ： <b class="text-success">$变量名称</b>或<b
-        class="text-success">${r'${变量名称}'}</b>的变量，请补全描述信息和默认值。
+    <i class="fa fa-info-circle pr-1"></i>上述变量和自脚本中形如 ： <b class="text-success">${r'${变量名称}'}</b>的变量一一对应，请补全描述信息和默认值。
 </div>
 
 </@layout.layout_script>

@@ -17,11 +17,7 @@ import java.util.List;
 public interface MirrorManager {
     Page<Project> queryProjects(Pageable pageable);
 
-    List<HostGroupScript> getGroupScripts(Long groupId);
-
-    HostGroup findGroup(Long groupId);
-
-    List<ProjectHost> findGroupHosts(Long groupId);
+    ProjectRole findProjectRole(Long roleId);
 
     List<ScriptFile> findScriptFiles(Long scriptId);
 
@@ -62,4 +58,12 @@ public interface MirrorManager {
     Batch findBatch(Long batchId);
 
     List<SysEnv> querySysEnvs();
+
+    Project saveProject(Project project);
+
+    List<ProjectRole> findProjectRoles(Long projectId);
+
+    ProjectRole saveProjectRole(ProjectRole projectRole);
+
+    List<Host> findHostsNotInProjectRole(Long roleId);
 }

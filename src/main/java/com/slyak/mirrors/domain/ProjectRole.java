@@ -6,6 +6,7 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * machine group.
@@ -14,11 +15,19 @@ import javax.persistence.Table;
  * @since 1.3.0
  */
 @Entity
-@Table(name = "t_group")
+@Table(name = "t_project_role")
 @Data
-public class HostGroup extends AbstractPersistable<Long> {
+public class ProjectRole extends AbstractPersistable<Long> {
+
+    private Long projectId;
 
     private String name;
 
-    private int projectId;
+    private String description;
+
+    @Column(name = "order0")
+    private int order = 0;
+
+    @Transient
+    private Project project;
 }

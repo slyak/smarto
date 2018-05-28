@@ -1,3 +1,5 @@
+<#-- @ftlvariable name="projectRole" type="com.slyak.mirrors.domain.ProjectRole" -->
+<#-- @ftlvariable name="project" type="com.slyak.mirrors.domain.Project" -->
 <#-- @ftlvariable name="script" type="com.slyak.mirrors.domain.Script" -->
 <#-- @ftlvariable name="slyakRequestContext" type="com.slyak.web.support.freemarker.SlyakRequestContext" -->
 <#macro cleanHtml>
@@ -109,7 +111,8 @@
     <ul>
         <#list items as item>
             <li class="list-item">
-                <a class="<#if slyakRequestContext.isSameUrl(item.url)>active</#if><@slyak.addClass values=[item.aClass]/>" href="<@slyak.query url="${item.url}" extra=RequestParameters/>">
+                <a class="<#if slyakRequestContext.isSameUrl(item.url)>active</#if><@slyak.addClass values=[item.aClass]/>"
+                   href="<@slyak.query url="${item.url}" extra=RequestParameters/>">
                     <i class="fas ${item.class}"></i>
                     <span>${item.title}</span>
                 </a>
@@ -131,17 +134,17 @@
     <div>
         <div class="text-center fa-">
             <img src="<@slyak.query url="/images/default-avatar.svg"/>">
-            <div class="sidebar-title">大数据基础</div>
+            <div class="sidebar-title">${project.name}</div>
         </div>
         <div class="mt-2">
             <@layout.list title="操作" items=[
-            {'title':'运行分组脚本','url':'/project/host','class':'fa-paper-plane'},
+            {'title':'运行项目脚本','url':'/project/host','class':'fa-paper-plane'},
             {'title':'下载离线安装包','url':'/project/download','class':'fa-download'}
             ]/>
     <@layout.list title="导航" items=[
-        {'title':'主机分组','url':'/project/groups','class':'fa-boxes'}
+        {'title':'角色列表','url':'/project/roles','class':'fa-boxes'}
         ]/>
-    <@layout.list items=[{'title':'配置','url':'/project/settings','class':'fa-cog'}]/>
+    <@layout.list items=[{'title':'配置','url':'/project','class':'fa-cog'}]/>
         </div>
     </div>
     </#assign>
@@ -151,27 +154,27 @@
     <@layout.rightMain title=title left=left right=right btnCreate=btnCreate/>
 </#macro>
 
-<#macro layout_group title btnCreate={}>
+<#macro layout_project_role title btnCreate={}>
     <#assign left>
     <div>
         <div class="text-left mb-3">
             <img src="<@slyak.query url="/images/default-avatar.svg"/>" style="width: 48px;position: absolute">
             <div style="padding-left: 58px;padding-top: 4px;height: 45px;">
-                <a href="">NameNode</a>
-                <div>大数据基础</div>
+                <a href="<@slyak.query "/project?id=${projectRole.project.id}"/>">${projectRole.project.name}</a>
+                <div>${projectRole.name}</div>
             </div>
         </div>
         <div class="mt-2">
             <@layout.list title="操作" items=[
-            {'title':'运行脚本','url':'/project/group/script','class':'fa-paper-plane'}
+            {'title':'运行脚本','url':'/project/role/script','class':'fa-paper-plane'}
             ]/>
     <@layout.list title="导航" items=[
-        {'title':'主机列表','url':'/project/group/hosts','class':'fa-desktop'},
-        {'title':'脚本列表','url':'/project/group/scripts','class':'fa-code'},
-        {'title':'变量列表','url':'/project/group/envs','class':'fa-subscript'},
-        {'title':'运行日志','url':'/project/group/logs','class':'fa-terminal'}
+        {'title':'主机列表','url':'/project/role/hosts','class':'fa-desktop'},
+        {'title':'脚本列表','url':'/project/role/scripts','class':'fa-code'},
+        {'title':'变量列表','url':'/project/role/envs','class':'fa-subscript'},
+        {'title':'运行日志','url':'/logs','class':'fa-terminal'}
         ]/>
-    <@layout.list items=[{'title':'配置','url':'/project/group/settings','class':'fa-cog'}]/>
+    <@layout.list items=[{'title':'配置','url':'/project/role','class':'fa-cog'}]/>
         </div>
     </div>
     </#assign>

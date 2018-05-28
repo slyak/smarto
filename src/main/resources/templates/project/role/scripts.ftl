@@ -1,4 +1,4 @@
-<@layout.layout_group title="脚本列表" btnCreate={'title':'管理脚本','modal':true,'url':'/script/picker'}>
+<@layout.layout_project_role title="脚本列表" btnCreate={'title':'管理脚本','modal':true,'url':'/script/picker'}>
 <table class="table table-hover table-fa">
     <thead>
     <tr>
@@ -15,9 +15,9 @@
         <td>CentOS7</td>
         <td>[7.0,7.4]</td>
         <td>
-            <a href="<@slyak.query url="/project/group/file"/>">查看</a>
-            <a href="<@slyak.query url='/project/group/file/delete'/>">删除</a>
-            <a href="<@slyak.query url='/project/group/file/delete'/>">启用</a>
+            <a href="<@slyak.query url="/project/role/file"/>">查看</a>
+            <a href="<@slyak.query url='/project/role/file/delete'/>">删除</a>
+            <a href="<@slyak.query url='/project/role/file/delete'/>">启用</a>
         </td>
     </tr>
     <tr>
@@ -25,11 +25,11 @@
         <td>CentOS7</td>
         <td>[7.0,7.4]</td>
         <td>
-            <a href="<@slyak.query url="/project/group/file"/>">查看</a>
-            <a href="<@slyak.query url='/project/group/file/delete'/>">删除</a>
-            <a href="<@slyak.query url='/project/group/file/delete'/>">启用</a>
+            <a href="<@slyak.query url="/project/role/file"/>">查看</a>
+            <a href="<@slyak.query url='/project/role/file/delete'/>">删除</a>
+            <a href="<@slyak.query url='/project/role/file/delete'/>">启用</a>
         </td>
     </tr>
     </tbody>
 </table>
-</@layout.layout_group>
+</@layout.layout_project_role>

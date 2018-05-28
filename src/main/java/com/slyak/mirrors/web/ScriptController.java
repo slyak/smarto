@@ -13,12 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * .
@@ -85,10 +85,6 @@ public class ScriptController {
             }
         }
 
-        @GetMapping("/settings")
-        public void settings() {
-        }
-
         @GetMapping("/files")
         public void files(Long id, ModelMap modelMap) {
             List<ScriptFile> files = mirrorManager.findScriptFiles(id);
@@ -123,23 +119,46 @@ public class ScriptController {
         }
 
         @GetMapping("/env")
-        public void env() {
+        public void env(@RequestParamBind("scriptId") Script script, String key, ModelMap modelMap) {
+            List<ScriptEnv> envs = Optional.ofNullable(script.getEnvs()).orElseGet(Lists::newArrayList);
+            for (int i = envs.size() - 1; i >= 0; i--) {
+                ScriptEnv env = envs.get(i);
+                if (Objects.equals(env.getKey(), key)) {
+                    modelMap.put("env", env);
+                    break;
+                }
+            }
+        }
 
+        @PostMapping("/env")
+        public void saveEnv(@RequestParamBind("scriptId") Script script, ScriptEnv scriptEnv) {
+            List<ScriptEnv> envs = Optional.ofNullable(script.getEnvs()).orElseGet(Lists::newArrayList);
+            boolean exist = false;
+            for (int i = envs.size() - 1; i >= 0; i--) {
+                ScriptEnv env = envs.get(i);
+                if (Objects.equals(env.getKey(), scriptEnv.getKey())) {
+                    exist = true;
+                    env.setDescription(scriptEnv.getDescription());
+                    env.setDefValue(scriptEnv.getDefValue());
+                }
+            }
+            if (!exist){
+                envs.add(scriptEnv);
+            }
+            mirrorManager.saveScript(script);
         }
 
         @GetMapping("/env/delete")
         @ResponseBody
         public boolean envDelete(@RequestParamBind("scriptId") Script script, String key) {
-            List<ScriptEnv> envs = script.getEnvs();
-            if (!CollectionUtils.isEmpty(envs)) {
-                for (int i = envs.size() - 1; i >= 0; i--) {
-                    ScriptEnv env = envs.get(i);
-                    if (Objects.equals(env.getKey(), key)){
-                        envs.remove(i);
-                    }
+            List<ScriptEnv> envs = Optional.ofNullable(script.getEnvs()).orElseGet(Lists::newArrayList);
+            for (int i = envs.size() - 1; i >= 0; i--) {
+                ScriptEnv env = envs.get(i);
+                if (Objects.equals(env.getKey(), key)) {
+                    envs.remove(i);
                 }
-                mirrorManager.saveScript(script);
             }
+            mirrorManager.saveScript(script);
             return true;
         }
 
