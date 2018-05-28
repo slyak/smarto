@@ -100,7 +100,7 @@ public class ProjectController {
 
         @GetMapping("/hostsPicker")
         public void hostsPicker(Long id, ModelMap modelMap) {
-            mirrorManager.findHostsNotInProjectRole(id);
+            modelMap.put("hosts", mirrorManager.findHostsNotInProjectRole(id));
         }
 
         @ModelAttribute("projectRole")

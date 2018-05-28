@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.util.List;
 
 /**
  * machine group.
@@ -30,4 +31,7 @@ public class ProjectRole extends AbstractPersistable<Long> {
 
     @Transient
     private Project project;
+
+    @Transient
+    private List<Host> hosts;
 }

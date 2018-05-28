@@ -1,5 +1,5 @@
 <#-- @ftlvariable name="projectRole" type="com.slyak.mirrors.domain.ProjectRole" -->
-<@layout.layout_project_role title="主机列表" btnCreate={'title':'选择主机','url':'/project/role/hostPicker?id=${projectRole.id}',"modal":true}>
+<@layout.layout_project_role title="主机列表" btnCreate={'title':'选择主机','url':'/project/role/hostsPicker?id=${projectRole.id}',"modal":true}>
 <table class="table table-hover table-fa">
     <thead>
     <tr>

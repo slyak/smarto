@@ -1,2 +1,4 @@
 --findHostNotInProjectRole
-SELECT * from t_host h where h.id not in
+SELECT h.*
+from t_host h
+WHERE NOT EXISTS(SELECT rh.id form t_project_role_host rh where h.id = rh.host_id)
