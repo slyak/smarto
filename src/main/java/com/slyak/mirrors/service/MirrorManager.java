@@ -72,4 +72,16 @@ public interface MirrorManager {
     void deleteProjectGroupHost(ProjectGroupHostKey id);
 
     List<ProjectGroupHost> findProjectGroupHosts(Long id);
+
+    List<ProjectGroupScript> findProjectGroupScripts(Long id);
+
+    void addGroupScripts(Long groupId, List<Long> scriptIds);
+
+    void deleteProjectGroupScript(Long id);
+
+    void saveGroupScript(ProjectGroupScript groupScript);
+
+    void updateGroupOrders(List<Long> groupIds);
+
+    void updateGroupScriptOrders(List<Long> groupScriptIds);
 }

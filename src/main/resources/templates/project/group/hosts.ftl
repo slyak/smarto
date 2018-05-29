@@ -21,7 +21,7 @@
         </tr>
         <#else >
         <tr>
-            <td colspan="3" class="text-center">暂无记录</td>
+            <td colspan="4" class="text-center">暂无记录</td>
         </tr>
         </#list>
     </tbody>

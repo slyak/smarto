@@ -63,6 +63,8 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
 
     private final ProjectGroupHostRepository projectGroupHostRepository;
 
+    private final ProjectGroupScriptRepository projectGroupScriptRepository;
+
     private final ProjectGroupRepository projectGroupRepository;
 
     private final ScriptRepository scriptRepository;
@@ -101,8 +103,8 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
             BatchTaskRepository batchTaskRepository,
             TaskExecutor taskExecutor,
             FreemarkerTemplateRender templateRender,
-            ProjectGroupHostRepository projectGroupHostRepository
-    ) {
+            ProjectGroupHostRepository projectGroupHostRepository,
+            ProjectGroupScriptRepository projectGroupScriptRepository) {
         this.projectRepository = projectRepository;
         this.scriptFileRepository = scriptFileRepository;
         this.projectGroupRepository = projectGroupRepository;
@@ -116,6 +118,7 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
         this.taskExecutor = taskExecutor;
         this.templateRender = templateRender;
         this.projectGroupHostRepository = projectGroupHostRepository;
+        this.projectGroupScriptRepository = projectGroupScriptRepository;
     }
 
     @Override
@@ -433,7 +436,7 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
 
     @Override
     public List<ProjectGroup> findProjectGroups(Long groupId) {
-        return projectGroupRepository.findByProjectId(groupId);
+        return projectGroupRepository.findByProjectIdOrderByOrderAsc(groupId);
     }
 
     @Override
@@ -463,6 +466,49 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
     @Override
     public List<ProjectGroupHost> findProjectGroupHosts(Long id) {
         return projectGroupHostRepository.findByIdProjectGroupId(id);
+    }
+
+    @Override
+    public List<ProjectGroupScript> findProjectGroupScripts(Long id) {
+        return projectGroupScriptRepository.findByProjectGroupIdOrderByOrderAsc(id);
+    }
+
+    @Override
+    public void addGroupScripts(Long groupId, List<Long> scriptIds) {
+        for (Long scriptId : scriptIds) {
+            ProjectGroupScript groupScript = new ProjectGroupScript();
+            groupScript.setProjectGroupId(groupId);
+            groupScript.setScriptId(scriptId);
+            projectGroupScriptRepository.save(groupScript);
+        }
+    }
+
+    @Override
+    public void deleteProjectGroupScript(Long id) {
+        projectGroupScriptRepository.delete(id);
+    }
+
+    @Override
+    public void saveGroupScript(ProjectGroupScript groupScript) {
+        projectGroupScriptRepository.save(groupScript);
+    }
+
+    @Override
+    public void updateGroupOrders(List<Long> groupIds) {
+        for (int i = 0; i < groupIds.size(); i++) {
+            ProjectGroup group = projectGroupRepository.findOne(groupIds.get(i));
+            group.setOrder(i);
+            projectGroupRepository.save(group);
+        }
+    }
+
+    @Override
+    public void updateGroupScriptOrders(List<Long> groupScriptIds) {
+        for (int i = 0; i < groupScriptIds.size(); i++) {
+            ProjectGroupScript script = projectGroupScriptRepository.findOne(groupScriptIds.get(i));
+            script.setOrder(i);
+            projectGroupScriptRepository.save(script);
+        }
     }
 
     @Override

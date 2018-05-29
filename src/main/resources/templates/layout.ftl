@@ -171,7 +171,7 @@
     <@layout.list title="导航" items=[
         {'title':'主机列表','url':'/project/group/hosts','class':'fa-desktop'},
         {'title':'脚本列表','url':'/project/group/scripts','class':'fa-code'},
-        {'title':'变量列表','url':'/project/group/envs','class':'fa-subscript'},
+        <#--{'title':'变量列表','url':'/project/group/envs','class':'fa-subscript'},-->
         {'title':'运行日志','url':'/logs','class':'fa-terminal'}
         ]/>
     <@layout.list items=[{'title':'配置','url':'/project/group','class':'fa-cog'}]/>

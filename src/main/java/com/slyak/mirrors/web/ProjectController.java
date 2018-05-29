@@ -3,6 +3,7 @@ package com.slyak.mirrors.web;
 import com.slyak.mirrors.domain.Project;
 import com.slyak.mirrors.domain.ProjectGroup;
 import com.slyak.mirrors.domain.ProjectGroupHostKey;
+import com.slyak.mirrors.domain.ProjectGroupScript;
 import com.slyak.mirrors.service.MirrorManager;
 import com.slyak.web.support.data.RequestParamBind;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +62,6 @@ public class ProjectController {
 
         @GetMapping("/group")
         public void group(@RequestParamBind("id") ProjectGroup projectGroup) {
-
         }
 
         @PostMapping("/group")
@@ -86,6 +86,12 @@ public class ProjectController {
             this.mirrorManager = mirrorManager;
         }
 
+        @PostMapping("/orders")
+        @ResponseBody
+        public void orders(@RequestBody List<Long> groupIds) {
+            mirrorManager.updateGroupOrders(groupIds);
+        }
+
         @GetMapping("/hosts")
         public void hosts(Long id, ModelMap modelMap) {
             modelMap.put("groupHosts", mirrorManager.findProjectGroupHosts(id));
@@ -108,9 +114,43 @@ public class ProjectController {
             mirrorManager.deleteProjectGroupHost(id);
         }
 
-        @GetMapping("/scripts")
-        public void scripts() {
+        @GetMapping("/script")
+        public void script(@RequestParamBind("id") ProjectGroupScript groupScript, ModelMap modelMap) {
+            modelMap.put("groupScript", groupScript);
+        }
 
+        @PostMapping("/script")
+        public void saveScript(@RequestParamBind("id") ProjectGroupScript groupScript) {
+            mirrorManager.saveGroupScript(groupScript);
+        }
+
+        @GetMapping("/scripts")
+        public void scripts(Long id, ModelMap modelMap) {
+            modelMap.put("groupScripts", mirrorManager.findProjectGroupScripts(id));
+        }
+
+        @PostMapping("/scriptOrders")
+        @ResponseBody
+        public void scriptOrders(@RequestBody List<Long> groupScriptIds) {
+            mirrorManager.updateGroupScriptOrders(groupScriptIds);
+        }
+
+        @GetMapping("/scriptsPicker")
+        public void scriptsPicker(String keyword, Pageable pageable, ModelMap modelMap) {
+            modelMap.put("page", mirrorManager.queryScripts(keyword, pageable));
+        }
+
+
+        @PostMapping("/addScripts")
+        @ResponseBody
+        public void addScripts(Long groupId, @RequestParam("scriptIds") List<Long> scriptIds) {
+            mirrorManager.addGroupScripts(groupId, scriptIds);
+        }
+
+        @GetMapping("/deleteScript")
+        @ResponseBody
+        public void deleteScript(Long id) {
+            mirrorManager.deleteProjectGroupScript(id);
         }
 
         @GetMapping("/envs")

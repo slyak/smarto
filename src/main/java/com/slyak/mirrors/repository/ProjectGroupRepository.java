@@ -13,5 +13,5 @@ import java.util.List;
  * @since 1.3.0
  */
 public interface ProjectGroupRepository extends GenericJpaRepository<ProjectGroup, Long> {
-    List<ProjectGroup> findByProjectId(Long projectId);
+    List<ProjectGroup> findByProjectIdOrderByOrderAsc(Long projectId);
 }

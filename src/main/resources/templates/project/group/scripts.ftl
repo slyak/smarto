@@ -1,5 +1,6 @@
 <#-- @ftlvariable name="groupScripts" type="java.util.List<com.slyak.mirrors.domain.ProjectGroupScript>" -->
-<@layout.layout_project_group title="脚本列表" btnCreate={'title':'管理脚本','modal':true,'url':'/script/scriptsPicker'}>
+<@layout.layout_project_group title="脚本列表" btnCreate={'title':'管理脚本','modal':true,'url':'/project/group/scriptsPicker?id=${RequestParameters.id}','showSubmit':true}>
+    <@slyakUI.jqueryui/>
 <table class="table table-hover table-fa">
     <thead>
     <tr>
@@ -8,16 +9,17 @@
         <th scope="col">操作</th>
     </tr>
     </thead>
-    <tbody>
+    <tbody class="sortable">
         <#list groupScripts as groupScript>
             <#assign script = groupScript.script/>
-        <tr>
+        <tr data-gsId="${groupScript.id}">
             <td><i class="fas fa-code"></i>${script.name}</td>
             <td>${script.osName}:${script.osVersions?join(",")}</td>
             <td>
-                <a href="<@slyak.query url="/project/group/file"/>">查看</a>
-                <a href="<@slyak.query url='/project/group/file/delete'/>">删除</a>
-                <a href="<@slyak.query url='/project/group/file/delete'/>">启用</a>
+                <a href="<@slyak.query url="/script/content?id=${script.id}"/>" target="_blank">查看</a>
+                <@bootstrap.a href="/project/group/script?id=${groupScript.id}" modal="true" showSubmit=true title="配置"/>
+                <a href="<@slyak.query url='/project/group/deleteScript?id=${groupScript.id}'/>"
+                   class="confirm ajax">删除</a>
             </td>
         </tr>
         <#else >
@@ -27,4 +29,30 @@
         </#list>
     </tbody>
 </table>
+<div class="alert alert-primary" group="alert">
+    <i class="fa fa-info-circle pr-1"></i>可以拖动上面的行进行排序，来决定脚本执行顺序！
+</div>
+
+<script>
+    $(function () {
+        $(".sortable").sortable({
+            cursor: "move",
+            items: "tr",
+            stop: function () {
+                var gsIds = $.map($(".sortable tr"), function (el) {
+                    return $(el).attr("data-gsId");
+                });
+                jQuery.ajax({
+                    url: "<@slyak.query url='/project/group/scriptOrders'/>",
+                    type: "POST",
+                    data: JSON.stringify(gsIds),
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    success: function () {
+                    }
+                });
+            }
+        });
+    });
+</script>
 </@layout.layout_project_group>
