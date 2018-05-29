@@ -61,9 +61,9 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
 
     private final ScriptFileRepository scriptFileRepository;
 
-    private final GroupRepository groupRepository;
+    private final ProjectGroupHostRepository projectGroupHostRepository;
 
-    private final ProjectRoleRepository projectRoleRepository;
+    private final ProjectGroupRepository projectGroupRepository;
 
     private final ScriptRepository scriptRepository;
 
@@ -91,8 +91,7 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
     public MirrorManagerImpl(
             ProjectRepository projectRepository,
             ScriptFileRepository scriptFileRepository,
-            GroupRepository groupRepository,
-            ProjectRoleRepository projectRoleRepository,
+            ProjectGroupRepository projectGroupRepository,
             ScriptRepository scriptRepository,
             OSRepository osRepository,
             BatchRepository batchRepository,
@@ -101,12 +100,12 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
             FileStoreService<String> fileStoreService,
             BatchTaskRepository batchTaskRepository,
             TaskExecutor taskExecutor,
-            FreemarkerTemplateRender templateRender
+            FreemarkerTemplateRender templateRender,
+            ProjectGroupHostRepository projectGroupHostRepository
     ) {
         this.projectRepository = projectRepository;
         this.scriptFileRepository = scriptFileRepository;
-        this.groupRepository = groupRepository;
-        this.projectRoleRepository = projectRoleRepository;
+        this.projectGroupRepository = projectGroupRepository;
         this.scriptRepository = scriptRepository;
         this.osRepository = osRepository;
         this.batchRepository = batchRepository;
@@ -116,6 +115,7 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
         this.batchTaskRepository = batchTaskRepository;
         this.taskExecutor = taskExecutor;
         this.templateRender = templateRender;
+        this.projectGroupHostRepository = projectGroupHostRepository;
     }
 
     @Override
@@ -124,7 +124,7 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
     }
 
     @Override
-    public ProjectRole findProjectRole(Long roleId) {
+    public ProjectGroup findProjectGroup(Long groupId) {
         return null;
     }
 
@@ -432,18 +432,37 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
     }
 
     @Override
-    public List<ProjectRole> findProjectRoles(Long groupId) {
-        return projectRoleRepository.findByProjectId(groupId);
+    public List<ProjectGroup> findProjectGroups(Long groupId) {
+        return projectGroupRepository.findByProjectId(groupId);
     }
 
     @Override
-    public ProjectRole saveProjectRole(ProjectRole projectRole) {
-        return projectRoleRepository.save(projectRole);
+    public ProjectGroup saveProjectGroup(ProjectGroup projectGroup) {
+        return projectGroupRepository.save(projectGroup);
     }
 
     @Override
-    public List<Host> findHostsNotInProjectRole(Long roleId) {
-        return hostRepository.findHostNotInProjectRole(roleId);
+    public List<Host> findHostsNotInProjectGroup(Long groupId) {
+        return hostRepository.findHostNotInProjectGroup(groupId);
+    }
+
+    @Override
+    public void addGroupHosts(Long groupId, List<Long> hostIds) {
+        for (Long hostId : hostIds) {
+            ProjectGroupHost groupHost = new ProjectGroupHost();
+            groupHost.setId(new ProjectGroupHostKey(groupId, hostId));
+            projectGroupHostRepository.save(groupHost);
+        }
+    }
+
+    @Override
+    public void deleteProjectGroupHost(ProjectGroupHostKey id) {
+        projectGroupHostRepository.delete(id);
+    }
+
+    @Override
+    public List<ProjectGroupHost> findProjectGroupHosts(Long id) {
+        return projectGroupHostRepository.findByIdProjectGroupId(id);
     }
 
     @Override

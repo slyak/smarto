@@ -29,7 +29,7 @@
         </tbody>
     </table>
     </@slyakUI.form>
-<div class="alert alert-primary" role="alert">
+<div class="alert alert-primary" group="alert">
     <i class="fa fa-info-circle pr-1"></i>上述变量和自脚本中形如 ： <b class="text-success">${r'${变量名称}'}</b>的变量一一对应，请补全描述信息和默认值。
 </div>
 

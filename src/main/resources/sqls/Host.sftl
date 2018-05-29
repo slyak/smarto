@@ -1,4 +1,6 @@
---findHostNotInProjectRole
+--findHostNotInProjectGroup
 SELECT h.*
-from t_host h
-WHERE NOT EXISTS(SELECT rh.id form t_project_role_host rh where h.id = rh.host_id)
+from T_HOST h
+WHERE NOT EXISTS(SELECT rh.*
+                 FROM T_PROJECT_GROUP_HOST rh
+                 where h.id = rh.host_id AND rh.PROJECT_GROUP_ID = :groupId)

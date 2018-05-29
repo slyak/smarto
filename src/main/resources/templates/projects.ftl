@@ -14,7 +14,7 @@
             <td>${project.name}</td>
             <td>${project.description}</td>
             <td>
-                <a href="<@slyak.query url="/project/roles?id=${project.id}"/>">编辑</a>
+                <a href="<@slyak.query url="/project/groups?id=${project.id}"/>">编辑</a>
                 <@bootstrap.a href="/project/delete?id=${project.id}" title="删除" class="confirm ajax"/>
             </td>
         </tr>

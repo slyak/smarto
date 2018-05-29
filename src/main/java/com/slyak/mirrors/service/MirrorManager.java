@@ -17,7 +17,7 @@ import java.util.List;
 public interface MirrorManager {
     Page<Project> queryProjects(Pageable pageable);
 
-    ProjectRole findProjectRole(Long roleId);
+    ProjectGroup findProjectGroup(Long groupId);
 
     List<ScriptFile> findScriptFiles(Long scriptId);
 
@@ -61,9 +61,15 @@ public interface MirrorManager {
 
     Project saveProject(Project project);
 
-    List<ProjectRole> findProjectRoles(Long projectId);
+    List<ProjectGroup> findProjectGroups(Long projectId);
 
-    ProjectRole saveProjectRole(ProjectRole projectRole);
+    ProjectGroup saveProjectGroup(ProjectGroup projectGroup);
 
-    List<Host> findHostsNotInProjectRole(Long roleId);
+    List<Host> findHostsNotInProjectGroup(Long groupId);
+
+    void addGroupHosts(Long groupId, List<Long> hostIds);
+
+    void deleteProjectGroupHost(ProjectGroupHostKey id);
+
+    List<ProjectGroupHost> findProjectGroupHosts(Long id);
 }

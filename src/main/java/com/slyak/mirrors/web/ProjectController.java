@@ -1,7 +1,8 @@
 package com.slyak.mirrors.web;
 
 import com.slyak.mirrors.domain.Project;
-import com.slyak.mirrors.domain.ProjectRole;
+import com.slyak.mirrors.domain.ProjectGroup;
+import com.slyak.mirrors.domain.ProjectGroupHostKey;
 import com.slyak.mirrors.service.MirrorManager;
 import com.slyak.web.support.data.RequestParamBind;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * .
@@ -37,7 +40,7 @@ public class ProjectController {
     @PostMapping("/project")
     public String saveProject(@RequestParamBind("id") Project project) {
         mirrorManager.saveProject(project);
-        return "redirect:/project/roles?id=" + project.getId();
+        return "redirect:/project/groups?id=" + project.getId();
     }
 
     @Controller
@@ -51,19 +54,19 @@ public class ProjectController {
         }
 
         //group start
-        @GetMapping("/roles")
-        public void roles(Long id, ModelMap modelMap) {
-            modelMap.put("roles", mirrorManager.findProjectRoles(id));
+        @GetMapping("/groups")
+        public void groups(Long id, ModelMap modelMap) {
+            modelMap.put("groups", mirrorManager.findProjectGroups(id));
         }
 
-        @GetMapping("/role")
-        public void role(@RequestParamBind("id") ProjectRole projectRole) {
+        @GetMapping("/group")
+        public void group(@RequestParamBind("id") ProjectGroup projectGroup) {
 
         }
 
-        @PostMapping("/role")
-        public void saveRole(@RequestParamBind("id") ProjectRole projectRole) {
-            mirrorManager.saveProjectRole(projectRole);
+        @PostMapping("/group")
+        public void saveGroup(@RequestParamBind("id") ProjectGroup projectGroup) {
+            mirrorManager.saveProjectGroup(projectGroup);
         }
 
         @ModelAttribute("project")
@@ -74,18 +77,35 @@ public class ProjectController {
 
 
     @Controller
-    @RequestMapping("/project/role/*")
-    public static class ProjectRoleController {
+    @RequestMapping("/project/group/*")
+    public static class ProjectGroupController {
         private final MirrorManager mirrorManager;
 
         @Autowired
-        public ProjectRoleController(MirrorManager mirrorManager) {
+        public ProjectGroupController(MirrorManager mirrorManager) {
             this.mirrorManager = mirrorManager;
         }
 
         @GetMapping("/hosts")
-        public void hosts() {
+        public void hosts(Long id, ModelMap modelMap) {
+            modelMap.put("groupHosts", mirrorManager.findProjectGroupHosts(id));
+        }
 
+        @GetMapping("/hostsPicker")
+        public void hostsPicker(Long id, ModelMap modelMap) {
+            modelMap.put("hosts", mirrorManager.findHostsNotInProjectGroup(id));
+        }
+
+        @PostMapping("/addHosts")
+        @ResponseBody
+        public void addHosts(Long groupId, @RequestParam("hostIds") List<Long> hostIds) {
+            mirrorManager.addGroupHosts(groupId, hostIds);
+        }
+
+        @GetMapping("/deleteHost")
+        @ResponseBody
+        public void deleteHost(ProjectGroupHostKey id) {
+            mirrorManager.deleteProjectGroupHost(id);
         }
 
         @GetMapping("/scripts")
@@ -98,14 +118,9 @@ public class ProjectController {
 
         }
 
-        @GetMapping("/hostsPicker")
-        public void hostsPicker(Long id, ModelMap modelMap) {
-            modelMap.put("hosts", mirrorManager.findHostsNotInProjectRole(id));
-        }
-
-        @ModelAttribute("projectRole")
-        public ProjectRole getProjectRole(@RequestParam(value = "id", required = false) ProjectRole projectRole) {
-            return projectRole;
+        @ModelAttribute("projectGroup")
+        public ProjectGroup getProjectGroup(@RequestParam(value = "id", required = false) ProjectGroup projectGroup) {
+            return projectGroup;
         }
     }
 }

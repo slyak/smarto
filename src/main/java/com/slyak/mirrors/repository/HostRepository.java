@@ -3,6 +3,7 @@ package com.slyak.mirrors.repository;
 import com.slyak.mirrors.domain.Host;
 import com.slyak.spring.jpa.GenericJpaRepository;
 import com.slyak.spring.jpa.TemplateQuery;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -16,5 +17,5 @@ public interface HostRepository extends GenericJpaRepository<Host, Long> {
     List<Host> findByTestHostTrue();
 
     @TemplateQuery
-    List<Host> findHostNotInProjectRole(Long roleId);
+    List<Host> findHostNotInProjectGroup(@Param("groupId") Long groupId);
 }

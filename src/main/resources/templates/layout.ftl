@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="projectRole" type="com.slyak.mirrors.domain.ProjectRole" -->
+<#-- @ftlvariable name="projectGroup" type="com.slyak.mirrors.domain.ProjectGroup" -->
 <#-- @ftlvariable name="project" type="com.slyak.mirrors.domain.Project" -->
 <#-- @ftlvariable name="script" type="com.slyak.mirrors.domain.Script" -->
 <#-- @ftlvariable name="slyakRequestContext" type="com.slyak.web.support.freemarker.SlyakRequestContext" -->
@@ -142,7 +142,7 @@
             {'title':'下载离线安装包','url':'/project/download','class':'fa-download'}
             ]/>
     <@layout.list title="导航" items=[
-        {'title':'角色列表','url':'/project/roles','class':'fa-boxes'}
+        {'title':'分组列表','url':'/project/groups','class':'fa-boxes'}
         ]/>
     <@layout.list items=[{'title':'配置','url':'/project','class':'fa-cog'}]/>
         </div>
@@ -154,27 +154,27 @@
     <@layout.rightMain title=title left=left right=right btnCreate=btnCreate/>
 </#macro>
 
-<#macro layout_project_role title btnCreate={}>
+<#macro layout_project_group title btnCreate={}>
     <#assign left>
     <div>
         <div class="text-left mb-3">
             <img src="<@slyak.query url="/images/default-avatar.svg"/>" style="width: 48px;position: absolute">
             <div style="padding-left: 58px;padding-top: 4px;height: 45px;">
-                <a href="<@slyak.query "/project?id=${projectRole.project.id}"/>">${projectRole.project.name}</a>
-                <div>${projectRole.name}</div>
+                <a href="<@slyak.query "/project?id=${projectGroup.project.id}"/>">${projectGroup.project.name}</a>
+                <div>${projectGroup.name}</div>
             </div>
         </div>
         <div class="mt-2">
             <@layout.list title="操作" items=[
-            {'title':'运行脚本','url':'/project/role/script','class':'fa-paper-plane'}
+            {'title':'运行脚本','url':'/project/group/script','class':'fa-paper-plane'}
             ]/>
     <@layout.list title="导航" items=[
-        {'title':'主机列表','url':'/project/role/hosts','class':'fa-desktop'},
-        {'title':'脚本列表','url':'/project/role/scripts','class':'fa-code'},
-        {'title':'变量列表','url':'/project/role/envs','class':'fa-subscript'},
+        {'title':'主机列表','url':'/project/group/hosts','class':'fa-desktop'},
+        {'title':'脚本列表','url':'/project/group/scripts','class':'fa-code'},
+        {'title':'变量列表','url':'/project/group/envs','class':'fa-subscript'},
         {'title':'运行日志','url':'/logs','class':'fa-terminal'}
         ]/>
-    <@layout.list items=[{'title':'配置','url':'/project/role','class':'fa-cog'}]/>
+    <@layout.list items=[{'title':'配置','url':'/project/group','class':'fa-cog'}]/>
         </div>
     </div>
     </#assign>
@@ -195,7 +195,7 @@
         </div>
         <@layout.list title="用户" items=[
         {'title':'用户管理','url':'/admin/users','class':'fa-user'},
-        {'title':'角色管理','url':'/admin/roles','class':'fa-user-secret'}
+        {'title':'分组管理','url':'/admin/groups','class':'fa-user-secret'}
         ]/>
         <@layout.list title="文件" items=[
         {'title':'镜像','url':'/admin/mirrors','class':'fa-warehouse'},

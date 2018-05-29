@@ -1,7 +1,7 @@
 package com.slyak.mirrors.assembler;
 
 import com.slyak.mirrors.domain.Project;
-import com.slyak.mirrors.domain.ProjectRole;
+import com.slyak.mirrors.domain.ProjectGroup;
 import com.slyak.mirrors.repository.ProjectRepository;
 import com.slyak.spring.jpa.EntityAssemblerOne;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,22 +17,22 @@ import java.util.Map;
  * @since 1.3.0
  */
 @Component
-public class ProjectRoleProjectAssembler extends EntityAssemblerOne<ProjectRole, Long, Project> {
+public class ProjectGroupProjectAssembler extends EntityAssemblerOne<ProjectGroup, Long, Project> {
 
     private final ProjectRepository projectRepository;
 
     @Autowired
-    public ProjectRoleProjectAssembler(ProjectRepository projectRepository) {
+    public ProjectGroupProjectAssembler(ProjectRepository projectRepository) {
         this.projectRepository = projectRepository;
     }
 
     @Override
-    protected Long getKey(ProjectRole bean) {
+    protected Long getKey(ProjectGroup bean) {
         return bean.getProjectId();
     }
 
     @Override
-    protected void setValue(ProjectRole bean, Project value) {
+    protected void setValue(ProjectGroup bean, Project value) {
         bean.setProject(value);
     }
 

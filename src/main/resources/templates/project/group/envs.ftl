@@ -1,4 +1,4 @@
-<@layout.layout_project_role title="变量列表" btnCreate={'title':'保存配置','url':'/role/env'}>
+<@layout.layout_project_group title="变量列表" btnCreate={'title':'保存配置','url':'/group/env'}>
 <table class="table table-hover table-fa">
     <thead>
     <tr>
@@ -31,9 +31,9 @@
     </tr>
     </tbody>
 </table>
-<div class="alert alert-primary" role="alert">
+<div class="alert alert-primary" group="alert">
     <p><i class="fa fa-info-circle pr-1"></i>变量可以使用在脚本中，以${r'${变量名称}'}方式引用，依赖项目的变量也会继承下来，供您修改。默认系统变量如下：</p>
     1. <b>HOST_IP</b>   当前主机IP<br/>
     2. <b>HOST_NAME</b> 主机名
 </div>
-</@layout.layout_project_role>
+</@layout.layout_project_group>

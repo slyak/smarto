@@ -16,9 +16,9 @@ import java.util.List;
  * @since 1.3.0
  */
 @Entity
-@Table(name = "t_project_role")
+@Table(name = "t_project_group")
 @Data
-public class ProjectRole extends AbstractPersistable<Long> {
+public class ProjectGroup extends AbstractPersistable<Long> {
 
     private Long projectId;
 
@@ -31,7 +31,4 @@ public class ProjectRole extends AbstractPersistable<Long> {
 
     @Transient
     private Project project;
-
-    @Transient
-    private List<Host> hosts;
 }
