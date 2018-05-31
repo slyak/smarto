@@ -311,3 +311,15 @@ svg, .fas, .list-item i {
     border: 1px solid #ddd;
     font-size: 14px !important;
 }
+
+.confirm {
+    display: none;
+}
+
+.safe .confirm {
+    display: inline;
+}
+
+.pagination {
+    justify-content: right;
+}

@@ -2,6 +2,7 @@ package com.slyak.mirrors.repository;
 
 import com.slyak.mirrors.domain.ScriptFile;
 import com.slyak.spring.jpa.GenericJpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 
 import java.util.List;
 
@@ -14,4 +15,7 @@ import java.util.List;
 public interface ScriptFileRepository extends GenericJpaRepository<ScriptFile, Long> {
 
     List<ScriptFile> findByScriptId(Long scriptId);
+
+    @Modifying
+    void deleteByScriptId(Long id);
 }

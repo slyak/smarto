@@ -14,7 +14,6 @@ $(function () {
             if (ret) {
                 //host is good , then run script
                 $.get(link.attr("href"), function (batchId) {
-                    alert(batchId);
                     location.href = ctx + "/logs?batchId=" + batchId;
                 })
             } else {
@@ -22,5 +21,5 @@ $(function () {
                 link.attr("checking", "0");
             }
         });
-    })
+    });
 });

@@ -44,8 +44,9 @@ public class HostController {
     }
 
     @PostMapping("/host")
-    public void saveHost(@RequestParamBind("id") Host host) {
+    public String saveHost(@RequestParamBind("id") Host host) {
         mirrorManager.saveHost(host);
+        return "redirect:/hosts";
     }
 
     @Controller

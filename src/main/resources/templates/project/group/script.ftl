@@ -3,30 +3,28 @@
 <@layout.cleanHtml>
     <@slyakUI.form action="/project/group/script">
     <input type="hidden" name="id" value="${groupScript.id}">
-        <@bootstrap.formgroup label="变量设置">
-        <table class="table table-borderless">
-            <thead>
+    <table class="table table-borderless">
+        <thead>
+        <tr>
+            <th>名称</th>
+            <th>描述</th>
+            <th>值</th>
+        </tr>
+        </thead>
+        <tbody>
+            <#list groupScript.script.envs as env>
             <tr>
-                <th>名称</th>
-                <th>描述</th>
-                <th>值</th>
+                <td>${env.key}</td>
+                <td>${env.description}</td>
+                <#assign existValue = groupScript.envs['${env.key}']/>
+                <td><@bootstrap.input name="envs['${env.key}']" value="${existValue?has_content?string(existValue,env.defValue)}"/></td>
             </tr>
-            </thead>
-            <tbody>
-                <#list groupScript.script.envs as env>
-                <tr>
-                    <td>${env.key}</td>
-                    <td>${env.description}</td>
-                    <#assign existValue = groupScript.envs['${env.key}']/>
-                    <td><@bootstrap.input name="envs['${env.key}']" value="${existValue?has_content?string(existValue,env.defValue)}"/></td>
-                </tr>
-                <#else >
-                <tr>
-                    <td colspan="3" class="text-center">没有定义的变量</td>
-                </tr>
-                </#list>
-            </tbody>
-        </table>
-        </@bootstrap.formgroup>
+            <#else >
+            <tr>
+                <td colspan="3" class="text-center">暂无记录</td>
+            </tr>
+            </#list>
+        </tbody>
+    </table>
     </@slyakUI.form>
 </@layout.cleanHtml>

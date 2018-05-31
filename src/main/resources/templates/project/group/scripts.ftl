@@ -13,11 +13,13 @@
         <#list groupScripts as groupScript>
             <#assign script = groupScript.script/>
         <tr data-gsId="${groupScript.id}">
-            <td><i class="fas fa-code"></i>${script.name}</td>
+            <td><i class="fas fa-code"></i><a href="<@slyak.query url="/script/content?id=${script.id}"/>"
+                                              target="_blank">${script.name}</a></td>
             <td>${script.osName}:${script.osVersions?join(",")}</td>
             <td>
-                <a href="<@slyak.query url="/script/content?id=${script.id}"/>" target="_blank">查看</a>
-                <@bootstrap.a href="/project/group/script?id=${groupScript.id}" modal="true" showSubmit=true title="配置"/>
+                <#if script.envs?? && script.envs?size gt 0>
+                    <@bootstrap.a href="/project/group/script?id=${groupScript.id}" modal="true" showSubmit=true title="变量设置"/>
+                </#if>
                 <a href="<@slyak.query url='/project/group/deleteScript?id=${groupScript.id}'/>"
                    class="confirm ajax">删除</a>
             </td>

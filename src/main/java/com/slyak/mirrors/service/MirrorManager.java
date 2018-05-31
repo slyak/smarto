@@ -84,4 +84,12 @@ public interface MirrorManager {
     void updateGroupOrders(List<Long> groupIds);
 
     void updateGroupScriptOrders(List<Long> groupScriptIds);
+
+    void deleteProjectGroup(Long id);
+
+    List<Project> findProjectsHavingScript(Long id);
+
+    void deleteScript(Long id);
+
+    void deleteScriptFile(ScriptFile scriptFile);
 }

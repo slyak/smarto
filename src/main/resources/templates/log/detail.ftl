@@ -12,7 +12,7 @@
         console.log(result);
         var body = eval("(" + result.body + ")");
         var len = editor.session.getLength();
-        editor.session.insert({row: len, column: 0}, '\n' + body.line);
+        editor.session.insert({row: len, column: 0}, body.line + '\n');
     };
 </script>
     <@ace.init cssSelector="#logArea" mode="sh" theme="tomorrow" minLines=20 maxLines=20 editable=false>

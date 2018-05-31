@@ -27,6 +27,7 @@ public class ProjectGroupScript extends AbstractPersistable<Long> {
     private Long scriptId;
 
     @Type(type = JSONType.TYPE)
+    @Column(length = 3000)
     private Map<String, String> envs;
 
     @Column(name = "order0")

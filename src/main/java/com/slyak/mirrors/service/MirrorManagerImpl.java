@@ -177,7 +177,7 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
 
     @Override
     public Page<Script> queryScripts(String keyword, Pageable pageable) {
-        return scriptRepository.queryByNameLike(StringUtils.isEmpty(keyword) ? null : "%" + keyword + "%", pageable);
+        return scriptRepository.queryByNameLike(StringUtils.isEmpty(keyword) ? null : "%" + keyword.toLowerCase() + "%", pageable);
     }
 
     @Override
@@ -509,6 +509,36 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
             script.setOrder(i);
             projectGroupScriptRepository.save(script);
         }
+    }
+
+    @Override
+    public void deleteProjectGroup(Long id) {
+        projectGroupHostRepository.deleteByIdProjectGroupId(id);
+        projectGroupScriptRepository.deleteByProjectGroupId(id);
+        projectGroupRepository.delete(id);
+    }
+
+    @Override
+    public List<Project> findProjectsHavingScript(Long id) {
+        return projectRepository.findProjectsHavingScript(id);
+    }
+
+    @Override
+    public void deleteScript(Long id) {
+        scriptFileRepository.deleteByScriptId(id);
+        scriptRepository.delete(id);
+    }
+
+    @Override
+    public void deleteScriptFile(ScriptFile scriptFile) {
+        GlobalFile globalFile = scriptFile.getGlobalFile();
+        //TODO reuse global file
+        fileStoreService.removeFile(globalFile.getId());
+        scriptFileRepository.delete(scriptFile);
+    }
+
+    private boolean isGlobalFileInUse(GlobalFile globalFile) {
+        return false;
     }
 
     @Override

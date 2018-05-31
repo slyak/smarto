@@ -12,7 +12,7 @@
     <@slyak.css url="/css/main.css"/>
     <@slyak.js url="/js/main.js"/>
 </head>
-<body class="clean-html">
+<body class="clean-html<#if RequestParameters.safe??> safe</#if>">
     <#nested />
 </body>
 </html>
@@ -160,7 +160,7 @@
         <div class="text-left mb-3">
             <img src="<@slyak.query url="/images/default-avatar.svg"/>" style="width: 48px;position: absolute">
             <div style="padding-left: 58px;padding-top: 4px;height: 45px;">
-                <a href="<@slyak.query "/project?id=${projectGroup.project.id}"/>">${projectGroup.project.name}</a>
+                <a href="<@slyak.query "/project/groups?id=${projectGroup.project.id}"/>">${projectGroup.project.name}</a>
                 <div>${projectGroup.name}</div>
             </div>
         </div>
@@ -169,9 +169,8 @@
             {'title':'运行脚本','url':'/project/group/script','class':'fa-paper-plane'}
             ]/>
     <@layout.list title="导航" items=[
-        {'title':'主机列表','url':'/project/group/hosts','class':'fa-desktop'},
         {'title':'脚本列表','url':'/project/group/scripts','class':'fa-code'},
-        <#--{'title':'变量列表','url':'/project/group/envs','class':'fa-subscript'},-->
+        {'title':'主机列表','url':'/project/group/hosts','class':'fa-desktop'},
         {'title':'运行日志','url':'/logs','class':'fa-terminal'}
         ]/>
     <@layout.list items=[{'title':'配置','url':'/project/group','class':'fa-cog'}]/>

@@ -2,6 +2,7 @@ package com.slyak.mirrors.repository;
 
 import com.slyak.mirrors.domain.ProjectGroupScript;
 import com.slyak.spring.jpa.GenericJpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 
 import java.util.List;
 
@@ -13,4 +14,7 @@ import java.util.List;
  */
 public interface ProjectGroupScriptRepository extends GenericJpaRepository<ProjectGroupScript, Long> {
     List<ProjectGroupScript> findByProjectGroupIdOrderByOrderAsc(Long id);
+
+    @Modifying
+    void deleteByProjectGroupId(Long id);
 }

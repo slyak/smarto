@@ -34,4 +34,6 @@ public class Host extends AbstractPersistable<Long> {
     private String osName;
 
     private String osVersion;
+
+    private String userHome;
 }

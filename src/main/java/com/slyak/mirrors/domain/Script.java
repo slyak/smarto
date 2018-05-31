@@ -6,6 +6,7 @@ import lombok.Data;
 import org.hibernate.annotations.Type;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.Table;
@@ -33,10 +34,14 @@ public class Script extends AbstractPersistable<Long> {
     private String osName;
 
     @Type(type = JSONType.TYPE)
+    @Column(length = 3000)
     private List<ScriptEnv> envs = Lists.newArrayList();
 
     @Type(type = JSONType.TYPE)
+    @Column(length = 1000)
     private List<String> osVersions;
+
+    private ScriptStatus latestStatus = ScriptStatus.UNKNOWN;
 
     @Override
     public String toString() {

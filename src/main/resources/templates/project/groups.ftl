@@ -19,8 +19,8 @@
             <td><i class="fas fa-boxes"></i>${group.name}</td>
             <td>${group.description}</td>
             <td>
-                <a href="<@slyak.query url="/project/group/hosts?id=${group.id}"/>">管理</a>
-                <@slyakUI.a href="/project/group/delete?id=${group.id}">删除</@slyakUI.a>
+                <a href="<@slyak.query url="/project/group/scripts?id=${group.id}"/>">管理</a>
+                <@slyakUI.a href="/project/group/delete?id=${group.id}" class="confirm ajax">删除</@slyakUI.a>
             </td>
         </tr>
         <#else >

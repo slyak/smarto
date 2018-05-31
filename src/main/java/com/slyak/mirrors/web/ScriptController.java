@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
@@ -59,9 +60,8 @@ public class ScriptController {
     @PostMapping("/script")
     public String saveScript(@RequestParamBind("id") Script script) {
         mirrorManager.saveScript(script);
-        return "redirect:/script/files?id=" + script.getId();
+        return "redirect:/script/content?id=" + script.getId();
     }
-
 
     @Controller
     @RequestMapping("/script/*")
@@ -75,6 +75,17 @@ public class ScriptController {
         public ScriptActionController(MirrorManager mirrorManager, InitialPreviewConfigConverter<GlobalFile> converter) {
             this.mirrorManager = mirrorManager;
             this.converter = converter;
+        }
+
+        @GetMapping("/delete")
+        @ResponseBody
+        public boolean delete(Long id) {
+            List<Project> projects = mirrorManager.findProjectsHavingScript(id);
+            if (CollectionUtils.isEmpty(projects)) {
+                mirrorManager.deleteScript(id);
+                return true;
+            }
+            return false;
         }
 
         @GetMapping("/osVersions")
@@ -106,6 +117,12 @@ public class ScriptController {
         @ResponseBody
         public void saveFile(@RequestParamBind("id") ScriptFile scriptFile) {
             mirrorManager.saveScriptFile(scriptFile);
+        }
+
+        @GetMapping("/file/delete")
+        @ResponseBody
+        public void deleteFile(@RequestParamBind("id") ScriptFile scriptFile) {
+            mirrorManager.deleteScriptFile(scriptFile);
         }
 
         @GetMapping("/envs")
@@ -142,7 +159,7 @@ public class ScriptController {
                     env.setDefValue(scriptEnv.getDefValue());
                 }
             }
-            if (!exist){
+            if (!exist) {
                 envs.add(scriptEnv);
             }
             mirrorManager.saveScript(script);

@@ -158,6 +158,12 @@ public class ProjectController {
 
         }
 
+        @GetMapping("/delete")
+        @ResponseBody
+        public void deleteGroup(Long id) {
+            mirrorManager.deleteProjectGroup(id);
+        }
+
         @ModelAttribute("projectGroup")
         public ProjectGroup getProjectGroup(@RequestParam(value = "id", required = false) ProjectGroup projectGroup) {
             return projectGroup;

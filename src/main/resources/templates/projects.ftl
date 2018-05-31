@@ -14,7 +14,7 @@
             <td>${project.name}</td>
             <td>${project.description}</td>
             <td>
-                <a href="<@slyak.query url="/project/groups?id=${project.id}"/>">编辑</a>
+                <a href="<@slyak.query url="/project/groups?id=${project.id}"/>">管理</a>
                 <@bootstrap.a href="/project/delete?id=${project.id}" title="删除" class="confirm ajax"/>
             </td>
         </tr>
@@ -30,4 +30,4 @@
     <@layout.downloadOS/>
 </#assign>
 
-<@layout.leftMain title='项目' left=left right=right btnCreate={'title':'创建项目','url':'/project/project'}/>
+<@layout.leftMain title='项目' left=left right=right btnCreate={'title':'创建项目','url':'/project'}/>

@@ -1,5 +1,6 @@
 --queryByNameLike
 SELECT * FROM t_script WHERE 1=1
 <#if keyword??>
-AND ((name LIKE :keyword) OR (os_name LIKE :keyword))
+AND ((lower(name) LIKE :keyword) OR (lower(os_name) LIKE :keyword))
 </#if>
+ORDER BY name,id
