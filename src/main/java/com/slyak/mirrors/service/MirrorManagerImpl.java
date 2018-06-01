@@ -30,6 +30,7 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.io.ByteArrayInputStream;
@@ -203,12 +204,12 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
     @Override
     public Batch execScript(Long scriptId) {
         Host host = getTestHost();
-        return execScripts(scriptId, Collections.singletonList(scriptId), Collections.singletonList(host.getId()));
+        return execScripts(BatchOwner.SCRIPT, scriptId, Collections.singletonList(scriptId), Collections.singletonList(host.getId()));
     }
 
     @Override
-    public Batch execScripts(Long bizId, List<Long> scriptIds, List<Long> hostIds) {
-        Batch batch = createBatch(bizId, scriptIds, hostIds);
+    public Batch execScripts(BatchOwner owner, Long ownerId, List<Long> scriptIds, List<Long> hostIds) {
+        Batch batch = createBatch(owner, ownerId, scriptIds, hostIds);
         runBatch(batch);
         return batch;
     }
@@ -316,6 +317,7 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
                     BatchTaskStatus.FAILED :
                     (stdLogger.hasError() ? BatchTaskStatus.FAILED : BatchTaskStatus.SUCCESS);
             batchTask.setStatus(status);
+
             batchTaskRepository.save(batchTask);
         });
     }
@@ -512,6 +514,7 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
     }
 
     @Override
+    @Transactional
     public void deleteProjectGroup(Long id) {
         projectGroupHostRepository.deleteByIdProjectGroupId(id);
         projectGroupScriptRepository.deleteByProjectGroupId(id);
@@ -565,7 +568,7 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
         return PROJECT_HOME + SEPARATOR + "logs";
     }
 
-    private Batch createBatch(Long ownerId, List<Long> scriptIds, List<Long> hostIds) {
+    private Batch createBatch(BatchOwner owner, Long ownerId, List<Long> scriptIds, List<Long> hostIds) {
         Batch batch = new Batch();
         batch.setOwnerId(ownerId);
         batch.setScriptIds(scriptIds);

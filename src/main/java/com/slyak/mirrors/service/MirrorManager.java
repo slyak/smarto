@@ -35,7 +35,7 @@ public interface MirrorManager {
 
     Batch execScript(Long scriptId);
 
-    Batch execScripts(Long bizId, List<Long> scriptIds, List<Long> hostIds);
+    Batch execScripts(BatchOwner owner, Long ownerId, List<Long> scriptIds, List<Long> hostIds);
 
     Global findGlobal();
 

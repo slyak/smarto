@@ -22,7 +22,7 @@
     <@cleanHtml>
         <@bootstrap.navbar brand="ITASM" left=[
         {'title':'脚本','url':'/scripts'},
-        {'title':'日志','url':'/logs'},
+        {'title':'任务','url':'/logs'},
         {'title':'主机','url':'/hosts'},
         {'title':'项目','url':'/projects'},
         {'title':'镜像','url':'/mirrors'}
@@ -221,7 +221,7 @@
         </div>
         <div class="mt-2">
             <@layout.list title="操作" items=[
-            {'title':'运行脚本','url':'/script/run','class':'fa-paper-plane','aClass':'run-script'},
+            {'title':'沙箱测试','url':'/script/run','class':'fa-paper-plane','aClass':'run-script'},
             {'title':'查看日志','url':'/logs','class':'fa-terminal'}
             ]/>
     <@layout.list title="导航" items=[

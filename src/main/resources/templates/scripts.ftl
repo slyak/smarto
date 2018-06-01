@@ -7,6 +7,7 @@
         <th scope="col">名称</th>
         <th scope="col">操作系统</th>
         <th scope="col">版本范围</th>
+        <th scope="col" class="text-center">最新状态</th>
         <th scope="col">操作</th>
     </tr>
     </thead>
@@ -16,6 +17,16 @@
             <td>${sc.name}</td>
             <td>${sc.osName}</td>
             <td><#if sc.osVersions?has_content>${sc.osVersions?join(",")}</#if></td>
+            <td class="text-center">
+                <#if sc.latestStatus == 'FAILED'>
+                    <#assign badgeClass="badge-danger"/>
+                <#elseif sc.latestStatus == 'SUCCESS'>
+                    <#assign badgeClass="badge-success"/>
+                <#else>
+                    <#assign badgeClass="badge-secondary"/>
+                </#if>
+                <span class="badge ${badgeClass}">${sc.latestStatus.title}</span>
+            </td>
             <td>
                 <@bootstrap.a href="#" title="使用帮助" modal=true modalContent="${sc.help}"/>
                 <@slyakUI.a href="/script/content?id=${sc.id}">管理</@slyakUI.a>

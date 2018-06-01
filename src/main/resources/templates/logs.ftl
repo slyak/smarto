@@ -4,12 +4,12 @@
 <table class="table table-hover table-fa">
     <thead>
     <tr>
-        <th scope="col">编号</th>
+        <th scope="col">任务编号</th>
         <th scope="col">主机</th>
         <th scope="col">脚本列表</th>
         <th scope="col">开始时间</th>
         <th scope="col">结束时间</th>
-        <th scope="col">脚本状态</th>
+        <th scope="col">状态</th>
         <th scope="col">操作</th>
     </tr>
     </thead>
@@ -21,8 +21,12 @@
                 <#if host_index == 0>
                     <td rowspan="${row}">${batch.id}</td>
                 </#if>
-                <td>${host.name}[${host.ip}]</td>
-                <td>${batch.scripts?join(",")}</td>
+                <td>${host.ip}-${host.name}</td>
+                <td>
+                    <#list batch.scripts as script>
+                        <a href="<@slyak.query url='/script/content?id=${script.id}'/>">${script.name}</a><#if script_has_next><br></#if>
+                    </#list>
+                </td>
                 <#assign task = batch.tasks?api.get(host.id)/>
                 <td rowspan="${row}">${task.startAt?number_to_date?string("MM/dd HH:mm:ss")}</td>
                 <td rowspan="${row}">
@@ -59,4 +63,5 @@
     <@layout.downloadOS/>
 </#assign>
 
-<@layout.leftMain title='日志' left=left right=right/>
+<#--<@layout.main title="任务">${left}</@layout.main>-->
+<@layout.leftMain title='任务' left=left right=right/>

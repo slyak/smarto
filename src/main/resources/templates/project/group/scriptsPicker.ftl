@@ -2,7 +2,7 @@
 <#-- @ftlvariable name="hosts" type="java.util.List<com.slyak.mirrors.domain.Host>" -->
 <@layout.cleanHtml>
     <@slyakUI.form action="/project/group/addScripts">
-    <@bootstrap.keywordSearch id="scriptSearch"/>
+        <@bootstrap.keywordSearch id="scriptSearch"/>
     <input type="hidden" name="groupId" value="${RequestParameters.id}">
     <table class="table">
         <thead>
@@ -22,5 +22,6 @@
             </#list>
         </tbody>
     </table>
+        <@slyakUI.pagination value=page/>
     </@slyakUI.form>
 </@layout.cleanHtml>

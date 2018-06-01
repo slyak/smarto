@@ -30,6 +30,8 @@ public class Batch extends AbstractPersistable<Long> {
 
     private Long ownerId = 0L;
 
+    private BatchOwner owner = BatchOwner.SCRIPT;
+
     private long createAt = System.currentTimeMillis();
 
     private BatchTaskStatus status;

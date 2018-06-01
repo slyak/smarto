@@ -140,7 +140,6 @@ public class ProjectController {
             modelMap.put("page", mirrorManager.queryScripts(keyword, pageable));
         }
 
-
         @PostMapping("/addScripts")
         @ResponseBody
         public void addScripts(Long groupId, @RequestParam("scriptIds") List<Long> scriptIds) {
