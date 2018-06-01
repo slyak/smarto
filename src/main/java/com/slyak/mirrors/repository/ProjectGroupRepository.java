@@ -2,7 +2,6 @@ package com.slyak.mirrors.repository;
 
 import com.slyak.mirrors.domain.ProjectGroup;
 import com.slyak.spring.jpa.GenericJpaRepository;
-import com.slyak.spring.jpa.TemplateQuery;
 
 import java.util.List;
 

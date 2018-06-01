@@ -37,7 +37,7 @@
 </#assign>
 
 <#assign right>
-<@layout.downloadOS/>
+    <@layout.downloadOS/>
 </#assign>
 
 <@layout.leftMain title="镜像" left=left right=right/>

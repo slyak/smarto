@@ -1,7 +1,7 @@
 <#-- @ftlvariable name="env" type="com.slyak.mirrors.domain.ScriptEnv" -->
 <@layout.cleanHtml>
     <@slyakUI.form action="/script/env">
-        <input type="hidden" name="scriptId" value="${RequestParameters.scriptId}">
+    <input type="hidden" name="scriptId" value="${RequestParameters.scriptId}">
         <@bootstrap.formgroup label="键" required=true>
             <@bootstrap.input name="key" value="${env.key}"/>
         </@bootstrap.formgroup>

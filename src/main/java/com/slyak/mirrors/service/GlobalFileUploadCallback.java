@@ -1,7 +1,6 @@
 package com.slyak.mirrors.service;
 
 import com.slyak.file.FileStoreService;
-import com.slyak.file.LocalFileStoreService;
 import com.slyak.mirrors.domain.GlobalFile;
 import com.slyak.mirrors.repository.GlobalFileRepository;
 import com.slyak.web.support.file.FileUploadCallback;
@@ -16,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**

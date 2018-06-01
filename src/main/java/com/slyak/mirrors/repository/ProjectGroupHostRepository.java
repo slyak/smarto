@@ -15,6 +15,7 @@ import java.util.List;
  */
 public interface ProjectGroupHostRepository extends GenericJpaRepository<ProjectGroupHost, ProjectGroupHostKey> {
     List<ProjectGroupHost> findByIdProjectGroupId(Long id);
+
     @Modifying
     void deleteByIdProjectGroupId(Long id);
 }

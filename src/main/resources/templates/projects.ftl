@@ -19,7 +19,9 @@
             </td>
         </tr>
         <#else >
-        <tr><td colspan="3" class="text-center">暂无记录</td></tr>
+        <tr>
+            <td colspan="3" class="text-center">暂无记录</td>
+        </tr>
         </#list>
     </tbody>
 </table>

@@ -1,6 +1,5 @@
 package com.slyak.mirrors.repository;
 
-import com.slyak.mirrors.domain.Global;
 import com.slyak.mirrors.domain.GlobalFile;
 import com.slyak.spring.jpa.GenericJpaRepository;
 

@@ -1,5 +1,6 @@
 package com.slyak.mirrors.service;
 
+import com.slyak.mirrors.domain.Batch;
 import com.slyak.mirrors.domain.Host;
 import com.slyak.mirrors.dto.SysEnv;
 
@@ -13,5 +14,5 @@ public interface SysEnvProvider<T> {
 
     SysEnv getMetadata();
 
-    T provide(Long batchId, Host host);
+    T provide(Batch batch, Host host);
 }

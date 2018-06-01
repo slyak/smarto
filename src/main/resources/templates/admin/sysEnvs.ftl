@@ -13,7 +13,9 @@
         <tr>
             <td>${sysEnv.name}</td>
             <td>${sysEnv.description}</td>
-            <td><pre>${sysEnv.structure}</pre></td>
+            <td>
+                <pre>${sysEnv.structure}</pre>
+            </td>
         </tr>
         </#list>
     </tbody>

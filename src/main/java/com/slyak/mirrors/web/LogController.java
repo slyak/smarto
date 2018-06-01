@@ -59,6 +59,23 @@ public class LogController {
         this.mirrorManager = mirrorManager;
     }
 
+    public static void main(String[] args) {
+        /*try {
+            FileUtils.forceMkdirParent(new File("/opt/itasm/logs/321/65.log"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+        String PROJECT_HOME = SystemUtils.getUserHome().getPath() + '/' + ".itasm";
+        System.out.println(PROJECT_HOME);
+        Logger logger = LoggerUtils.createLogger(PROJECT_HOME + "/logs/321/65.log", "%msg%n");
+        logger.info("this is a test");
+        logger.info("this is a test");
+        logger.info("this is a test");
+        logger.info("this is a test");
+
+        System.out.println(System.getProperty("user.home"));
+    }
+
     @MessageMapping("/ssh/logs")
     public void logs(Message<TaskLogRequest> message) throws IOException {
         TaskLogRequest taskLogRequest = message.getPayload();
@@ -103,25 +120,8 @@ public class LogController {
     }
 
     @RequestMapping("/logs")
-    public void logs(BatchQuery batchQuery, @PageableDefault(size = 20,sort = "id",direction = Sort.Direction.DESC) Pageable pageable, ModelMap modelMap) {
+    public void logs(BatchQuery batchQuery, @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable, ModelMap modelMap) {
         modelMap.put("page", mirrorManager.queryBatches(batchQuery, pageable));
-    }
-
-    public static void main(String[] args) {
-        /*try {
-            FileUtils.forceMkdirParent(new File("/opt/itasm/logs/321/65.log"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-        String PROJECT_HOME = SystemUtils.getUserHome().getPath() + '/' + ".itasm";
-        System.out.println(PROJECT_HOME);
-        Logger logger = LoggerUtils.createLogger(PROJECT_HOME + "/logs/321/65.log", "%msg%n");
-        logger.info("this is a test");
-        logger.info("this is a test");
-        logger.info("this is a test");
-        logger.info("this is a test");
-
-        System.out.println(System.getProperty("user.home"));
     }
 
 }

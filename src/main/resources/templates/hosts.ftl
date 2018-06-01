@@ -14,7 +14,8 @@
             <td>${host.name}</td>
             <td>${host.ip}</td>
             <td>
-                <a href="<@slyak.query url='/host/test?id=${host.id}'/>" class="ajax" data-cb="{'true':'连接成功!','false':'连接失败!'}">测试</a>
+                <a href="<@slyak.query url='/host/test?id=${host.id}'/>" class="ajax"
+                   data-cb="{'true':'连接成功!','false':'连接失败!'}">测试</a>
                 <@slyakUI.a href="/host?id=${host.id}">编辑</@slyakUI.a>
                 <@slyakUI.a href="/host/delete?id=${host.id}" class="confirm ajax">删除</@slyakUI.a>
             </td>

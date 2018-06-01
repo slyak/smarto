@@ -1,5 +1,6 @@
 package com.slyak.mirrors.service;
 
+import com.slyak.mirrors.domain.Batch;
 import com.slyak.mirrors.domain.Host;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class CurrentHostSysEnvProvider extends AbstractSysEnvProvider<Host> {
 
     @Override
-    public Host provide(Long batchId, Host host) {
+    public Host provide(Batch batch, Host host) {
         return host;
     }
 

@@ -1,7 +1,7 @@
 <#-- @ftlvariable name="os" type="com.slyak.mirrors.domain.OS" -->
 <@layout.cleanHtml>
     <@slyakUI.form action="/admin/os">
-        <input type="hidden" name="id" value="${os.id}">
+    <input type="hidden" name="id" value="${os.id}">
         <@bootstrap.formgroup label="操作系统名称" required=true>
             <@bootstrap.input name="os" value="${os.os}"/>
         </@bootstrap.formgroup>

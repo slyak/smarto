@@ -6,7 +6,8 @@
         <div class="mt-2">
         <#list versions as ver>
             <div class="custom-control custom-checkbox custom-control-inline">
-                <input id="checkbox_${ver_index}" name="osVersions" value="${ver}" class="custom-control-input" type="checkbox"
+                <input id="checkbox_${ver_index}" name="osVersions" value="${ver}" class="custom-control-input"
+                       type="checkbox"
                        <#if script?? && script.osVersions?seq_contains(ver)>checked</#if>/>
                 <label class="custom-control-label" for="checkbox_${ver_index}">${ver}</label>
             </div>

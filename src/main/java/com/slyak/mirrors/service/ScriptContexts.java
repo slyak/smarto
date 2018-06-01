@@ -28,6 +28,12 @@ public abstract class ScriptContexts implements ScriptContext {
         this.stdCallback = stdLogger;
     }
 
+    static ScriptContext select(Host host, SSH2 ssh2, StdEventLogger stdLogger, Set<String> scriptPaths) {
+        return host.isTestHost() ?
+                new DockerScriptRunnerContext(ssh2, stdLogger, scriptPaths, host) :
+                new DefaultScriptRunnerContext(ssh2, stdLogger, scriptPaths);
+    }
+
     @Override
     public void exec(List<String> scriptFiles) {
         try {
@@ -50,14 +56,6 @@ public abstract class ScriptContexts implements ScriptContext {
     }
 
     abstract String generateCommand(String scriptFile);
-
-
-    static ScriptContext select(Host host, SSH2 ssh2, StdEventLogger stdLogger, Set<String> scriptPaths) {
-        return host.isTestHost() ?
-                new DockerScriptRunnerContext(ssh2, stdLogger, scriptPaths, host) :
-                new DefaultScriptRunnerContext(ssh2, stdLogger, scriptPaths);
-    }
-
 
     static class DefaultScriptRunnerContext extends ScriptContexts {
 

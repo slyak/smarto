@@ -1,7 +1,7 @@
 <#-- @ftlvariable name="oss" type="java.util.List<com.slyak.web.ui.Option>" -->
 <#-- @ftlvariable name="script" type="com.slyak.mirrors.domain.Script" -->
 <#macro settings left=3>
-    <input type="hidden" name="id" value="${script.id}">
+<input type="hidden" name="id" value="${script.id}">
     <@bootstrap.formgroup label="名称" required=true left=left>
         <@bootstrap.input name="name" value="${script.name}"/>
     </@bootstrap.formgroup>

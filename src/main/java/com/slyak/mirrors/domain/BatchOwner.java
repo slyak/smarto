@@ -7,5 +7,5 @@ package com.slyak.mirrors.domain;
  * @since 1.3.0
  */
 public enum BatchOwner {
-    SCRIPT, PROJECT
+    SCRIPT, PROJECT_GROUP
 }

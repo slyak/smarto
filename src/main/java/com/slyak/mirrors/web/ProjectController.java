@@ -1,9 +1,6 @@
 package com.slyak.mirrors.web;
 
-import com.slyak.mirrors.domain.Project;
-import com.slyak.mirrors.domain.ProjectGroup;
-import com.slyak.mirrors.domain.ProjectGroupHostKey;
-import com.slyak.mirrors.domain.ProjectGroupScript;
+import com.slyak.mirrors.domain.*;
 import com.slyak.mirrors.service.MirrorManager;
 import com.slyak.web.support.data.RequestParamBind;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -161,6 +158,13 @@ public class ProjectController {
         @ResponseBody
         public void deleteGroup(Long id) {
             mirrorManager.deleteProjectGroup(id);
+        }
+
+        @GetMapping("/run")
+        @ResponseBody
+        public Long run(@RequestParam("id") Long id) {
+            Batch batch = mirrorManager.execOwnerScripts(BatchOwner.PROJECT_GROUP, id);
+            return batch.getId();
         }
 
         @ModelAttribute("projectGroup")

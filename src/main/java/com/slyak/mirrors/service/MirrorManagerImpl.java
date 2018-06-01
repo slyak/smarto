@@ -13,6 +13,7 @@ import com.slyak.core.util.StringUtils;
 import com.slyak.file.FileStoreService;
 import com.slyak.mirrors.domain.*;
 import com.slyak.mirrors.dto.BatchQuery;
+import com.slyak.mirrors.dto.ScriptInstances;
 import com.slyak.mirrors.dto.SysEnv;
 import com.slyak.mirrors.repository.*;
 import com.slyak.web.support.freemarker.FreemarkerTemplateRender;
@@ -21,6 +22,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SystemUtils;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -46,9 +48,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
-public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublisherAware, ApplicationContextAware {
-
-    private static final String ENV_PATTERN = "\\$[{]?([A-Za-z0-9_-]+)[}]?";
+public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublisherAware, ApplicationContextAware, InitializingBean {
 
     private static final String SH = ".sh";
 
@@ -86,6 +86,8 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
 
     private final FreemarkerTemplateRender templateRender;
 
+    private Map<BatchOwner, BatchProvider> batchProviders = Maps.newHashMap();
+
     private ApplicationEventPublisher eventPublisher;
 
     private ApplicationContext appContext;
@@ -105,7 +107,8 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
             TaskExecutor taskExecutor,
             FreemarkerTemplateRender templateRender,
             ProjectGroupHostRepository projectGroupHostRepository,
-            ProjectGroupScriptRepository projectGroupScriptRepository) {
+            ProjectGroupScriptRepository projectGroupScriptRepository
+    ) {
         this.projectRepository = projectRepository;
         this.scriptFileRepository = scriptFileRepository;
         this.projectGroupRepository = projectGroupRepository;
@@ -128,53 +131,15 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
     }
 
     @Override
-    public ProjectGroup findProjectGroup(Long groupId) {
-        return null;
-    }
-
-    @Override
     public List<ScriptFile> findScriptFiles(Long scriptId) {
         return scriptFileRepository.findByScriptId(scriptId);
     }
 
     @Override
+    @Transactional
     public void saveScript(Script script) {
         scriptRepository.save(script);
     }
-
-    /**
-     * @param script
-     * @Deprecated
-     */
-    private void generateScriptEnvs(Script script) {
-        String content = script.getContent();
-        Set<String> envs = content == null ?
-                Collections.emptySet() : new HashSet<>(StringUtils.findGroupsIfMatch(ENV_PATTERN, content));
-        List<ScriptEnv> existEnvs = script.getEnvs();//null or empty
-        if (envs.isEmpty() || CollectionUtils.isEmpty(existEnvs)) {
-            script.setEnvs(toScriptEnvs(envs));
-        } else {
-            //remove not exist key
-            for (int i = existEnvs.size() - 1; i >= 0; i--) {
-                ScriptEnv scriptEnv = existEnvs.get(i);
-                if (envs.contains(scriptEnv.getKey())) {
-                    envs.remove(scriptEnv.getKey());
-                } else {
-                    existEnvs.remove(i);
-                }
-            }
-            //add new key
-            existEnvs.addAll(toScriptEnvs(envs));
-        }
-    }
-
-    private List<ScriptEnv> toScriptEnvs(Set<String> envs) {
-        if (CollectionUtils.isEmpty(envs)) {
-            return Collections.emptyList();
-        }
-        return envs.stream().map(s -> new ScriptEnv(s, null, null)).collect(Collectors.toList());
-    }
-
 
     @Override
     public Page<Script> queryScripts(String keyword, Pageable pageable) {
@@ -182,11 +147,13 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
     }
 
     @Override
+    @Transactional
     public void saveOs(OS os) {
         osRepository.save(os);
     }
 
     @Override
+    @Transactional
     public void saveScriptFile(ScriptFile scriptFile) {
         scriptFileRepository.save(scriptFile);
     }
@@ -201,16 +168,33 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
         return osRepository.findByOs(osName);
     }
 
-    @Override
-    public Batch execScript(Long scriptId) {
-        Host host = getTestHost();
-        return execScripts(BatchOwner.SCRIPT, scriptId, Collections.singletonList(scriptId), Collections.singletonList(host.getId()));
+    private Batch createBatch(BatchOwner owner, Long ownerId) {
+        BatchProvider batchProvider = batchProviders.get(owner);
+        Batch batch = new Batch();
+        batch.setOwner(owner);
+        batch.setOwnerId(ownerId);
+        //get hosts
+        List<Long> hostIds = batchProvider.getOwnerHostIds(ownerId);
+        ScriptInstances instances = batchProvider.getScriptsInstances(ownerId);
+        batch.setScriptIds(instances.getIds());
+        batch.setScriptEnvs(instances.getEnvs());
+        batch.setHostIds(hostIds);
+        saveBatch(batch);
+        Long batchId = batch.getId();
+        for (Long hostId : hostIds) {
+            BatchTask task = new BatchTask();
+            task.setId(new BatchTaskKey(batchId, hostId));
+            task.setStartAt(System.currentTimeMillis());
+            batchTaskRepository.save(task);
+        }
+        return batch;
     }
 
     @Override
-    public Batch execScripts(BatchOwner owner, Long ownerId, List<Long> scriptIds, List<Long> hostIds) {
-        Batch batch = createBatch(owner, ownerId, scriptIds, hostIds);
-        runBatch(batch);
+    @Transactional
+    public Batch execOwnerScripts(BatchOwner owner, Long ownerId) {
+        Batch batch = createBatch(owner, ownerId);
+        runBatch(batch.getId());
         return batch;
     }
 
@@ -222,6 +206,7 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
 
     @Override
     @SneakyThrows
+    @Transactional
     public Global saveGlobal(Global global) {
         return globalRepository.save(global);
     }
@@ -236,21 +221,21 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
     }
 
     @SneakyThrows
-    private void runBatch(Batch batch) {
+    private void runBatch(Long batchId) {
+        Batch batch = batchRepository.findOne(batchId);
         taskExecutor.execute(() -> {
             List<Host> hosts = hostRepository.findAll(batch.getHostIds());
             List<Script> scripts = scriptRepository.findAll(batch.getScriptIds());
-            Long batchId = batch.getId();
             for (Host host : hosts) {
                 //run command in one host
                 String logFile = getBatchLogfile(batchId, host.getId());
-                asyncConnectExecute(batchId, host, scripts, logFile);
+                asyncConnectExecute(batch, host, scripts, logFile);
             }
         });
 
     }
 
-    private void asyncConnectExecute(Long batchId, Host host, List<Script> scripts, String logfile) {
+    private void asyncConnectExecute(Batch batch, Host host, List<Script> scripts, String logfile) {
         taskExecutor.execute(() -> {
             //connect and auth
             SSH2 ssh2 = null;
@@ -263,7 +248,7 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
                     stdLogger = new StdEventLogger(logger, eventPublisher) {
                         @Override
                         protected StdEvent decorate(StdEvent stdEvent) {
-                            stdEvent.setProperty("batchId", batchId);
+                            stdEvent.setProperty("batchId", batch.getId());
                             stdEvent.setProperty("hostId", host.getId());
                             return stdEvent;
                         }
@@ -287,8 +272,8 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
                         //run bash script
                         fileScpPaths.add(PROJECT_HOME);
                         Map<String, Object> model = Maps.newHashMap();
-                        setupSysEnvs(model, batchId, host);
-                        model.putAll(getBatchScriptEnvs(batchId, script));
+                        setupSysEnvs(model, batch, host);
+                        Optional.of(batch.getScriptEnvs()).ifPresent(scriptEnvs -> model.putAll(scriptEnvs.get(script.getId())));
                         //\r\n will cause dos file format and will cause file not found exception
                         String bashScript = StringUtils.replace(templateRender.renderStringTpl(script.getContent(), model), "\r\n", "\n");
                         @Cleanup ByteArrayInputStream is = new ByteArrayInputStream(bashScript.getBytes(DEFAULT_CHARSET));
@@ -309,7 +294,7 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
             }
             //log batch host result
             BatchTaskKey taskKey = new BatchTaskKey();
-            taskKey.setBatchId(batchId);
+            taskKey.setBatchId(batch.getId());
             taskKey.setHostId(host.getId());
             BatchTask batchTask = batchTaskRepository.findOne(taskKey);
             batchTask.setStopAt(System.currentTimeMillis());
@@ -322,29 +307,12 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
         });
     }
 
-    private Map<String, String> getBatchScriptEnvs(Long batchId, Script script) {
-        Map<String, String> envs = Maps.newHashMap();
-        Map<String, String> batchEnvs = getBatchScriptEnvs(batchId, script.getId());
-        for (ScriptEnv env : script.getEnvs()) {
-            String key = env.getKey();
-            String current = batchEnvs.get(key);
-            envs.put(key, StringUtils.isEmpty(current) ? env.getDefValue() : current);
-
-        }
-        return envs;
-    }
-
-    //TODO project batch
-    private Map<String, String> getBatchScriptEnvs(Long batchId, Long scriptId) {
-        return Collections.emptyMap();
-    }
-
-    private void setupSysEnvs(Map<String, Object> model, Long batchId, Host host) {
+    private void setupSysEnvs(Map<String, Object> model, Batch batch, Host host) {
         Collection<SysEnvProvider> sysEnvProviders = getSysEnvProviders();
         if (!CollectionUtils.isEmpty(sysEnvProviders)) {
             for (SysEnvProvider provider : sysEnvProviders) {
                 SysEnv metadata = provider.getMetadata();
-                model.put(metadata.getName(), provider.provide(batchId, host));
+                model.put(metadata.getName(), provider.provide(batch, host));
             }
         }
     }
@@ -418,11 +386,6 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
     }
 
     @Override
-    public Batch findBatch(Long batchId) {
-        return batchRepository.findOne(batchId);
-    }
-
-    @Override
     public List<SysEnv> querySysEnvs() {
         List<SysEnv> sysEnvs = Lists.newArrayList();
         for (SysEnvProvider provider : getSysEnvProviders()) {
@@ -432,16 +395,18 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
     }
 
     @Override
+    @Transactional
     public Project saveProject(Project project) {
         return projectRepository.save(project);
     }
 
     @Override
-    public List<ProjectGroup> findProjectGroups(Long groupId) {
-        return projectGroupRepository.findByProjectIdOrderByOrderAsc(groupId);
+    public List<ProjectGroup> findProjectGroups(Long projectId) {
+        return projectGroupRepository.findByProjectIdOrderByOrderAsc(projectId);
     }
 
     @Override
+    @Transactional
     public ProjectGroup saveProjectGroup(ProjectGroup projectGroup) {
         return projectGroupRepository.save(projectGroup);
     }
@@ -452,6 +417,7 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
     }
 
     @Override
+    @Transactional
     public void addGroupHosts(Long groupId, List<Long> hostIds) {
         for (Long hostId : hostIds) {
             ProjectGroupHost groupHost = new ProjectGroupHost();
@@ -466,16 +432,17 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
     }
 
     @Override
-    public List<ProjectGroupHost> findProjectGroupHosts(Long id) {
-        return projectGroupHostRepository.findByIdProjectGroupId(id);
+    public List<ProjectGroupHost> findProjectGroupHosts(Long groupId) {
+        return projectGroupHostRepository.findByIdProjectGroupId(groupId);
     }
 
     @Override
-    public List<ProjectGroupScript> findProjectGroupScripts(Long id) {
-        return projectGroupScriptRepository.findByProjectGroupIdOrderByOrderAsc(id);
+    public List<ProjectGroupScript> findProjectGroupScripts(Long groupId) {
+        return projectGroupScriptRepository.findByProjectGroupIdOrderByOrderAsc(groupId);
     }
 
     @Override
+    @Transactional
     public void addGroupScripts(Long groupId, List<Long> scriptIds) {
         for (Long scriptId : scriptIds) {
             ProjectGroupScript groupScript = new ProjectGroupScript();
@@ -486,16 +453,19 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
     }
 
     @Override
+    @Transactional
     public void deleteProjectGroupScript(Long id) {
         projectGroupScriptRepository.delete(id);
     }
 
     @Override
+    @Transactional
     public void saveGroupScript(ProjectGroupScript groupScript) {
         projectGroupScriptRepository.save(groupScript);
     }
 
     @Override
+    @Transactional
     public void updateGroupOrders(List<Long> groupIds) {
         for (int i = 0; i < groupIds.size(); i++) {
             ProjectGroup group = projectGroupRepository.findOne(groupIds.get(i));
@@ -505,6 +475,7 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
     }
 
     @Override
+    @Transactional
     public void updateGroupScriptOrders(List<Long> groupScriptIds) {
         for (int i = 0; i < groupScriptIds.size(); i++) {
             ProjectGroupScript script = projectGroupScriptRepository.findOne(groupScriptIds.get(i));
@@ -527,21 +498,19 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
     }
 
     @Override
+    @Transactional
     public void deleteScript(Long id) {
         scriptFileRepository.deleteByScriptId(id);
         scriptRepository.delete(id);
     }
 
     @Override
+    @Transactional
     public void deleteScriptFile(ScriptFile scriptFile) {
         GlobalFile globalFile = scriptFile.getGlobalFile();
         //TODO reuse global file
         fileStoreService.removeFile(globalFile.getId());
         scriptFileRepository.delete(scriptFile);
-    }
-
-    private boolean isGlobalFileInUse(GlobalFile globalFile) {
-        return false;
     }
 
     @Override
@@ -560,31 +529,13 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
     }
 
     @Override
+    @Transactional
     public void saveHost(Host host) {
         hostRepository.save(host);
     }
 
     private String getBatchLogDirectory() {
         return PROJECT_HOME + SEPARATOR + "logs";
-    }
-
-    private Batch createBatch(BatchOwner owner, Long ownerId, List<Long> scriptIds, List<Long> hostIds) {
-        Batch batch = new Batch();
-        batch.setOwnerId(ownerId);
-        batch.setScriptIds(scriptIds);
-        batch.setHostIds(hostIds);
-        saveBatch(batch);
-
-        Long batchId = batch.getId();
-        for (Long hostId : hostIds) {
-            BatchTask task = new BatchTask();
-            task.setId(new BatchTaskKey(batchId, hostId));
-            task.setStartAt(System.currentTimeMillis());
-            batchTaskRepository.save(task);
-        }
-
-        return batch;
-
     }
 
     private Batch saveBatch(Batch batch) {
@@ -599,5 +550,110 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
     @Override
     public void setApplicationContext(ApplicationContext appContext) throws BeansException {
         this.appContext = appContext;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        this.batchProviders.put(BatchOwner.PROJECT_GROUP, new ProjectGroupBatchProvider());
+        this.batchProviders.put(BatchOwner.SCRIPT, new ScriptBatchProvider());
+    }
+
+    public abstract class AbstractBatchProvider<T> implements BatchProvider {
+        @Override
+        public ScriptInstances getScriptsInstances(Long ownerId) {
+            ScriptInstances instances = new ScriptInstances();
+            T prepared = prepare(ownerId);
+            List<Long> ids = Lists.newArrayList();
+            Map<Long, Map<String, String>> envs = Maps.newHashMap();
+            if (prepared != null) {
+                decorateIds(prepared, ids);
+                decorateEnvs(prepared, envs);
+            }
+            instances.setIds(ids);
+            instances.setEnvs(envs);
+            return instances;
+        }
+
+        abstract void decorateEnvs(T prepared, Map<Long, Map<String, String>> envs);
+
+        abstract void decorateIds(T prepared, List<Long> ids);
+
+        abstract T prepare(Long ownerId);
+    }
+
+    public class ScriptBatchProvider extends AbstractBatchProvider<Script> {
+        @Override
+        public List<Long> getOwnerHostIds(Long scriptId) {
+            Host testHost = getTestHost();
+            if (testHost != null) {
+                return Collections.singletonList(testHost.getId());
+            }
+            return Collections.emptyList();
+        }
+
+        @Override
+        void decorateEnvs(Script prepared, Map<Long, Map<String, String>> envs) {
+            Map<String, String> ses = Maps.newHashMap();
+            for (ScriptEnv se : prepared.getEnvs()) {
+                ses.put(se.getKey(), se.getDefValue());
+            }
+            envs.put(prepared.getId(), ses);
+        }
+
+        @Override
+        void decorateIds(Script prepared, List<Long> ids) {
+            ids.add(prepared.getId());
+        }
+
+        @Override
+        Script prepare(Long ownerId) {
+            return scriptRepository.findOne(ownerId);
+        }
+    }
+
+    public class ProjectGroupBatchProvider extends AbstractBatchProvider<List<ProjectGroupScript>> {
+
+        @Override
+        public List<Long> getOwnerHostIds(Long groupId) {
+            List<ProjectGroupHost> hosts = findProjectGroupHosts(groupId);
+            return hosts.stream().map(projectGroupHost -> projectGroupHost.getHost().getId()).collect(Collectors.toList());
+        }
+
+        @Override
+        void decorateEnvs(List<ProjectGroupScript> prepared, Map<Long, Map<String, String>> envs) {
+            for (ProjectGroupScript pgs : prepared) {
+                Script script = pgs.getScript();
+                List<ScriptEnv> ses = script.getEnvs();
+                Map<String, String> finalEnvs = Maps.newHashMap();
+                if (!CollectionUtils.isEmpty(ses)) {
+                    Map<String, String> pgsEnvs = pgs.getEnvs();
+                    for (ScriptEnv se : ses) {
+                        String key = se.getKey();
+                        finalEnvs.put(key, getEnv(key, se.getDefValue(), pgsEnvs));
+                    }
+                }
+                envs.put(pgs.getScriptId(), finalEnvs);
+            }
+        }
+
+        private String getEnv(String key, String defValue, Map<String, String> pgsEnvs) {
+            if (pgsEnvs == null) {
+                return defValue;
+            }
+            String val = pgsEnvs.get(key);
+            return StringUtils.isBlank(val) ? defValue : val;
+        }
+
+        @Override
+        void decorateIds(List<ProjectGroupScript> prepared, List<Long> ids) {
+            for (ProjectGroupScript script : prepared) {
+                ids.add(script.getScriptId());
+            }
+        }
+
+        @Override
+        List<ProjectGroupScript> prepare(Long ownerId) {
+            return findProjectGroupScripts(ownerId);
+        }
     }
 }

@@ -2,7 +2,6 @@ package com.slyak.mirrors.service;
 
 import com.slyak.mirrors.domain.Batch;
 import com.slyak.mirrors.domain.Host;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -15,16 +14,9 @@ import java.util.List;
  */
 @Component
 public class BatchHostsSysEnvProvider extends AbstractSysEnvProvider<List<Host>> {
-    private final MirrorManager mirrorManager;
-
-    @Autowired
-    public BatchHostsSysEnvProvider(MirrorManager mirrorManager) {
-        this.mirrorManager = mirrorManager;
-    }
 
     @Override
-    public List<Host> provide(Long batchId, Host host) {
-        Batch batch = mirrorManager.findBatch(batchId);
+    public List<Host> provide(Batch batch, Host host) {
         return batch.getHosts();
     }
 

@@ -188,7 +188,7 @@ public class ScriptController {
         @GetMapping("/run")
         @ResponseBody
         public Long run(@RequestParam("id") Long id) {
-            Batch batch = mirrorManager.execScript(id);
+            Batch batch = mirrorManager.execOwnerScripts(BatchOwner.SCRIPT, id);
             return batch.getId();
         }
 

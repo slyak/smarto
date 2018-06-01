@@ -17,8 +17,6 @@ import java.util.List;
 public interface MirrorManager {
     Page<Project> queryProjects(Pageable pageable);
 
-    ProjectGroup findProjectGroup(Long groupId);
-
     List<ScriptFile> findScriptFiles(Long scriptId);
 
     void saveScript(Script script);
@@ -33,9 +31,7 @@ public interface MirrorManager {
 
     OS findOs(String osName);
 
-    Batch execScript(Long scriptId);
-
-    Batch execScripts(BatchOwner owner, Long ownerId, List<Long> scriptIds, List<Long> hostIds);
+    Batch execOwnerScripts(BatchOwner owner, Long ownerId);
 
     Global findGlobal();
 
@@ -55,8 +51,6 @@ public interface MirrorManager {
 
     boolean validateHost(Host testHost, String command, String contains);
 
-    Batch findBatch(Long batchId);
-
     List<SysEnv> querySysEnvs();
 
     Project saveProject(Project project);
@@ -71,9 +65,9 @@ public interface MirrorManager {
 
     void deleteProjectGroupHost(ProjectGroupHostKey id);
 
-    List<ProjectGroupHost> findProjectGroupHosts(Long id);
+    List<ProjectGroupHost> findProjectGroupHosts(Long groupId);
 
-    List<ProjectGroupScript> findProjectGroupScripts(Long id);
+    List<ProjectGroupScript> findProjectGroupScripts(Long groupId);
 
     void addGroupScripts(Long groupId, List<Long> scriptIds);
 
