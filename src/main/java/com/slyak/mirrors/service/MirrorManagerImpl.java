@@ -170,12 +170,16 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
 
     private Batch createBatch(BatchOwner owner, Long ownerId) {
         BatchProvider batchProvider = batchProviders.get(owner);
-        Batch batch = new Batch();
-        batch.setOwner(owner);
-        batch.setOwnerId(ownerId);
         //get hosts
         List<Long> hostIds = batchProvider.getOwnerHostIds(ownerId);
         ScriptInstances instances = batchProvider.getScriptsInstances(ownerId);
+        if (CollectionUtils.isEmpty(hostIds) || CollectionUtils.isEmpty(instances.getIds())) {
+            return null;
+        }
+
+        Batch batch = new Batch();
+        batch.setOwner(owner);
+        batch.setOwnerId(ownerId);
         batch.setScriptIds(instances.getIds());
         batch.setScriptEnvs(instances.getEnvs());
         batch.setHostIds(hostIds);
@@ -194,7 +198,9 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
     @Transactional
     public Batch execOwnerScripts(BatchOwner owner, Long ownerId) {
         Batch batch = createBatch(owner, ownerId);
-        runBatch(batch.getId());
+        if (batch != null) {
+            runBatch(batch.getId());
+        }
         return batch;
     }
 

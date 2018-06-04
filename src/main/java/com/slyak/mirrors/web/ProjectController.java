@@ -161,10 +161,9 @@ public class ProjectController {
         }
 
         @GetMapping("/run")
-        @ResponseBody
-        public Long run(@RequestParam("id") Long id) {
-            Batch batch = mirrorManager.execOwnerScripts(BatchOwner.PROJECT_GROUP, id);
-            return batch.getId();
+        public String run(@RequestParam("id") Long id) {
+            mirrorManager.execOwnerScripts(BatchOwner.PROJECT_GROUP, id);
+            return "redirect:/logs";
         }
 
         @ModelAttribute("projectGroup")

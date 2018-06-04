@@ -1,7 +1,7 @@
 $(function () {
     var ctx = window['ctx'] || "";
 
-    $("a.run-script").click(function (e) {
+    $("a.test-script").click(function (e) {
         e.preventDefault();
         e.stopPropagation();
         var link = $(this);

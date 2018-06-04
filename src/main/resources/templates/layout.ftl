@@ -166,7 +166,7 @@
         </div>
         <div class="mt-2">
             <@layout.list title="操作" items=[
-            {'title':'运行脚本','url':'/project/group/script','class':'fa-paper-plane'}
+            {'title':'运行分组脚本','url':'/project/group/run','class':'fa-paper-plane'}
             ]/>
     <@layout.list title="导航" items=[
         {'title':'脚本列表','url':'/project/group/scripts','class':'fa-code'},
@@ -221,7 +221,7 @@
         </div>
         <div class="mt-2">
             <@layout.list title="操作" items=[
-            {'title':'沙箱测试','url':'/script/run','class':'fa-paper-plane','aClass':'run-script'},
+            {'title':'沙箱测试','url':'/script/run','class':'fa-paper-plane','aClass':'test-script'},
             {'title':'查看日志','url':'/logs','class':'fa-terminal'}
             ]/>
     <@layout.list title="导航" items=[
