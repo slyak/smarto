@@ -20,6 +20,7 @@ import com.slyak.web.support.freemarker.FreemarkerTemplateRender;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
@@ -313,12 +314,13 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
         });
     }
 
+    @SneakyThrows
     private void setupSysEnvs(Map<String, Object> model, Batch batch, Host host) {
         Collection<SysEnvProvider> sysEnvProviders = getSysEnvProviders();
         if (!CollectionUtils.isEmpty(sysEnvProviders)) {
             for (SysEnvProvider provider : sysEnvProviders) {
                 SysEnv metadata = provider.getMetadata();
-                model.put(metadata.getName(), provider.provide(batch, host));
+                model.put(metadata.getName(), provider.provide((Batch) BeanUtils.cloneBean(batch), host));
             }
         }
     }
