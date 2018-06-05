@@ -1,30 +1,15 @@
-# mirrors
-## 功能
-* 项目管理
-	* 项目CRUD
-	* 主机组
-		* 主机列表
-		* 自动化运行脚本
-		* 文件管理	
-			* 文件上传
-				* downloadonly
-				* 手动上传
-				* URL
-			* 文件下载
-			* 文件同步
-			* repo模板上传
-	* 导入/导出项目配置
+## SMARTO （smart auto）
 
-* docker环境初始化
-	* docker安装
-	* nginx镜像服务器安装
-	* ansible tower安装
-	 	
-* 镜像服务器管理
-	* 启停
-* 软件分发维护
+### Features
+1. script supermarket
+2. hosts management
+3. project template：machine grouping 、script ordering、variables customizing、project exporting
+4. easy sandbox testing
+5. multi hosts resources delivery and batch scripts execute
+6. batch logs gathering
+7. mirror management and export for offline situation
 
+### Architecture
+![purpose](./purpose.png)
 
-TODO
-冗余文件定时清理
-删除脚本后，任务中的如何友好显示？软删除？
+### Screen Snapshots

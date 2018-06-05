@@ -8,7 +8,7 @@ import com.slyak.core.util.LoggerUtils;
 import com.slyak.mirrors.dto.BatchHostLogResponse;
 import com.slyak.mirrors.dto.BatchQuery;
 import com.slyak.mirrors.dto.TaskLogRequest;
-import com.slyak.mirrors.service.MirrorManager;
+import com.slyak.mirrors.service.ItasmManager;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
@@ -44,7 +44,7 @@ public class LogController {
 
     private final SimpMessagingTemplate messagingTemplate;
 
-    private final MirrorManager mirrorManager;
+    private final ItasmManager itasmManager;
 
     private Cache<String, TaskLogRequest> onlineRequests =
             CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build();
@@ -53,10 +53,10 @@ public class LogController {
     @Autowired
     public LogController(
             SimpMessagingTemplate messagingTemplate,
-            MirrorManager mirrorManager
+            ItasmManager itasmManager
     ) throws IOException {
         this.messagingTemplate = messagingTemplate;
-        this.mirrorManager = mirrorManager;
+        this.itasmManager = itasmManager;
     }
 
     public static void main(String[] args) {
@@ -81,7 +81,7 @@ public class LogController {
         TaskLogRequest taskLogRequest = message.getPayload();
         onlineRequests.put(taskLogRequest.getId(), taskLogRequest);
 
-        String logfile = mirrorManager.getBatchLogfile(taskLogRequest.getBatchId(), taskLogRequest.getHostId());
+        String logfile = itasmManager.getBatchLogfile(taskLogRequest.getBatchId(), taskLogRequest.getHostId());
         LineIterator iterator = FileUtils.lineIterator(new File(logfile));
         int lineCount = 0;
         while (iterator.hasNext()) {
@@ -121,7 +121,7 @@ public class LogController {
 
     @RequestMapping("/logs")
     public void logs(BatchQuery batchQuery, @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable, ModelMap modelMap) {
-        modelMap.put("page", mirrorManager.queryBatches(batchQuery, pageable));
+        modelMap.put("page", itasmManager.queryBatches(batchQuery, pageable));
     }
 
 }

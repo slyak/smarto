@@ -2,7 +2,7 @@ package com.slyak.mirrors.web;
 
 import com.slyak.mirrors.domain.Host;
 import com.slyak.mirrors.domain.OS;
-import com.slyak.mirrors.service.MirrorManager;
+import com.slyak.mirrors.service.ItasmManager;
 import com.slyak.web.support.data.RequestParamBind;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,16 +23,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class AdminController {
 
     @Autowired
-    private MirrorManager mirrorManager;
+    private ItasmManager itasmManager;
 
     @GetMapping("/index")
     public void index(ModelMap modelMap) {
-        modelMap.put("global", mirrorManager.findGlobal());
+        modelMap.put("global", itasmManager.findGlobal());
     }
 
     @GetMapping("/oss")
     public void oss(ModelMap modelMap) {
-        modelMap.put("oss", mirrorManager.queryOss());
+        modelMap.put("oss", itasmManager.queryOss());
     }
 
     @GetMapping("/os")
@@ -42,14 +42,14 @@ public class AdminController {
 
     @PostMapping("/os")
     public void saveOs(@RequestParamBind("id") OS os) {
-        mirrorManager.saveOs(os);
+        itasmManager.saveOs(os);
     }
 
     @GetMapping("/testHost")
     @ResponseBody
     public boolean validateTestHost() {
-        Host testHost = mirrorManager.getTestHost();
-        return mirrorManager.validateHost(testHost, "docker -v", "version");
+        Host testHost = itasmManager.getTestHost();
+        return itasmManager.validateHost(testHost, "docker -v", "version");
     }
 
     @GetMapping("/files")
@@ -58,6 +58,6 @@ public class AdminController {
 
     @GetMapping("/sysEnvs")
     public void sysEnvs(ModelMap modelMap) {
-        modelMap.put("sysEnvs", mirrorManager.querySysEnvs());
+        modelMap.put("sysEnvs", itasmManager.querySysEnvs());
     }
 }

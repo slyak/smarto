@@ -1,7 +1,7 @@
 package com.slyak.mirrors.web;
 
 import com.slyak.mirrors.domain.*;
-import com.slyak.mirrors.service.MirrorManager;
+import com.slyak.mirrors.service.ItasmManager;
 import com.slyak.web.support.data.RequestParamBind;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -21,11 +21,11 @@ import java.util.List;
 public class ProjectController {
 
     @Autowired
-    private MirrorManager mirrorManager;
+    private ItasmManager itasmManager;
 
     @RequestMapping("/projects")
     public void index(Pageable pageable, ModelMap modelMap) {
-        modelMap.put("page", mirrorManager.queryProjects(pageable));
+        modelMap.put("page", itasmManager.queryProjects(pageable));
     }
 
     @GetMapping("/project")
@@ -37,24 +37,24 @@ public class ProjectController {
 
     @PostMapping("/project")
     public String saveProject(@RequestParamBind("id") Project project) {
-        mirrorManager.saveProject(project);
+        itasmManager.saveProject(project);
         return "redirect:/project/groups?id=" + project.getId();
     }
 
     @Controller
     @RequestMapping("/project/*")
     public static class ProjectActionsController {
-        private final MirrorManager mirrorManager;
+        private final ItasmManager itasmManager;
 
         @Autowired
-        public ProjectActionsController(MirrorManager mirrorManager) {
-            this.mirrorManager = mirrorManager;
+        public ProjectActionsController(ItasmManager itasmManager) {
+            this.itasmManager = itasmManager;
         }
 
         //group start
         @GetMapping("/groups")
         public void groups(Long id, ModelMap modelMap) {
-            modelMap.put("groups", mirrorManager.findProjectGroups(id));
+            modelMap.put("groups", itasmManager.findProjectGroups(id));
         }
 
         @GetMapping("/group")
@@ -63,7 +63,7 @@ public class ProjectController {
 
         @PostMapping("/group")
         public void saveGroup(@RequestParamBind("id") ProjectGroup projectGroup) {
-            mirrorManager.saveProjectGroup(projectGroup);
+            itasmManager.saveProjectGroup(projectGroup);
         }
 
         @ModelAttribute("project")
@@ -76,39 +76,39 @@ public class ProjectController {
     @Controller
     @RequestMapping("/project/group/*")
     public static class ProjectGroupController {
-        private final MirrorManager mirrorManager;
+        private final ItasmManager itasmManager;
 
         @Autowired
-        public ProjectGroupController(MirrorManager mirrorManager) {
-            this.mirrorManager = mirrorManager;
+        public ProjectGroupController(ItasmManager itasmManager) {
+            this.itasmManager = itasmManager;
         }
 
         @PostMapping("/orders")
         @ResponseBody
         public void orders(@RequestBody List<Long> groupIds) {
-            mirrorManager.updateGroupOrders(groupIds);
+            itasmManager.updateGroupOrders(groupIds);
         }
 
         @GetMapping("/hosts")
         public void hosts(Long id, ModelMap modelMap) {
-            modelMap.put("groupHosts", mirrorManager.findProjectGroupHosts(id));
+            modelMap.put("groupHosts", itasmManager.findProjectGroupHosts(id));
         }
 
         @GetMapping("/hostsPicker")
         public void hostsPicker(Long id, ModelMap modelMap) {
-            modelMap.put("hosts", mirrorManager.findHostsNotInProjectGroup(id));
+            modelMap.put("hosts", itasmManager.findHostsNotInProjectGroup(id));
         }
 
         @PostMapping("/addHosts")
         @ResponseBody
         public void addHosts(Long groupId, @RequestParam("hostIds") List<Long> hostIds) {
-            mirrorManager.addGroupHosts(groupId, hostIds);
+            itasmManager.addGroupHosts(groupId, hostIds);
         }
 
         @GetMapping("/deleteHost")
         @ResponseBody
         public void deleteHost(ProjectGroupHostKey id) {
-            mirrorManager.deleteProjectGroupHost(id);
+            itasmManager.deleteProjectGroupHost(id);
         }
 
         @GetMapping("/script")
@@ -118,35 +118,35 @@ public class ProjectController {
 
         @PostMapping("/script")
         public void saveScript(@RequestParamBind("id") ProjectGroupScript groupScript) {
-            mirrorManager.saveGroupScript(groupScript);
+            itasmManager.saveGroupScript(groupScript);
         }
 
         @GetMapping("/scripts")
         public void scripts(Long id, ModelMap modelMap) {
-            modelMap.put("groupScripts", mirrorManager.findProjectGroupScripts(id));
+            modelMap.put("groupScripts", itasmManager.findProjectGroupScripts(id));
         }
 
         @PostMapping("/scriptOrders")
         @ResponseBody
         public void scriptOrders(@RequestBody List<Long> groupScriptIds) {
-            mirrorManager.updateGroupScriptOrders(groupScriptIds);
+            itasmManager.updateGroupScriptOrders(groupScriptIds);
         }
 
         @GetMapping("/scriptsPicker")
         public void scriptsPicker(String keyword, Pageable pageable, ModelMap modelMap) {
-            modelMap.put("page", mirrorManager.queryScripts(keyword, pageable));
+            modelMap.put("page", itasmManager.queryScripts(keyword, pageable));
         }
 
         @PostMapping("/addScripts")
         @ResponseBody
         public void addScripts(Long groupId, @RequestParam("scriptIds") List<Long> scriptIds) {
-            mirrorManager.addGroupScripts(groupId, scriptIds);
+            itasmManager.addGroupScripts(groupId, scriptIds);
         }
 
         @GetMapping("/deleteScript")
         @ResponseBody
         public void deleteScript(Long id) {
-            mirrorManager.deleteProjectGroupScript(id);
+            itasmManager.deleteProjectGroupScript(id);
         }
 
         @GetMapping("/envs")
@@ -157,12 +157,12 @@ public class ProjectController {
         @GetMapping("/delete")
         @ResponseBody
         public void deleteGroup(Long id) {
-            mirrorManager.deleteProjectGroup(id);
+            itasmManager.deleteProjectGroup(id);
         }
 
         @GetMapping("/run")
         public String run(@RequestParam("id") Long id) {
-            mirrorManager.execOwnerScripts(BatchOwner.PROJECT_GROUP, id);
+            itasmManager.execOwnerScripts(BatchOwner.PROJECT_GROUP, id);
             return "redirect:/logs";
         }
 

@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
-public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublisherAware, ApplicationContextAware, InitializingBean {
+public class ItasmManagerImpl implements ItasmManager, ApplicationEventPublisherAware, ApplicationContextAware, InitializingBean {
 
     private static final String SH = ".sh";
 
@@ -94,7 +94,7 @@ public class MirrorManagerImpl implements MirrorManager, ApplicationEventPublish
     private ApplicationContext appContext;
 
     @Autowired
-    public MirrorManagerImpl(
+    public ItasmManagerImpl(
             ProjectRepository projectRepository,
             ScriptFileRepository scriptFileRepository,
             ProjectGroupRepository projectGroupRepository,

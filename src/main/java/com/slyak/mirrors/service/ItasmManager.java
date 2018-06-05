@@ -14,7 +14,7 @@ import java.util.List;
  * @author stormning 2018/4/17
  * @since 1.3.0
  */
-public interface MirrorManager {
+public interface ItasmManager {
     Page<Project> queryProjects(Pageable pageable);
 
     List<ScriptFile> findScriptFiles(Long scriptId);

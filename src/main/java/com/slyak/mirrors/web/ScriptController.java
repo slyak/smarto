@@ -3,7 +3,7 @@ package com.slyak.mirrors.web;
 import com.google.common.collect.Lists;
 import com.slyak.mirrors.converter.OsVersionsOptionConverter;
 import com.slyak.mirrors.domain.*;
-import com.slyak.mirrors.service.MirrorManager;
+import com.slyak.mirrors.service.ItasmManager;
 import com.slyak.web.support.data.RequestParamBind;
 import com.slyak.web.support.freemarker.bootstrap.InitialPreviewConfigConverter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,19 +25,19 @@ import java.util.Optional;
  */
 @Controller
 public class ScriptController {
-    private final MirrorManager mirrorManager;
+    private final ItasmManager itasmManager;
 
     private final OsVersionsOptionConverter optionConverter;
 
     @Autowired
-    public ScriptController(MirrorManager mirrorManager, OsVersionsOptionConverter optionConverter) {
-        this.mirrorManager = mirrorManager;
+    public ScriptController(ItasmManager itasmManager, OsVersionsOptionConverter optionConverter) {
+        this.itasmManager = itasmManager;
         this.optionConverter = optionConverter;
     }
 
     @GetMapping("/scripts")
     public void scripts(String keyword, Pageable pageable, ModelMap modelMap) {
-        modelMap.put("page", mirrorManager.queryScripts(keyword, pageable));
+        modelMap.put("page", itasmManager.queryScripts(keyword, pageable));
     }
 
     @GetMapping("/scriptPicker")
@@ -47,7 +47,7 @@ public class ScriptController {
 
     @GetMapping("/script")
     public void script(@RequestParamBind("id") Script script, ModelMap modelMap) {
-        modelMap.put("oss", optionConverter.convert(mirrorManager.queryOss()));
+        modelMap.put("oss", optionConverter.convert(itasmManager.queryOss()));
         if (script != null) {
             modelMap.put("script", script);
         }
@@ -55,7 +55,7 @@ public class ScriptController {
 
     @PostMapping("/script")
     public String saveScript(@RequestParamBind("id") Script script) {
-        mirrorManager.saveScript(script);
+        itasmManager.saveScript(script);
         return "redirect:/script/content?id=" + script.getId();
     }
 
@@ -63,22 +63,22 @@ public class ScriptController {
     @RequestMapping("/script/*")
     public static class ScriptActionController {
 
-        private final MirrorManager mirrorManager;
+        private final ItasmManager itasmManager;
 
         private final InitialPreviewConfigConverter<GlobalFile> converter;
 
         @Autowired
-        public ScriptActionController(MirrorManager mirrorManager, InitialPreviewConfigConverter<GlobalFile> converter) {
-            this.mirrorManager = mirrorManager;
+        public ScriptActionController(ItasmManager itasmManager, InitialPreviewConfigConverter<GlobalFile> converter) {
+            this.itasmManager = itasmManager;
             this.converter = converter;
         }
 
         @GetMapping("/delete")
         @ResponseBody
         public boolean delete(Long id) {
-            List<Project> projects = mirrorManager.findProjectsHavingScript(id);
+            List<Project> projects = itasmManager.findProjectsHavingScript(id);
             if (CollectionUtils.isEmpty(projects)) {
-                mirrorManager.deleteScript(id);
+                itasmManager.deleteScript(id);
                 return true;
             }
             return false;
@@ -86,7 +86,7 @@ public class ScriptController {
 
         @GetMapping("/osVersions")
         public void osVersions(String osName, ModelMap modelMap) {
-            OS os = mirrorManager.findOs(osName);
+            OS os = itasmManager.findOs(osName);
             if (os != null) {
                 modelMap.put("versions", os.getVersions());
             }
@@ -94,7 +94,7 @@ public class ScriptController {
 
         @GetMapping("/files")
         public void files(Long id, ModelMap modelMap) {
-            List<ScriptFile> files = mirrorManager.findScriptFiles(id);
+            List<ScriptFile> files = itasmManager.findScriptFiles(id);
             modelMap.put("files", files);
         }
 
@@ -112,13 +112,13 @@ public class ScriptController {
         @PostMapping("/file")
         @ResponseBody
         public void saveFile(@RequestParamBind("id") ScriptFile scriptFile) {
-            mirrorManager.saveScriptFile(scriptFile);
+            itasmManager.saveScriptFile(scriptFile);
         }
 
         @GetMapping("/file/delete")
         @ResponseBody
         public void deleteFile(@RequestParamBind("id") ScriptFile scriptFile) {
-            mirrorManager.deleteScriptFile(scriptFile);
+            itasmManager.deleteScriptFile(scriptFile);
         }
 
         @GetMapping("/envs")
@@ -127,7 +127,7 @@ public class ScriptController {
 
         @PostMapping("/envs")
         public String saveEnvs(@RequestParamBind("id") Script script) {
-            mirrorManager.saveScript(script);
+            itasmManager.saveScript(script);
             return "redirect:/script/envs?id=" + script.getId();
         }
 
@@ -158,7 +158,7 @@ public class ScriptController {
             if (!exist) {
                 envs.add(scriptEnv);
             }
-            mirrorManager.saveScript(script);
+            itasmManager.saveScript(script);
         }
 
         @GetMapping("/env/delete")
@@ -171,7 +171,7 @@ public class ScriptController {
                     envs.remove(i);
                 }
             }
-            mirrorManager.saveScript(script);
+            itasmManager.saveScript(script);
             return true;
         }
 
@@ -188,7 +188,7 @@ public class ScriptController {
         @GetMapping("/run")
         @ResponseBody
         public Long run(@RequestParam("id") Long id) {
-            Batch batch = mirrorManager.execOwnerScripts(BatchOwner.SCRIPT, id);
+            Batch batch = itasmManager.execOwnerScripts(BatchOwner.SCRIPT, id);
             return batch.getId();
         }
 
