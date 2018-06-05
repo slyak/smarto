@@ -29,6 +29,7 @@
                     </#list>
                 </td>
                 <#assign task = batch.tasks?api.get(host.id)/>
+                <#if host_index == 0>
                 <td rowspan="${row}">${task.startAt?number_to_date?string("MM/dd HH:mm:ss")}</td>
                 <td rowspan="${row}">
                     <#if task.stopAt gt 0>
@@ -36,6 +37,7 @@
                     <#else > --
                     </#if>
                 </td>
+                </#if>
                 <td>
                     <#if task.status == 'RUNNING'>
                         <#assign badgeClass="badge-secondary"/>
@@ -53,7 +55,6 @@
     </tbody>
 </table>
     <@slyakUI.pagination value=page/>
-
 <script>
 
 </script>

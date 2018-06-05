@@ -23,7 +23,7 @@
     {"name":"/ssh/receive/${requestId}","callback":"callback"}
     ]>
     ss.connect(function(){
-    ss.send("/ssh/logs",{'id':'${requestId}','batchId':${RequestParameters.batchId},'hostId':${RequestParameters.hostId}});
+    ss.send("/ssh/logs",{'id':'${requestId}','batchId':'${RequestParameters.batchId}','hostId':${RequestParameters.hostId}});
     });
     </@sockjs.connect>
 </@layout.cleanHtml>

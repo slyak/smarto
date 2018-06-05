@@ -32,6 +32,6 @@ public class MirrorsApplication {
 
     @Bean
     public TaskExecutor taskExecutor() {
-        return new ConcurrentTaskExecutor(Executors.newFixedThreadPool(10));
+        return new ConcurrentTaskExecutor(Executors.newCachedThreadPool());
     }
 }

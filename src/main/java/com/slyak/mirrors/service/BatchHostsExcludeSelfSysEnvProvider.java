@@ -1,5 +1,6 @@
 package com.slyak.mirrors.service;
 
+import com.google.common.collect.Lists;
 import com.slyak.mirrors.domain.Batch;
 import com.slyak.mirrors.domain.Host;
 import org.springframework.stereotype.Component;
@@ -18,7 +19,7 @@ public class BatchHostsExcludeSelfSysEnvProvider extends AbstractSysEnvProvider<
 
     @Override
     public List<Host> provide(Batch batch, Host host) {
-        List<Host> hosts = batch.getHosts();
+        List<Host> hosts = Lists.newArrayList(batch.getHosts());
         for (int i = hosts.size() - 1; i >= 0; i--) {
             if (Objects.equals(host.getId(), hosts.get(i).getId())) {
                 hosts.remove(i);
