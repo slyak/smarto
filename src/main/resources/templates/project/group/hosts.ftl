@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="groupHosts" type="java.util.List<com.slyak.mirrors.domain.ProjectGroupHost>" -->
+<#-- @ftlvariable name="groupHosts" type="java.util.List<com.slyak.smarto.domain.ProjectGroupHost>" -->
 <@layout.layout_project_group title="主机列表" btnCreate={'title':'选择主机','url':'/project/group/hostsPicker?id=${projectGroup.id}',"modal":true,'showSubmit':true}>
 <table class="table table-hover table-fa">
     <thead>

@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="hosts" type="java.util.List<com.slyak.mirrors.domain.Host>" -->
+<#-- @ftlvariable name="hosts" type="java.util.List<com.slyak.smarto.domain.Host>" -->
 <@layout.cleanHtml>
     <@slyakUI.form action="/project/group/addHosts">
     <input type="hidden" name="groupId" value="${RequestParameters.id}">

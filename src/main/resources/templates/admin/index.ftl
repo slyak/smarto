@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="global" type="com.slyak.mirrors.domain.Global" -->
+<#-- @ftlvariable name="global" type="com.slyak.smarto.domain.Global" -->
 <@layout.layout_admin title="全局设置">
     <@slyakUI.form action="/admin/global" id="globalForm">
     <input type="hidden" name="id" value="${global.id}">

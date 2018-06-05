@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="scriptFile" type="com.slyak.mirrors.domain.ScriptFile" -->
+<#-- @ftlvariable name="scriptFile" type="com.slyak.smarto.domain.ScriptFile" -->
 <@layout.cleanHtml>
     <@slyakUI.form title="上传脚本" action="/script/file" id="uploadForm">
         <@bootstrap.formgroup label="文件" required=true left=3 right=9>

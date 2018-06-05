@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="groupScripts" type="java.util.List<com.slyak.mirrors.domain.ProjectGroupScript>" -->
+<#-- @ftlvariable name="groupScripts" type="java.util.List<com.slyak.smarto.domain.ProjectGroupScript>" -->
 <@layout.layout_project_group title="脚本列表" btnCreate={'title':'管理脚本','modal':true,'url':'/project/group/scriptsPicker?id=${RequestParameters.id}','showSubmit':true}>
     <@slyakUI.jqueryui/>
 <table class="table table-hover table-fa">

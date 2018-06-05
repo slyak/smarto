@@ -1,5 +1,5 @@
 <#-- @ftlvariable name="oss" type="java.util.List<com.slyak.web.ui.Option>" -->
-<#-- @ftlvariable name="host" type="com.slyak.mirrors.domain.Host" -->
+<#-- @ftlvariable name="host" type="com.slyak.smarto.domain.Host" -->
 <@layout.layout_detail action="/host" title="${host.id???string('编辑','创建')}主机">
 <input type="hidden" name="id" value="${host.id}">
     <@bootstrap.formgroup label="主机名" required=true left=3>

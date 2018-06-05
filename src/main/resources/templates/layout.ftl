@@ -1,6 +1,6 @@
-<#-- @ftlvariable name="projectGroup" type="com.slyak.mirrors.domain.ProjectGroup" -->
-<#-- @ftlvariable name="project" type="com.slyak.mirrors.domain.Project" -->
-<#-- @ftlvariable name="script" type="com.slyak.mirrors.domain.Script" -->
+<#-- @ftlvariable name="projectGroup" type="com.slyak.smarto.domain.ProjectGroup" -->
+<#-- @ftlvariable name="project" type="com.slyak.smarto.domain.Project" -->
+<#-- @ftlvariable name="script" type="com.slyak.smarto.domain.Script" -->
 <#-- @ftlvariable name="slyakRequestContext" type="com.slyak.web.support.freemarker.SlyakRequestContext" -->
 <#macro cleanHtml>
 <html>
@@ -20,7 +20,7 @@
 
 <#macro html>
     <@cleanHtml>
-        <@bootstrap.navbar brand="ITASM" left=[
+        <@bootstrap.navbar brand="SMARTO" left=[
         {'title':'脚本','url':'/scripts'},
         {'title':'任务','url':'/logs'},
         {'title':'主机','url':'/hosts'},

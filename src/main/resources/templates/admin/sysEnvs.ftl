@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="sysEnvs" type="java.util.List<com.slyak.mirrors.dto.SysEnv>" -->
+<#-- @ftlvariable name="sysEnvs" type="java.util.List<com.slyak.smarto.dto.SysEnv>" -->
 <@layout.cleanHtml>
 <table class="table table-bordered">
     <thead>

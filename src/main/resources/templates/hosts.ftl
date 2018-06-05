@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="page" type="org.springframework.data.domain.Page<com.slyak.mirrors.domain.Host>" -->
+<#-- @ftlvariable name="page" type="org.springframework.data.domain.Page<com.slyak.smarto.domain.Host>" -->
 <#assign left>
 <table class="table table-hover">
     <thead>

@@ -1,5 +1,5 @@
-<#-- @ftlvariable name="groupScript" type="com.slyak.mirrors.domain.ProjectGroupScript" -->
-<#-- @ftlvariable name="hosts" type="java.util.List<com.slyak.mirrors.domain.Host>" -->
+<#-- @ftlvariable name="groupScript" type="com.slyak.smarto.domain.ProjectGroupScript" -->
+<#-- @ftlvariable name="hosts" type="java.util.List<com.slyak.smarto.domain.Host>" -->
 <@layout.cleanHtml>
     <@slyakUI.form action="/project/group/script">
     <input type="hidden" name="id" value="${groupScript.id}">

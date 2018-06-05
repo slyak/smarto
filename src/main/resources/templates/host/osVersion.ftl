@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="host" type="com.slyak.mirrors.domain.Host" -->
+<#-- @ftlvariable name="host" type="com.slyak.smarto.domain.Host" -->
 <#-- @ftlvariable name="versions" type="java.util.List<String>" -->
 <div class="form-group row">
     <label class="col-sm-3 col-form-label">适用版本<span class="text-danger">*</span></label>

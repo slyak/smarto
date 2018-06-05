@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="projectGroup" type="com.slyak.mirrors.domain.ProjectGroup" -->
+<#-- @ftlvariable name="projectGroup" type="com.slyak.smarto.domain.ProjectGroup" -->
 <#macro settings>
 <input type="hidden" name="id" value="${projectGroup.id}">
 <input type="hidden" name="projectId" value="${projectGroup.projectId}">

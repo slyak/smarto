@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="project" type="com.slyak.mirrors.domain.Project" -->
+<#-- @ftlvariable name="project" type="com.slyak.smarto.domain.Project" -->
 <#macro settings left=3>
 <input type="hidden" name="id" value="${project.id}">
     <@bootstrap.formgroup label="项目名称">

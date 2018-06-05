@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="script" type="com.slyak.mirrors.domain.Script" -->
+<#-- @ftlvariable name="script" type="com.slyak.smarto.domain.Script" -->
 <@layout.layout_script title="使用帮助">
     <@slyakUI.form action="/script">
     <input type="hidden" name="id" value="${script.id}">

@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="page" type="org.springframework.data.domain.Page<com.slyak.mirrors.domain.Project>" -->
+<#-- @ftlvariable name="page" type="org.springframework.data.domain.Page<com.slyak.smarto.domain.Project>" -->
 <#assign left>
     <@bootstrap.keywordSearch id="mirrorSearch"/>
 <table class="table table-hover table-fa">

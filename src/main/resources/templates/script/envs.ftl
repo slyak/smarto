@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="script" type="com.slyak.mirrors.domain.Script" -->
+<#-- @ftlvariable name="script" type="com.slyak.smarto.domain.Script" -->
 <@layout.layout_script title="变量列表" btnCreate={'title':'添加变量','url':'/script/env?scriptId=${script.id}','modal':true,'showSubmit':true}>
     <@slyakUI.form action="/script/envs" id="envsForm">
     <input type="hidden" name="id" value="${script.id}"/>

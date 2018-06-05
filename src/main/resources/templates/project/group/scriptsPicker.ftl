@@ -1,5 +1,5 @@
-<#-- @ftlvariable name="page" type="org.springframework.data.domain.Page<com.slyak.mirrors.domain.Script>" -->
-<#-- @ftlvariable name="hosts" type="java.util.List<com.slyak.mirrors.domain.Host>" -->
+<#-- @ftlvariable name="page" type="org.springframework.data.domain.Page<com.slyak.smarto.domain.Script>" -->
+<#-- @ftlvariable name="hosts" type="java.util.List<com.slyak.smarto.domain.Host>" -->
 <@layout.cleanHtml>
     <@slyakUI.form action="/project/group/addScripts">
         <@bootstrap.keywordSearch id="scriptSearch"/>

@@ -1,5 +1,5 @@
-<#-- @ftlvariable name="project" type="com.slyak.mirrors.domain.Project" -->
-<#-- @ftlvariable name="groups" type="java.util.List<com.slyak.mirrors.domain.ProjectGroup>" -->
+<#-- @ftlvariable name="project" type="com.slyak.smarto.domain.Project" -->
+<#-- @ftlvariable name="groups" type="java.util.List<com.slyak.smarto.domain.ProjectGroup>" -->
 <@layout.layout_project title='分组列表' btnCreate={"title":"创建分组","url":"/project/group?projectId=${project.id}", 'modal':true,'showSubmit':true}>
     <@slyakUI.jqueryui/>
 <div class="">

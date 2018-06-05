@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="env" type="com.slyak.mirrors.domain.ScriptEnv" -->
+<#-- @ftlvariable name="env" type="com.slyak.smarto.domain.ScriptEnv" -->
 <@layout.cleanHtml>
     <@slyakUI.form action="/script/env">
     <input type="hidden" name="scriptId" value="${RequestParameters.scriptId}">

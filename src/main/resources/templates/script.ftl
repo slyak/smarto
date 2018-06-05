@@ -1,5 +1,5 @@
 <#-- @ftlvariable name="oss" type="java.util.List<com.slyak.web.ui.Option>" -->
-<#-- @ftlvariable name="script" type="com.slyak.mirrors.domain.Script" -->
+<#-- @ftlvariable name="script" type="com.slyak.smarto.domain.Script" -->
 <#macro settings left=3>
 <input type="hidden" name="id" value="${script.id}">
     <@bootstrap.formgroup label="名称" required=true left=left>

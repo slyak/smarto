@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="page" type="org.springframework.data.domain.Page<com.slyak.mirrors.domain.Batch>" -->
+<#-- @ftlvariable name="page" type="org.springframework.data.domain.Page<com.slyak.smarto.domain.Batch>" -->
 <#assign left>
     <@bootstrap.keywordSearch id="scriptSearch"/>
 <table class="table table-hover table-fa">

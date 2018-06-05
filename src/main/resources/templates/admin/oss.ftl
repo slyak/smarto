@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="oss" type="java.util.List<com.slyak.mirrors.domain.OS>" -->
+<#-- @ftlvariable name="oss" type="java.util.List<com.slyak.smarto.domain.OS>" -->
 <@layout.layout_admin title="操作系统" btnCreate={'title':'添加操作系统','modal':true,'url':'/admin/os','showSubmit':true}>
 <table class="table table-hover table-fa">
     <thead>

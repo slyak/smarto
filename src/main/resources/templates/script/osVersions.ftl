@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="script" type="com.slyak.mirrors.domain.Script" -->
+<#-- @ftlvariable name="script" type="com.slyak.smarto.domain.Script" -->
 <#-- @ftlvariable name="versions" type="java.util.List<String>" -->
 <div class="form-group row">
     <label class="col-sm-3 col-form-label">适用版本<span class="text-danger">*</span></label>

@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="os" type="com.slyak.mirrors.domain.OS" -->
+<#-- @ftlvariable name="os" type="com.slyak.smarto.domain.OS" -->
 <@layout.cleanHtml>
     <@slyakUI.form action="/admin/os">
     <input type="hidden" name="id" value="${os.id}">
