@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
 
 /**
@@ -14,11 +15,12 @@ import java.io.Serializable;
  * @since 1.3.0
  */
 @Entity
-@Table(name = "t_mfile")
+@Table(name = "t_mfile",uniqueConstraints = @UniqueConstraint(columnNames = "md5"))
 @Data
 public class GlobalFile implements Serializable {
     @Id
     private String id;
     private String name;
     private long size;
+    private String md5;
 }

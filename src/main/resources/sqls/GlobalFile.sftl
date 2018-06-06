@@ -1,0 +1,2 @@
+--findUnusedFiles
+SELECT f.* FROM T_MFILE f WHERE NOT exists(SELECT sf.* FROM T_SCRIPT_FILE sf WHERE sf.GLOBAL_FILE_ID=f.ID)

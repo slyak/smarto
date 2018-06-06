@@ -1,5 +1,7 @@
 package com.slyak.smarto.service;
 
+import com.google.common.hash.Hashing;
+import com.google.common.io.ByteSource;
 import com.slyak.file.FileStoreService;
 import com.slyak.smarto.domain.GlobalFile;
 import com.slyak.smarto.repository.GlobalFileRepository;
@@ -15,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -40,12 +44,19 @@ public class GlobalFileUploadCallback implements FileUploadCallback<GlobalFile, 
     @Override
     @SneakyThrows
     public GlobalFile saveMFile(MultipartFile multipartFile) {
-        GlobalFile globalFile = new GlobalFile();
-        String filename = multipartFile.getOriginalFilename();
-        globalFile.setName(filename);
-        globalFile.setSize(multipartFile.getSize());
-        globalFile.setId(fileStoreService.store(multipartFile.getInputStream(), filename));
-        return globalFileRepository.save(globalFile);
+        InputStream inputStream = multipartFile.getInputStream();
+        InputStreamByteSource byteSource = new InputStreamByteSource(inputStream);
+        String md5 = byteSource.hash(Hashing.md5()).toString();
+        GlobalFile globalFile = globalFileRepository.findByMd5(md5);
+        if (globalFile == null) {
+            globalFile = new GlobalFile();
+            String filename = multipartFile.getOriginalFilename();
+            globalFile.setName(filename);
+            globalFile.setSize(multipartFile.getSize());
+            globalFile.setId(fileStoreService.store(inputStream, filename));
+            return globalFileRepository.save(globalFile);
+        }
+        return globalFile;
     }
 
     @Override
@@ -67,5 +78,19 @@ public class GlobalFileUploadCallback implements FileUploadCallback<GlobalFile, 
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(converter.convert(list));
+    }
+
+    class InputStreamByteSource extends ByteSource {
+
+        private InputStream inputStream;
+
+        public InputStreamByteSource(InputStream inputStream) {
+            this.inputStream = inputStream;
+        }
+
+        @Override
+        public InputStream openStream() throws IOException {
+            return inputStream;
+        }
     }
 }

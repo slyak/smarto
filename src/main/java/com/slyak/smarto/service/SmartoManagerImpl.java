@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.slyak.core.ssh2.SSH2;
-import com.slyak.core.ssh2.StdCallback;
 import com.slyak.core.ssh2.StdEvent;
 import com.slyak.core.ssh2.StdEventLogger;
 import com.slyak.core.util.LoggerUtils;
@@ -57,8 +56,6 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
 
     private static final String DEFAULT_CHARSET = "UTF-8";
 
-    private static final String PROJECT_HOME = SystemUtils.getUserHome().getPath() + SEPARATOR + ".itasm";
-
     private final ProjectRepository projectRepository;
 
     private final ScriptFileRepository scriptFileRepository;
@@ -78,6 +75,8 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
     private final HostRepository hostRepository;
 
     private final GlobalRepository globalRepository;
+
+    private final GlobalFileRepository globalFileRepository;
 
     private final FileStoreService<String> fileStoreService;
 
@@ -108,7 +107,8 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
             TaskExecutor taskExecutor,
             FreemarkerTemplateRender templateRender,
             ProjectGroupHostRepository projectGroupHostRepository,
-            ProjectGroupScriptRepository projectGroupScriptRepository
+            ProjectGroupScriptRepository projectGroupScriptRepository,
+            GlobalFileRepository globalFileRepository
     ) {
         this.projectRepository = projectRepository;
         this.scriptFileRepository = scriptFileRepository;
@@ -124,6 +124,7 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
         this.templateRender = templateRender;
         this.projectGroupHostRepository = projectGroupHostRepository;
         this.projectGroupScriptRepository = projectGroupScriptRepository;
+        this.globalFileRepository = globalFileRepository;
     }
 
     @Override
@@ -248,48 +249,55 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
             SSH2 ssh2 = null;
             //custom std logger
             StdEventLogger stdLogger = null;
+            final Long hostId = host.getId();
             try {
                 ssh2 = connectToHost(host);
                 if (ssh2 != null && ssh2.isAuthSuccess()) {
+                    String hostUserHome = getSmartoHome(ssh2, host);
                     Logger logger = LoggerUtils.createLogger(logfile, "%msg%n");
                     stdLogger = new StdEventLogger(logger, eventPublisher) {
                         @Override
                         protected StdEvent decorate(StdEvent stdEvent) {
                             stdEvent.setProperty("batchId", batch.getId());
-                            stdEvent.setProperty("hostId", host.getId());
+                            stdEvent.setProperty("hostId", hostId);
                             return stdEvent;
                         }
                     };
-                    Set<String> fileScpPaths = Sets.newHashSet();
+                    Set<String> filePathsToMount = Sets.newHashSet();
                     List<String> scriptFiles = Lists.newArrayList();
                     for (Script script : scripts) {
+                        //envs
+                        Map<String, Object> model = Maps.newHashMap();
+                        setupSysEnvs(model, batch, host);
+                        Optional.of(batch.getScriptEnvs()).ifPresent(scriptEnvs -> model.putAll(scriptEnvs.get(script.getId())));
+
                         //copy script files
                         List<ScriptFile> files = findScriptFiles(script.getId());
                         //do scp, if file exist skip
                         for (ScriptFile sf : files) {
                             GlobalFile gf = sf.getGlobalFile();
                             File nativeFile = fileStoreService.lookup(gf.getId());
+                            String scpPath = templateRender.renderStringTpl(sf.getScpPath(), model);
+                            filePathsToMount.add(scpPath);
                             String fileName = gf.getName();
-                            String scpPath = sf.getScpPath();
-                            ssh2.scp(nativeFile, fileName, scpPath);
-                            logger.info("Scp file {} to host path {}:{}", fileName, host.getIp(), scpPath);
-                            fileScpPaths.add(scpPath);
+                            if (Objects.equals(gf.getMd5(), ssh2.md5(scpPath + File.separator + fileName))) {
+                                logger.info("Scp file {} to host path {}:{}, file md5 not changed ,skip copy", fileName, host.getIp(), scpPath);
+                            } else {
+                                logger.info("Scp file {} to host path {}:{}", fileName, host.getIp(), scpPath);
+                                ssh2.copy(nativeFile, fileName, scpPath);
+                            }
                         }
-
                         //run bash script
-                        fileScpPaths.add(PROJECT_HOME);
-                        Map<String, Object> model = Maps.newHashMap();
-                        setupSysEnvs(model, batch, host);
-                        Optional.of(batch.getScriptEnvs()).ifPresent(scriptEnvs -> model.putAll(scriptEnvs.get(script.getId())));
+                        filePathsToMount.add(hostUserHome);
                         //\r\n will cause dos file format and will cause file not found exception
                         String bashScript = StringUtils.replace(templateRender.renderStringTpl(script.getContent(), model), "\r\n", "\n");
                         @Cleanup ByteArrayInputStream is = new ByteArrayInputStream(bashScript.getBytes(DEFAULT_CHARSET));
                         String scriptName = script.getId() + SH;
-                        ssh2.scp(is, scriptName, PROJECT_HOME);
-                        scriptFiles.add(PROJECT_HOME + SEPARATOR + scriptName);
+                        ssh2.copy(is, scriptName, hostUserHome);
+                        scriptFiles.add(hostUserHome + SEPARATOR + scriptName);
                     }
 
-                    ScriptContext context = ScriptContexts.select(host, ssh2, stdLogger, fileScpPaths);
+                    ScriptContext context = ScriptContexts.select(host, ssh2, stdLogger, filePathsToMount);
                     context.exec(scriptFiles);
                 }
             } catch (Exception e) {
@@ -302,7 +310,7 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
             //log batch host result
             BatchTaskKey taskKey = new BatchTaskKey();
             taskKey.setBatchId(batch.getId());
-            taskKey.setHostId(host.getId());
+            taskKey.setHostId(hostId);
             BatchTask batchTask = batchTaskRepository.findOne(taskKey);
             batchTask.setStopAt(System.currentTimeMillis());
             BatchTaskStatus status = stdLogger == null ?
@@ -312,6 +320,20 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
 
             batchTaskRepository.save(batchTask);
         });
+    }
+
+    public String getSmartoHome(SSH2 ssh2, Host host) {
+        String hostUserHome = host.getUserHome();
+        if (StringUtils.isBlank(hostUserHome)) {
+            hostUserHome = ssh2.execCommand("echo $HOME");
+            host.setUserHome(hostUserHome);
+            hostRepository.save(host);
+        }
+        return getSmartoHome(hostUserHome);
+    }
+
+    private String getSmartoHome(String userHome) {
+        return userHome + SEPARATOR + ".smarto";
     }
 
     @SneakyThrows
@@ -365,24 +387,9 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
                 result = ssh2.isAuthSuccess();
             }
             if (result && StringUtils.isNotEmpty(command)) {
-                final boolean[] cmdContains = {false};
-                ssh2.execCommand(command, new StdCallback() {
-                    @Override
-                    public void processOut(String out) {
-                        log.info(out);
-                        if (out.contains(contains)) {
-                            cmdContains[0] = true;
-                        }
-                    }
-
-                    @Override
-                    public void processError(String error) {
-                        log.error(error);
-                    }
-                });
-                return cmdContains[0];
+                String ret = ssh2.execCommand(command);
+                return ret != null && ret.contains(contains);
             }
-
         } catch (Exception e) {
             log.error("An exception occurred when validating host {}", e);
         } finally {
@@ -515,9 +522,6 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
     @Override
     @Transactional
     public void deleteScriptFile(ScriptFile scriptFile) {
-        GlobalFile globalFile = scriptFile.getGlobalFile();
-        //TODO reuse global file
-        fileStoreService.removeFile(globalFile.getId());
         scriptFileRepository.delete(scriptFile);
     }
 
@@ -543,7 +547,7 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
     }
 
     private String getBatchLogDirectory() {
-        return PROJECT_HOME + SEPARATOR + "logs";
+        return getSmartoHome(SystemUtils.getUserHome().getPath()) + SEPARATOR + "logs";
     }
 
     private Batch saveBatch(Batch batch) {
@@ -662,6 +666,17 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
         @Override
         List<ProjectGroupScript> prepare(Long ownerId) {
             return findProjectGroupScripts(ownerId);
+        }
+    }
+
+    @Override
+    public void cleanUnusedFiles() {
+        List<GlobalFile> unusedFiles = globalFileRepository.findUnusedFiles();
+        for (GlobalFile gf : unusedFiles) {
+            log.info("remove unused file : {}", gf);
+            String id = gf.getId();
+            globalFileRepository.delete(id);
+            fileStoreService.removeFile(id);
         }
     }
 }

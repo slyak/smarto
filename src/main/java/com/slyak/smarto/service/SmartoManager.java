@@ -86,4 +86,6 @@ public interface SmartoManager {
     void deleteScript(Long id);
 
     void deleteScriptFile(ScriptFile scriptFile);
+
+    void cleanUnusedFiles();
 }

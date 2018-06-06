@@ -7,9 +7,11 @@ import com.slyak.smarto.domain.GlobalFile;
 import com.slyak.web.support.freemarker.FreemarkerTemplateRender;
 import com.slyak.web.support.freemarker.bootstrap.Fileinput;
 import com.slyak.web.support.freemarker.bootstrap.InitialPreviewConfigConverter;
+import org.apache.commons.lang3.SystemUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.util.HashMap;
 
@@ -24,7 +26,9 @@ public class GlobalConfig {
 
     @Bean
     public FileStoreService<String> fileStoreService() {
-        return new LocalFileStoreService();
+        LocalFileStoreService fileStoreService = new LocalFileStoreService();
+        fileStoreService.setPathPrefix(SystemUtils.getUserHome() + File.separator + ".smarto" + File.separator + "files");
+        return fileStoreService;
     }
 
     @Bean
