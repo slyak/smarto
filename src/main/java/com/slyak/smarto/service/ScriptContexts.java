@@ -1,5 +1,6 @@
 package com.slyak.smarto.service;
 
+import com.google.common.collect.Maps;
 import com.slyak.core.ssh2.SSH2;
 import com.slyak.core.ssh2.SimpleStdCallback;
 import com.slyak.core.ssh2.StdEventLogger;
@@ -8,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -35,13 +37,15 @@ public abstract class ScriptContexts implements ScriptContext {
     }
 
     @Override
-    public void exec(List<String> scriptFiles) {
+    public Map<Long, Boolean> exec(List<Executable> scriptFiles) {
+        Map<Long, Boolean> result = Maps.newConcurrentMap();
         try {
-            for (String scriptFile : scriptFiles) {
+            for (Executable executable : scriptFiles) {
                 try {
-                    ssh2.execCommand(generateCommand(scriptFile), stdCallback);
+                    ssh2.execCommand(generateCommand(executable.getFile()), stdCallback);
+                    result.put(executable.getScriptId(), !stdCallback.hasError());
                 } catch (Exception e) {
-                    log.error("Error occurred when execute scriptFile {}", scriptFile);
+                    log.error("Error occurred when execute remote script {}", executable);
                 }
             }
         } finally {
@@ -49,6 +53,7 @@ public abstract class ScriptContexts implements ScriptContext {
             ssh2.disconnect();
         }
 
+        return result;
     }
 
     protected void finishExec() {
@@ -90,7 +95,6 @@ public abstract class ScriptContexts implements ScriptContext {
             for (String filePath : filePaths) {
                 builder.append(" -v ").append(filePath).append(":").append(filePath);
             }
-            //TODO speed up yum update , use optimized docker image , upload optimized image at admin console
             builder.append(" ")
                     .append(host.getOsName())
                     .append(":")

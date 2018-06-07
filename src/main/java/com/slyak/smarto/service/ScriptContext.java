@@ -1,6 +1,7 @@
 package com.slyak.smarto.service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * .
@@ -9,5 +10,5 @@ import java.util.List;
  * @since 1.3.0
  */
 public interface ScriptContext {
-    void exec(List<String> scriptFiles);
+    Map<Long, Boolean> exec(List<Executable> scriptFiles);
 }

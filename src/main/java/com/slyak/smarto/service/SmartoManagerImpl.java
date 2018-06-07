@@ -264,7 +264,7 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
                         }
                     };
                     Set<String> filePathsToMount = Sets.newHashSet();
-                    List<String> scriptFiles = Lists.newArrayList();
+                    List<Executable> scriptFiles = Lists.newArrayList();
                     for (Script script : scripts) {
                         //envs
                         Map<String, Object> model = Maps.newHashMap();
@@ -280,10 +280,11 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
                             String scpPath = templateRender.renderStringTpl(sf.getScpPath(), model);
                             filePathsToMount.add(scpPath);
                             String fileName = gf.getName();
+                            logger.info("Copy file {} to host path {}:{}, start checksum", fileName, host.getIp(), scpPath);
                             if (Objects.equals(gf.getMd5(), ssh2.md5(scpPath + File.separator + fileName))) {
-                                logger.info("Scp file {} to host path {}:{}, file md5 not changed ,skip copy", fileName, host.getIp(), scpPath);
+                                logger.info("File {} not changed ,skip copy", fileName, host.getIp(), scpPath);
                             } else {
-                                logger.info("Scp file {} to host path {}:{}", fileName, host.getIp(), scpPath);
+                                logger.info("Copying file {} , please wait", fileName, host.getIp(), scpPath);
                                 ssh2.copy(nativeFile, fileName, scpPath);
                             }
                         }
@@ -294,11 +295,12 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
                         @Cleanup ByteArrayInputStream is = new ByteArrayInputStream(bashScript.getBytes(DEFAULT_CHARSET));
                         String scriptName = script.getId() + SH;
                         ssh2.copy(is, scriptName, hostUserHome);
-                        scriptFiles.add(hostUserHome + SEPARATOR + scriptName);
+
+                        scriptFiles.add(new Executable(script.getId(), hostUserHome + SEPARATOR + scriptName, script.getName()));
                     }
 
                     ScriptContext context = ScriptContexts.select(host, ssh2, stdLogger, filePathsToMount);
-                    context.exec(scriptFiles);
+                    updateScriptLastStatus(context.exec(scriptFiles));
                 }
             } catch (Exception e) {
                 log.error("An error occurred : {}", e);
@@ -322,6 +324,14 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
         });
     }
 
+    private void updateScriptLastStatus(Map<Long, Boolean> execResult) {
+        for (Map.Entry<Long, Boolean> re : execResult.entrySet()) {
+            Script script = scriptRepository.findOne(re.getKey());
+            script.setLatestStatus(re.getValue() == Boolean.TRUE ? ScriptStatus.SUCCESS : ScriptStatus.FAILED);
+            scriptRepository.save(script);
+        }
+    }
+
     public String getSmartoHome(SSH2 ssh2, Host host) {
         String hostUserHome = host.getUserHome();
         if (StringUtils.isBlank(hostUserHome)) {
@@ -343,6 +353,12 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
             for (SysEnvProvider provider : sysEnvProviders) {
                 SysEnv metadata = provider.getMetadata();
                 model.put(metadata.getName(), provider.provide((Batch) BeanUtils.cloneBean(batch), host));
+            }
+        }
+
+        for (Map.Entry<String, Object> modelEntry : model.entrySet()) {
+            if (modelEntry.getValue() instanceof String) {
+                model.put(modelEntry.getKey(), templateRender.renderStringTpl((String) modelEntry.getValue(), model));
             }
         }
     }

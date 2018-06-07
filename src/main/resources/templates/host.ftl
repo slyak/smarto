@@ -23,7 +23,7 @@
     </@bootstrap.formgroup>
 <div id="versionsHolder"></div>
     <@bootstrap.formgroup label="作为测试机" required=true left=3>
-    <input class="mt-2" type="checkbox" name="testHost" value="1" <#if host.testHost>checked</#if>>
+    <div class="mt-2"><@slyakUI.checkbox name="testHost" value="${host.testHost}"/></div>
     </@bootstrap.formgroup>
 <script>
     $(function () {

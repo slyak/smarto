@@ -5,6 +5,7 @@
     <tr>
         <th scope="col">机器名</th>
         <th scope="col">IP</th>
+        <th scope="col">是否测试机</th>
         <th scope="col">操作</th>
     </tr>
     </thead>
@@ -13,6 +14,7 @@
         <tr>
             <td>${host.name}</td>
             <td>${host.ip}</td>
+            <td>${host.testHost?string("Y","N")}</td>
             <td>
                 <a href="<@slyak.query url='/host/test?id=${host.id}'/>" class="ajax"
                    data-cb="{'true':'连接成功!','false':'连接失败!'}">测试</a>
