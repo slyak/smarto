@@ -140,6 +140,10 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
     @Override
     @Transactional
     public void saveScript(Script script) {
+        Script old = scriptRepository.findOne(script.getId());
+        if (!Objects.equals(old.getContent(), script.getContent())) {
+            script.setLatestStatus(ScriptStatus.UNKNOWN);
+        }
         scriptRepository.save(script);
     }
 
