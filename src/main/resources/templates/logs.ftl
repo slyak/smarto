@@ -30,7 +30,7 @@
                 </td>
                 <#assign task = batch.tasks?api.get(host.id)/>
                 <#if host_index == 0>
-                <td rowspan="${row}">${task.startAt?number_to_date?string("MM/dd HH:mm:ss")}</td>
+                <td rowspan="${row}">${batch.createAt?number_to_date?string("MM/dd HH:mm:ss")}</td>
                 <td rowspan="${row}">
                     <#if task.stopAt gt 0>
                     ${task.stopAt?number_to_date?string("MM/dd HH:mm:ss")}

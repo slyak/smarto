@@ -70,6 +70,12 @@ public class ProjectController {
         public Project getProject(@RequestParam(value = "id", required = false) Project project) {
             return project;
         }
+
+        @GetMapping("/delete")
+        @ResponseBody
+        public void delete(Long id){
+            smartoManager.deleteProject(id);
+        }
     }
 
 

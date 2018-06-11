@@ -1,10 +1,8 @@
 package com.slyak.smarto.web;
 
-import ch.qos.logback.classic.Logger;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.slyak.core.ssh2.StdEvent;
-import com.slyak.core.util.LoggerUtils;
 import com.slyak.smarto.dto.BatchHostLogResponse;
 import com.slyak.smarto.dto.BatchQuery;
 import com.slyak.smarto.dto.TaskLogRequest;
@@ -13,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.SystemUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Pageable;
@@ -57,23 +54,6 @@ public class LogController {
     ) throws IOException {
         this.messagingTemplate = messagingTemplate;
         this.smartoManager = smartoManager;
-    }
-
-    public static void main(String[] args) {
-        /*try {
-            FileUtils.forceMkdirParent(new File("/opt/itasm/logs/321/65.log"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-        String PROJECT_HOME = SystemUtils.getUserHome().getPath() + '/' + ".itasm";
-        System.out.println(PROJECT_HOME);
-        Logger logger = LoggerUtils.createLogger(PROJECT_HOME + "/logs/321/65.log", "%msg%n");
-        logger.info("this is a test");
-        logger.info("this is a test");
-        logger.info("this is a test");
-        logger.info("this is a test");
-
-        System.out.println(System.getProperty("user.home"));
     }
 
     @MessageMapping("/ssh/logs")

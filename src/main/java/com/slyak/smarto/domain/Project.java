@@ -1,5 +1,6 @@
 package com.slyak.smarto.domain;
 
+import com.slyak.spring.jpa.Status;
 import lombok.Data;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
@@ -21,4 +22,6 @@ public class Project extends AbstractPersistable<Long> {
 
 
     private String description;
+
+    private Status status = Status.ENABLED;
 }

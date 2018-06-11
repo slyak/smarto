@@ -34,6 +34,8 @@ public class Batch extends AbstractPersistable<Long> {
 
     private long createAt = System.currentTimeMillis();
 
+    private long stopAt = 0;
+
     private BatchTaskStatus status;
 
     //{scriptId:{key:value}}

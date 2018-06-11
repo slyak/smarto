@@ -1,0 +1,17 @@
+--queryBatches
+SELECT b.* FROM T_BATCH b WHERE 1=1
+<#if batchId gt 0>
+    and b.ID = :batchId
+</#if>
+<#if owner??>
+    and b.OWNER = :owner
+</#if>
+<#if owner??>
+    and b.OWNER_ID = :ownerId
+</#if>
+<#if startAt?? && startAt gt 0>
+    and b.CREATE_AT >= :startAt
+</#if>
+<#if stopAt?? && startAt gt 0 >
+    and b.STOP_AT <= :stopAt
+</#if>

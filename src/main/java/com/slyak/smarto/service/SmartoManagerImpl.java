@@ -4,6 +4,7 @@ import ch.qos.logback.classic.Logger;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.slyak.core.concurrent.ExecutorUtils;
 import com.slyak.core.ssh2.SSH2;
 import com.slyak.core.ssh2.StdEvent;
 import com.slyak.core.ssh2.StdEventLogger;
@@ -15,6 +16,7 @@ import com.slyak.smarto.dto.BatchQuery;
 import com.slyak.smarto.dto.ScriptInstances;
 import com.slyak.smarto.dto.SysEnv;
 import com.slyak.smarto.repository.*;
+import com.slyak.spring.jpa.Status;
 import com.slyak.web.support.freemarker.FreemarkerTemplateRender;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
@@ -28,7 +30,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
-import org.springframework.core.task.TaskExecutor;
+import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -51,6 +53,8 @@ import java.util.stream.Collectors;
 public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublisherAware, ApplicationContextAware, InitializingBean {
 
     private static final String SH = ".sh";
+
+    private static final int BATCH_TIME_OUT = 30 * 60 * 1000;
 
     private static final char SEPARATOR = '/';
 
@@ -82,7 +86,7 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
 
     private final BatchTaskRepository batchTaskRepository;
 
-    private final TaskExecutor taskExecutor;
+    private final AsyncTaskExecutor taskExecutor;
 
     private final FreemarkerTemplateRender templateRender;
 
@@ -104,7 +108,7 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
             GlobalRepository globalRepository,
             FileStoreService<String> fileStoreService,
             BatchTaskRepository batchTaskRepository,
-            TaskExecutor taskExecutor,
+            AsyncTaskExecutor taskExecutor,
             FreemarkerTemplateRender templateRender,
             ProjectGroupHostRepository projectGroupHostRepository,
             ProjectGroupScriptRepository projectGroupScriptRepository,
@@ -129,7 +133,7 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
 
     @Override
     public Page<Project> queryProjects(Pageable pageable) {
-        return projectRepository.findAll(pageable);
+        return projectRepository.findByStatusEquals(Status.ENABLED, pageable);
     }
 
     @Override
@@ -140,9 +144,11 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
     @Override
     @Transactional
     public void saveScript(Script script) {
-        Script old = scriptRepository.findOne(script.getId());
-        if (!Objects.equals(old.getContent(), script.getContent())) {
-            script.setLatestStatus(ScriptStatus.UNKNOWN);
+        if (script.getId() != null) {
+            Script old = scriptRepository.findOne(script.getId());
+            if (!Objects.equals(old.getContent(), script.getContent())) {
+                script.setLatestStatus(ScriptStatus.UNKNOWN);
+            }
         }
         scriptRepository.save(script);
     }
@@ -197,7 +203,7 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
             task.setStartAt(System.currentTimeMillis());
             batchTaskRepository.save(task);
         }
-        return batch;
+        return batchRepository.findOne(batchId);
     }
 
     @Override
@@ -205,7 +211,7 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
     public Batch execOwnerScripts(BatchOwner owner, Long ownerId) {
         Batch batch = createBatch(owner, ownerId);
         if (batch != null) {
-            runBatch(batch.getId());
+            runBatch(batch);
         }
         return batch;
     }
@@ -233,99 +239,104 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
     }
 
     @SneakyThrows
-    private void runBatch(Long batchId) {
-        Batch batch = batchRepository.findOne(batchId);
+    private void runBatch(Batch batch) {
         taskExecutor.execute(() -> {
             List<Host> hosts = hostRepository.findAll(batch.getHostIds());
             List<Script> scripts = scriptRepository.findAll(batch.getScriptIds());
-            for (Host host : hosts) {
-                //run command in one host
-                String logFile = getBatchLogfile(batchId, host.getId());
-                asyncConnectExecute(batch, host, scripts, logFile);
+            int maxRunners = hosts.size();
+            //run command in one host
+            List<Long> stopAts = ExecutorUtils.startCompetition(index -> {
+                Host host = hosts.get(index);
+                return connectExecute(batch, host, scripts, getBatchLogfile(batch.getId(), host.getId()));
+            }, maxRunners, maxRunners, BATCH_TIME_OUT);
+            if (CollectionUtils.isEmpty(stopAts)) {
+                batch.setStopAt(-1);
+            } else {
+                stopAts.sort((o1, o2) -> o1 > o2 ? 0 : 1);
+                batch.setStopAt(stopAts.get(0));
             }
         });
-
     }
 
-    private void asyncConnectExecute(Batch batch, Host host, List<Script> scripts, String logfile) {
-        taskExecutor.execute(() -> {
-            //connect and auth
-            SSH2 ssh2 = null;
-            //custom std logger
-            StdEventLogger stdLogger = null;
-            final Long hostId = host.getId();
-            try {
-                ssh2 = connectToHost(host);
-                if (ssh2 != null && ssh2.isAuthSuccess()) {
-                    String hostUserHome = getSmartoHome(ssh2, host);
-                    Logger logger = LoggerUtils.createLogger(logfile, "%msg%n");
-                    stdLogger = new StdEventLogger(logger, eventPublisher) {
-                        @Override
-                        protected StdEvent decorate(StdEvent stdEvent) {
-                            stdEvent.setProperty("batchId", batch.getId());
-                            stdEvent.setProperty("hostId", hostId);
-                            return stdEvent;
-                        }
-                    };
-                    Set<String> filePathsToMount = Sets.newHashSet();
-                    List<Executable> scriptFiles = Lists.newArrayList();
-                    for (Script script : scripts) {
-                        //envs
-                        Map<String, Object> model = Maps.newHashMap();
-                        setupSysEnvs(model, batch, host);
-                        Optional.of(batch.getScriptEnvs()).ifPresent(scriptEnvs -> model.putAll(scriptEnvs.get(script.getId())));
-
-                        //copy script files
-                        List<ScriptFile> files = findScriptFiles(script.getId());
-                        //do scp, if file exist skip
-                        for (ScriptFile sf : files) {
-                            GlobalFile gf = sf.getGlobalFile();
-                            File nativeFile = fileStoreService.lookup(gf.getId());
-                            String scpPath = templateRender.renderStringTpl(sf.getScpPath(), model);
-                            filePathsToMount.add(scpPath);
-                            String fileName = gf.getName();
-                            logger.info("Copy file {} to host path {}:{}, start checksum", fileName, host.getIp(), scpPath);
-                            if (Objects.equals(gf.getMd5(), ssh2.md5(scpPath + File.separator + fileName))) {
-                                logger.info("File {} not changed ,skip copy", fileName, host.getIp(), scpPath);
-                            } else {
-                                logger.info("Copying file {} , please wait", fileName, host.getIp(), scpPath);
-                                ssh2.copy(nativeFile, fileName, scpPath);
-                            }
-                        }
-                        //run bash script
-                        filePathsToMount.add(hostUserHome);
-                        //\r\n will cause dos file format and will cause file not found exception
-                        String bashScript = StringUtils.replace(templateRender.renderStringTpl(script.getContent(), model), "\r\n", "\n");
-                        @Cleanup ByteArrayInputStream is = new ByteArrayInputStream(bashScript.getBytes(DEFAULT_CHARSET));
-                        String scriptName = script.getId() + SH;
-                        ssh2.copy(is, scriptName, hostUserHome);
-
-                        scriptFiles.add(new Executable(script.getId(), hostUserHome + SEPARATOR + scriptName, script.getName()));
+    private long connectExecute(Batch batch, Host host, List<Script> scripts, String logfile) {
+        //connect and auth
+        SSH2 ssh2 = null;
+        //custom std logger
+        StdEventLogger stdLogger = null;
+        final Long hostId = host.getId();
+        try {
+            ssh2 = connectToHost(host);
+            if (ssh2 != null && ssh2.isAuthSuccess()) {
+                String hostUserHome = getSmartoHome(ssh2, host);
+                Logger logger = LoggerUtils.createLogger(logfile, "%msg%n");
+                stdLogger = new StdEventLogger(logger, eventPublisher) {
+                    @Override
+                    protected StdEvent decorate(StdEvent stdEvent) {
+                        stdEvent.setProperty("batchId", batch.getId());
+                        stdEvent.setProperty("hostId", hostId);
+                        return stdEvent;
                     }
+                };
+                Set<String> filePathsToMount = Sets.newHashSet();
+                List<Executable> scriptFiles = Lists.newArrayList();
+                for (Script script : scripts) {
+                    //envs
+                    Map<String, Object> model = Maps.newHashMap();
+                    setupSysEnvs(model, batch, host);
+                    Optional.of(batch.getScriptEnvs()).ifPresent(scriptEnvs -> model.putAll(scriptEnvs.get(script.getId())));
 
-                    ScriptContext context = ScriptContexts.select(host, ssh2, stdLogger, filePathsToMount);
-                    updateScriptLastStatus(context.exec(scriptFiles));
+                    //copy script files
+                    List<ScriptFile> files = findScriptFiles(script.getId());
+                    //do scp, if file exist skip
+                    for (ScriptFile sf : files) {
+                        GlobalFile gf = sf.getGlobalFile();
+                        File nativeFile = fileStoreService.lookup(gf.getId());
+                        String scpPath = templateRender.renderStringTpl(sf.getScpPath(), model);
+                        filePathsToMount.add(scpPath);
+                        String fileName = gf.getName();
+                        logger.info("Copy file {} to host path {}:{}, start checksum", fileName, host.getIp(), scpPath);
+                        if (Objects.equals(gf.getMd5(), ssh2.md5(scpPath + File.separator + fileName))) {
+                            logger.info("File {} not changed ,skip copy", fileName, host.getIp(), scpPath);
+                        } else {
+                            logger.info("Copying file {} , please wait", fileName, host.getIp(), scpPath);
+                            ssh2.copy(nativeFile, fileName, scpPath);
+                        }
+                    }
+                    //run bash script
+                    filePathsToMount.add(hostUserHome);
+                    //\r\n will cause dos file format and will cause file not found exception
+                    String bashScript = StringUtils.replace(templateRender.renderStringTpl(script.getContent(), model), "\r\n", "\n");
+                    @Cleanup ByteArrayInputStream is = new ByteArrayInputStream(bashScript.getBytes(DEFAULT_CHARSET));
+                    String scriptName = script.getId() + SH;
+                    ssh2.copy(is, scriptName, hostUserHome);
+
+                    scriptFiles.add(new Executable(script.getId(), hostUserHome + SEPARATOR + scriptName, script.getName()));
                 }
-            } catch (Exception e) {
-                log.error("An error occurred : {}", e);
-            } finally {
-                if (ssh2 != null) {
-                    ssh2.disconnect();
-                }
+
+                ScriptContext context = ScriptContexts.select(host, ssh2, stdLogger, filePathsToMount);
+                updateScriptLastStatus(context.exec(scriptFiles));
             }
-            //log batch host result
-            BatchTaskKey taskKey = new BatchTaskKey();
-            taskKey.setBatchId(batch.getId());
-            taskKey.setHostId(hostId);
-            BatchTask batchTask = batchTaskRepository.findOne(taskKey);
-            batchTask.setStopAt(System.currentTimeMillis());
-            BatchTaskStatus status = stdLogger == null ?
-                    BatchTaskStatus.FAILED :
-                    (stdLogger.hasError() ? BatchTaskStatus.FAILED : BatchTaskStatus.SUCCESS);
-            batchTask.setStatus(status);
+        } catch (Exception e) {
+            log.error("An error occurred : {}", e);
+        } finally {
+            if (ssh2 != null) {
+                ssh2.disconnect();
+            }
+        }
+        long stopAt = System.currentTimeMillis();
+        //log batch host result
+        BatchTaskKey taskKey = new BatchTaskKey();
+        taskKey.setBatchId(batch.getId());
+        taskKey.setHostId(hostId);
+        BatchTask batchTask = batchTaskRepository.findOne(taskKey);
+        batchTask.setStopAt(stopAt);
+        BatchTaskStatus status = stdLogger == null ?
+                BatchTaskStatus.FAILED :
+                (stdLogger.hasError() ? BatchTaskStatus.FAILED : BatchTaskStatus.SUCCESS);
+        batchTask.setStatus(status);
+        batchTaskRepository.save(batchTask);
 
-            batchTaskRepository.save(batchTask);
-        });
+        return stopAt;
     }
 
     private void updateScriptLastStatus(Map<Long, Boolean> execResult) {
@@ -552,7 +563,7 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
 
     @Override
     public Page<Batch> queryBatches(BatchQuery batchQuery, Pageable pageable) {
-        return batchRepository.findAll(pageable);
+        return batchRepository.queryBatches(batchQuery, pageable);
     }
 
     @Override
@@ -698,5 +709,11 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
             globalFileRepository.delete(id);
             fileStoreService.removeFile(id);
         }
+    }
+
+    @Override
+    @Transactional
+    public void deleteProject(Long id) {
+        projectRepository.fakeDelete(id);
     }
 }

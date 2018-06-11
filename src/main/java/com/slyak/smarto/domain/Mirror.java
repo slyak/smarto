@@ -23,6 +23,8 @@ public class Mirror extends AbstractPersistable<Long> {
 
     private String storagePath;
 
-    private String repoCfgFid;
+    private String repoFileName;
+
+    private String repoTemplate;
 
 }

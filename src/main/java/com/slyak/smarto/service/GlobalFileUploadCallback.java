@@ -1,7 +1,9 @@
 package com.slyak.smarto.service;
 
-import com.google.common.hash.Hashing;
+import com.google.common.hash.*;
 import com.google.common.io.ByteSource;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Closer;
 import com.slyak.file.FileStoreService;
 import com.slyak.smarto.domain.GlobalFile;
 import com.slyak.smarto.repository.GlobalFileRepository;
@@ -19,7 +21,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * .
@@ -46,17 +51,22 @@ public class GlobalFileUploadCallback implements FileUploadCallback<GlobalFile, 
     public GlobalFile saveMFile(MultipartFile multipartFile) {
         InputStream inputStream = multipartFile.getInputStream();
         InputStreamByteSource byteSource = new InputStreamByteSource(inputStream);
-        String md5 = byteSource.hash(Hashing.md5()).toString();
-        GlobalFile globalFile = globalFileRepository.findByMd5(md5);
-        if (globalFile == null) {
-            globalFile = new GlobalFile();
-            String filename = multipartFile.getOriginalFilename();
-            globalFile.setName(filename);
-            globalFile.setSize(multipartFile.getSize());
-            globalFile.setId(fileStoreService.store(inputStream, filename));
-            return globalFileRepository.save(globalFile);
+        try {
+            String md5 = byteSource.hash(Hashing.md5()).toString();
+            GlobalFile globalFile = globalFileRepository.findByMd5(md5);
+            if (globalFile == null) {
+                globalFile = new GlobalFile();
+                String filename = multipartFile.getOriginalFilename();
+                globalFile.setName(filename);
+                globalFile.setSize(multipartFile.getSize());
+                globalFile.setId(fileStoreService.store(inputStream, filename));
+                return globalFileRepository.save(globalFile);
+            }
+
+            return globalFile;
+        } finally {
+            byteSource.getCloser().close();
         }
-        return globalFile;
     }
 
     @Override
@@ -84,6 +94,8 @@ public class GlobalFileUploadCallback implements FileUploadCallback<GlobalFile, 
 
         private InputStream inputStream;
 
+        private Closer closer;
+
         public InputStreamByteSource(InputStream inputStream) {
             this.inputStream = inputStream;
         }
@@ -91,6 +103,30 @@ public class GlobalFileUploadCallback implements FileUploadCallback<GlobalFile, 
         @Override
         public InputStream openStream() throws IOException {
             return inputStream;
+        }
+
+        @Override
+        public HashCode hash(HashFunction hashFunction) throws IOException {
+            Hasher hasher = hashFunction.newHasher();
+            copyTo(Funnels.asOutputStream(hasher));
+            return hasher.hash();
+        }
+
+        @Override
+        public long copyTo(OutputStream output) throws IOException {
+            checkNotNull(output);
+
+            this.closer = Closer.create();
+            try {
+                InputStream in = closer.register(openStream());
+                return ByteStreams.copy(in, output);
+            } catch (Throwable e) {
+                throw closer.rethrow(e);
+            }
+        }
+
+        public Closer getCloser() {
+            return closer;
         }
     }
 }
