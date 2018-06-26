@@ -187,9 +187,8 @@ public class ScriptController {
 
         @GetMapping("/run")
         @ResponseBody
-        public Long run(@RequestParam("id") Long id) {
-            Batch batch = smartoManager.execOwnerScripts(BatchOwner.SCRIPT, id);
-            return batch.getId();
+        public void run(@RequestParam("id") Long id) {
+            smartoManager.execOwnerScripts(BatchOwner.SCRIPT, id);
         }
 
         @ModelAttribute("script")

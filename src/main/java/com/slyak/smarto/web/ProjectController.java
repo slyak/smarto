@@ -41,6 +41,12 @@ public class ProjectController {
         return "redirect:/project/groups?id=" + project.getId();
     }
 
+    @GetMapping("/run")
+    public String run(Long id){
+        smartoManager.execProjectScripts(id);
+        return "redirect:/logs";
+    }
+
     @Controller
     @RequestMapping("/project/*")
     public static class ProjectActionsController {

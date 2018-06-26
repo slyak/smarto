@@ -1,6 +1,7 @@
 package com.slyak.smarto.web;
 
 import com.slyak.smarto.domain.Host;
+import com.slyak.smarto.domain.Mirror;
 import com.slyak.smarto.domain.OS;
 import com.slyak.smarto.service.SmartoManager;
 import com.slyak.web.support.data.RequestParamBind;
@@ -51,6 +52,22 @@ public class AdminController {
         Host testHost = smartoManager.getTestHost();
         return smartoManager.validateHost(testHost, "docker -v", "version");
     }
+
+    @GetMapping("/mirrors")
+    public void mirrors(ModelMap modelMap) {
+        modelMap.put("mirrors", smartoManager.queryMirrors());
+    }
+
+    @GetMapping("/mirror")
+    public void mirror(@RequestParamBind("id") Mirror mirror) {
+
+    }
+
+    @PostMapping("/mirror")
+    public void saveMirror(@RequestParamBind("id") Mirror mirror) {
+        smartoManager.saveMirror(mirror);
+    }
+
 
     @GetMapping("/files")
     public void files() {

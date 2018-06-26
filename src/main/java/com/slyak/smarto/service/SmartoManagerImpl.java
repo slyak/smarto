@@ -40,6 +40,7 @@ import org.springframework.util.CollectionUtils;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 /**
@@ -96,6 +97,8 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
 
     private ApplicationContext appContext;
 
+    private MirrorRepository mirrorRepository;
+
     @Autowired
     public SmartoManagerImpl(
             ProjectRepository projectRepository,
@@ -112,8 +115,8 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
             FreemarkerTemplateRender templateRender,
             ProjectGroupHostRepository projectGroupHostRepository,
             ProjectGroupScriptRepository projectGroupScriptRepository,
-            GlobalFileRepository globalFileRepository
-    ) {
+            GlobalFileRepository globalFileRepository,
+            MirrorRepository mirrorRepository) {
         this.projectRepository = projectRepository;
         this.scriptFileRepository = scriptFileRepository;
         this.projectGroupRepository = projectGroupRepository;
@@ -129,6 +132,7 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
         this.projectGroupHostRepository = projectGroupHostRepository;
         this.projectGroupScriptRepository = projectGroupScriptRepository;
         this.globalFileRepository = globalFileRepository;
+        this.mirrorRepository = mirrorRepository;
     }
 
     @Override
@@ -208,12 +212,8 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
 
     @Override
     @Transactional
-    public Batch execOwnerScripts(BatchOwner owner, Long ownerId) {
-        Batch batch = createBatch(owner, ownerId);
-        if (batch != null) {
-            runBatch(batch);
-        }
-        return batch;
+    public Future<Batch> execOwnerScripts(BatchOwner owner, Long ownerId) {
+        return runBatch(createBatch(owner, ownerId));
     }
 
     @Override
@@ -239,8 +239,8 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
     }
 
     @SneakyThrows
-    private void runBatch(Batch batch) {
-        taskExecutor.execute(() -> {
+    private Future<Batch> runBatch(Batch batch) {
+        return taskExecutor.submit(() -> {
             List<Host> hosts = hostRepository.findAll(batch.getHostIds());
             List<Script> scripts = scriptRepository.findAll(batch.getScriptIds());
             int maxRunners = hosts.size();
@@ -255,6 +255,7 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
                 stopAts.sort((o1, o2) -> o1 > o2 ? 0 : 1);
                 batch.setStopAt(stopAts.get(0));
             }
+            return batch;
         });
     }
 
@@ -715,5 +716,31 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
     @Transactional
     public void deleteProject(Long id) {
         projectRepository.fakeDelete(id);
+    }
+
+    @Override
+    public List<Mirror> queryMirrors() {
+        return mirrorRepository.findAll();
+    }
+
+    @Override
+    public void saveMirror(Mirror mirror) {
+        mirrorRepository.save(mirror);
+    }
+
+    @Override
+    @SneakyThrows
+    public void execProjectScripts(Long id) {
+        List<ProjectGroup> groups = projectGroupRepository.findByProjectIdOrderByOrderAsc(id);
+        for (ProjectGroup group : groups) {
+            Future<Batch> batchFuture = execOwnerScripts(BatchOwner.PROJECT_GROUP, group.getId());
+            if (batchFuture.isDone()) {
+                Batch batch = batchFuture.get();
+                if (batch.getStatus() == BatchTaskStatus.SUCCESS) {
+                    continue;
+                }
+            }
+            break;
+        }
     }
 }

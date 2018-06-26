@@ -22,4 +22,6 @@ public class Global {
     @Id
     private Long id = ONLY_ID;
 
+    private String host;
+
 }

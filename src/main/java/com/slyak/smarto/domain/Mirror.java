@@ -3,8 +3,10 @@ package com.slyak.smarto.domain;
 import lombok.Data;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * .
@@ -19,12 +21,22 @@ public class Mirror extends AbstractPersistable<Long> {
 
     private String name;
 
+    private String baseUrl;
+
+    @Column(length = 500)
+    private String rootPath;
+
     private Long hostId;
 
-    private String storagePath;
+    @Column(length = 3000)
+    private String script = "#!/bin/bash";
 
-    private String repoFileName;
+    @Column(length = 3000)
+    private String help;
 
-    private String repoTemplate;
+    private long lastUpdate;
+
+    @Transient
+    private Host host;
 
 }

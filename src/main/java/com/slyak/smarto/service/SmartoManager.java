@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.concurrent.Future;
 
 /**
  * .
@@ -31,7 +32,7 @@ public interface SmartoManager {
 
     OS findOs(String osName);
 
-    Batch execOwnerScripts(BatchOwner owner, Long ownerId);
+    Future<Batch> execOwnerScripts(BatchOwner owner, Long ownerId);
 
     Global findGlobal();
 
@@ -90,4 +91,10 @@ public interface SmartoManager {
     void cleanUnusedFiles();
 
     void deleteProject(Long id);
+
+    List<Mirror> queryMirrors();
+
+    void saveMirror(Mirror mirror);
+
+    void execProjectScripts(Long id);
 }

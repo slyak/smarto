@@ -1,6 +1,5 @@
-<#-- @ftlvariable name="page" type="org.springframework.data.domain.Page<com.slyak.smarto.domain.Project>" -->
+<#-- @ftlvariable name="mirrors" type="java.util.List<com.slyak.smarto.domain.Mirror>" -->
 <#assign left>
-    <@bootstrap.keywordSearch id="mirrorSearch"/>
 <table class="table table-hover table-fa">
     <thead>
     <tr>
@@ -11,31 +10,20 @@
     </tr>
     </thead>
     <tbody>
+    <#list mirrors as mirror>
     <tr>
-        <td><a href="http://192.168.10.2/CentOS" target="_blank">CentOS</a></td>
-        <td>2018-04-27 10:30:00</td>
+        <td><a href="http://192.168.10.2/CentOS" target="_blank">${mirror.name}</a></td>
+        <td>${mirror.lastUpdate}</td>
         <td class="text-success">success</td>
         <td>
-            <@bootstrap.a href="/mirror/help" title="使用帮助" modal=true/>
+            <@bootstrap.a href="#" title="使用帮助" modal=true modalContent="${mirror.help}"/>
         </td>
     </tr>
-    <tr>
-        <td><a href="http://192.168.10.2/HDP" target="_blank">HDP</a></td>
-        <td>2018-04-27 10:30:00</td>
-        <td class="text-success">success</td>
-        <td><@bootstrap.a href="/mirror/help" title="使用帮助" modal=true/></td>
-    </tr>
-    <tr>
-        <td><a href="http://192.168.10.2/HDP-UTILS-1.1.0.20/" target="_blank">HDP-UTILS</a></td>
-        <td>2018-04-27 10:30:00</td>
-        <td class="text-success">success</td>
-        <td><@bootstrap.a href="/mirror/help" title="使用帮助" modal=true/></td>
-    </tr>
+    </#list>
     </tbody>
 </table>
     <@slyakUI.pagination value=page/>
 </#assign>
-
 <#assign right>
     <@layout.downloadOS/>
 </#assign>

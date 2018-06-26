@@ -138,7 +138,7 @@
         </div>
         <div class="mt-2">
             <@layout.list title="操作" items=[
-            {'title':'运行项目脚本','url':'/project/host','class':'fa-paper-plane'},
+            {'title':'运行项目脚本','url':'/project/run','class':'fa-paper-plane'},
             {'title':'下载离线安装包','url':'/project/download','class':'fa-download'}
             ]/>
     <@layout.list title="导航" items=[
@@ -240,23 +240,29 @@
     <@layout.rightMain title=title left=left right=right btnCreate=btnCreate/>
 </#macro>
 
-<#macro cardForm title action enctype="application/x-www-form-urlencoded">
+<#macro card title>
 <div class="detail">
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">${title}</h5>
             <hr/>
-            <@slyakUI.form action=action enctype=enctype>
-                <#nested />
-                <hr/>
-                <div class="text-right">
-                    <button class="btn btn-lg btn-primary" type="submit">保存</button>
-                    <button class="btn btn-lg btn-link" type="button" onclick="history.back()">取消</button>
-                </div>
-            </@slyakUI.form>
+            <#nested />
         </div>
     </div>
 </div>
+</#macro>
+
+<#macro cardForm title action enctype="application/x-www-form-urlencoded">
+    <@card title=title>
+        <@slyakUI.form action=action enctype=enctype>
+            <#nested />
+        <hr/>
+        <div class="text-right">
+            <button class="btn btn-lg btn-primary" type="submit">保存</button>
+            <button class="btn btn-lg btn-link" type="button" onclick="history.back()">取消</button>
+        </div>
+        </@slyakUI.form>
+    </@card>
 </#macro>
 
 <#macro layout_detail title action enctype="application/x-www-form-urlencoded">
