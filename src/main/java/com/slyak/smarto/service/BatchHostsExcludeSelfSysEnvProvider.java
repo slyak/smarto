@@ -1,5 +1,6 @@
 package com.slyak.smarto.service;
 
+import com.google.common.collect.Lists;
 import com.slyak.smarto.domain.Batch;
 import com.slyak.smarto.domain.Host;
 import org.springframework.stereotype.Component;
@@ -18,13 +19,15 @@ public class BatchHostsExcludeSelfSysEnvProvider extends AbstractSysEnvProvider<
 
     @Override
     public List<Host> provide(Batch batch, Host host) {
+        List<Host> cloned = Lists.newArrayList();
         List<Host> hosts = batch.getHosts();
         for (int i = hosts.size() - 1; i >= 0; i--) {
-            if (Objects.equals(host.getId(), hosts.get(i).getId())) {
-                hosts.remove(i);
+            Host h = hosts.get(i);
+            if (!Objects.equals(host.getId(), h.getId())) {
+                cloned.add(h);
             }
         }
-        return hosts;
+        return cloned;
     }
 
     @Override

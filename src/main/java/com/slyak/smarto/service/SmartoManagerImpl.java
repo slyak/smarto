@@ -281,37 +281,43 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
                 Set<String> filePathsToMount = Sets.newHashSet();
                 List<Executable> scriptFiles = Lists.newArrayList();
                 for (Script script : scripts) {
-                    //envs
-                    Map<String, Object> model = Maps.newHashMap();
-                    setupSysEnvs(model, batch, host);
-                    Optional.of(batch.getScriptEnvs()).ifPresent(scriptEnvs -> model.putAll(scriptEnvs.get(script.getId())));
+                    try {
+                        //envs
+                        Map<String, Object> model = Maps.newHashMap();
+                        setupSysEnvs(model, batch, host);
+                        Optional.of(batch.getScriptEnvs()).ifPresent(scriptEnvs -> model.putAll(scriptEnvs.get(script.getId())));
 
-                    //copy script files
-                    List<ScriptFile> files = findScriptFiles(script.getId());
-                    //do scp, if file exist skip
-                    for (ScriptFile sf : files) {
-                        GlobalFile gf = sf.getGlobalFile();
-                        File nativeFile = fileStoreService.lookup(gf.getId());
-                        String scpPath = templateRender.renderStringTpl(sf.getScpPath(), model);
-                        filePathsToMount.add(scpPath);
-                        String fileName = gf.getName();
-                        logger.info("Copy file {} to host path {}:{}, start checksum", fileName, host.getIp(), scpPath);
-                        if (Objects.equals(gf.getMd5(), ssh2.md5(scpPath + File.separator + fileName))) {
-                            logger.info("File {} not changed ,skip copy", fileName, host.getIp(), scpPath);
-                        } else {
-                            logger.info("Copying file {} , please wait", fileName, host.getIp(), scpPath);
-                            ssh2.copy(nativeFile, fileName, scpPath);
+                        //copy script files
+                        List<ScriptFile> files = findScriptFiles(script.getId());
+                        //do scp, if file exist skip
+                        for (ScriptFile sf : files) {
+                            GlobalFile gf = sf.getGlobalFile();
+                            File nativeFile = fileStoreService.lookup(gf.getId());
+                            String scpPath = templateRender.renderStringTpl(sf.getScpPath(), model);
+                            filePathsToMount.add(scpPath);
+                            String fileName = gf.getName();
+                            logger.info("Copy file {} to host path {}:{}, start checksum", fileName, host.getIp(), scpPath);
+                            if (Objects.equals(gf.getMd5(), ssh2.md5(scpPath + File.separator + fileName))) {
+                                logger.info("File {} not changed ,skip copy", fileName, host.getIp(), scpPath);
+                            } else {
+                                logger.info("Copying file {} , please wait", fileName, host.getIp(), scpPath);
+                                ssh2.copy(nativeFile, fileName, scpPath);
+                            }
                         }
-                    }
-                    //run bash script
-                    filePathsToMount.add(hostUserHome);
-                    //\r\n will cause dos file format and will cause file not found exception
-                    String bashScript = StringUtils.replace(templateRender.renderStringTpl(script.getContent(), model), "\r\n", "\n");
-                    @Cleanup ByteArrayInputStream is = new ByteArrayInputStream(bashScript.getBytes(DEFAULT_CHARSET));
-                    String scriptName = script.getId() + SH;
-                    ssh2.copy(is, scriptName, hostUserHome);
+                        //run bash script
+                        filePathsToMount.add(hostUserHome);
+                        //\r\n will cause dos file format and will cause file not found exception
 
-                    scriptFiles.add(new Executable(script.getId(), hostUserHome + SEPARATOR + scriptName, script.getName()));
+                        String bashScript = StringUtils.replace(templateRender.renderStringTpl(script.getContent(), model), "\r\n", "\n");
+
+                        @Cleanup ByteArrayInputStream is = new ByteArrayInputStream(bashScript.getBytes(DEFAULT_CHARSET));
+                        String scriptName = script.getId() + SH;
+                        ssh2.copy(is, scriptName, hostUserHome);
+
+                        scriptFiles.add(new Executable(script.getId(), hostUserHome + SEPARATOR + scriptName, script.getName()));
+                    } catch (Exception e) {
+                        log.error("prepare script {} error : {}", script, e);
+                    }
                 }
 
                 ScriptContext context = ScriptContexts.select(host, ssh2, stdLogger, filePathsToMount);
