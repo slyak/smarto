@@ -241,7 +241,7 @@ public class SmartoManagerImpl implements SmartoManager, ApplicationEventPublish
     @SneakyThrows
     private Future<Batch> runBatch(Batch batch) {
         return taskExecutor.submit(() -> {
-            List<Host> hosts = hostRepository.findAll(batch.getHostIds());
+            List<Host> hosts = hostRepository.findAllOneByOne(batch.getHostIds());
             List<Script> scripts = scriptRepository.findAllOneByOne(batch.getScriptIds());
             int maxRunners = hosts.size();
             //run command in one host
