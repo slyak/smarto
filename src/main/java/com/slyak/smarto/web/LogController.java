@@ -65,13 +65,12 @@ public class LogController {
 
         String logFileName = smartoManager.getBatchLogfile(taskLogRequest.getBatchId(), taskLogRequest.getHostId());
         File logFile = new File(logFileName);
-        while (!logFile.exists()) {
-            Thread.sleep(1000);
-        }
-        LineIterator iterator = FileUtils.lineIterator(logFile);
-        int lineCount = 0;
-        while (iterator.hasNext()) {
-            send(taskLogRequest.getId(), iterator.next(), ++lineCount);
+        if (logFile.exists()) {
+            LineIterator iterator = FileUtils.lineIterator(logFile);
+            int lineCount = 0;
+            while (iterator.hasNext()) {
+                send(taskLogRequest.getId(), iterator.next(), ++lineCount);
+            }
         }
     }
 
