@@ -7,6 +7,7 @@ import com.slyak.smarto.dto.BatchHostLogResponse;
 import com.slyak.smarto.dto.BatchQuery;
 import com.slyak.smarto.dto.TaskLogRequest;
 import com.slyak.smarto.service.SmartoManager;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
@@ -57,12 +58,17 @@ public class LogController {
     }
 
     @MessageMapping("/ssh/logs")
+    @SneakyThrows
     public void logs(Message<TaskLogRequest> message) throws IOException {
         TaskLogRequest taskLogRequest = message.getPayload();
         onlineRequests.put(taskLogRequest.getId(), taskLogRequest);
 
-        String logfile = smartoManager.getBatchLogfile(taskLogRequest.getBatchId(), taskLogRequest.getHostId());
-        LineIterator iterator = FileUtils.lineIterator(new File(logfile));
+        String logFileName = smartoManager.getBatchLogfile(taskLogRequest.getBatchId(), taskLogRequest.getHostId());
+        File logFile = new File(logFileName);
+        while (!logFile.exists()) {
+            Thread.sleep(1000);
+        }
+        LineIterator iterator = FileUtils.lineIterator(logFile);
         int lineCount = 0;
         while (iterator.hasNext()) {
             send(taskLogRequest.getId(), iterator.next(), ++lineCount);
