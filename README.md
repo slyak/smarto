@@ -10,6 +10,13 @@
 7. mirror management and export for offline situation
 
 ### Architecture
-![purpose](./purpose.png)
+![purpose](./doc/purpose.png)
 
 ### Screen Snapshots
+![scripts](doc/scripts.png)
+
+![tasks](doc/tasks.png)
+
+![scripts-edit](doc/scripts-edit.png)
+
+![group-scripts](doc/group-scripts.png)
