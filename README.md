@@ -13,10 +13,10 @@
 ![purpose](./doc/purpose.png)
 
 ### Screen Snapshots
-![scripts](doc/scripts.png)
+![scripts](./doc/scripts.png)
 
-![tasks](doc/tasks.png)
+![tasks](./doc/tasks.png)
 
-![scripts-edit](doc/scripts-edit.png)
+![scripts-edit](./doc/scripts-edit.png)
 
-![group-scripts](doc/group-scripts.png)
+![group-scripts](./doc/group-scripts.png)
